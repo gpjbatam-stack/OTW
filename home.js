@@ -103,7 +103,7 @@ document.querySelectorAll("[data-close-sheet]").forEach(btn => btn.addEventListe
 
 /* Trip type */
 const tripTypeBtns = document.querySelectorAll(".trip-type");
-const returnDateBtn = document.querySelector("#returnDateBtn");
+const returnDateWrap = document.querySelector("#returnDateWrap");
 const tripTypeLabel = document.querySelector("#tripTypeLabel");
 
 tripTypeBtns.forEach(btn => {
@@ -112,7 +112,7 @@ tripTypeBtns.forEach(btn => {
     btn.classList.add("active");
     state.tripType = btn.dataset.trip;
     const round = state.tripType === "roundtrip";
-    returnDateBtn.hidden = !round;
+    returnDateWrap.hidden = !round;
     tripTypeLabel.textContent = round ? "Pulang-pergi" : "Sekali jalan";
     if (!round) state.returnDate = "";
   });
@@ -222,9 +222,6 @@ function openNativeDate(input) {
     input.click();
   }
 }
-
-document.querySelector("#departDateBtn").addEventListener("click", () => openNativeDate(departInput));
-document.querySelector("#returnDateBtn").addEventListener("click", () => openNativeDate(returnInput));
 
 departInput.addEventListener("change", () => {
   state.departDate = departInput.value;

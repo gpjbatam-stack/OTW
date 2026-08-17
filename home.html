@@ -106,25 +106,31 @@
           </div>
 
           <div class="booking-meta">
-            <button class="meta-card" id="departDateBtn" type="button">
-              <span class="meta-icon">
-                <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
-              </span>
-              <span class="meta-copy">
-                <small>Berangkat</small>
-                <strong id="departDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
-              </span>
-            </button>
+            <div class="date-field-wrap" id="departDateWrap">
+              <div class="meta-card date-display">
+                <span class="meta-icon">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
+                </span>
+                <span class="meta-copy">
+                  <small>Berangkat</small>
+                  <strong id="departDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
+                </span>
+              </div>
+              <input id="departDateInput" class="date-overlay-input" type="date" aria-label="Tanggal berangkat">
+            </div>
 
-            <button class="meta-card" id="returnDateBtn" type="button" hidden>
-              <span class="meta-icon return">
-                <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
-              </span>
-              <span class="meta-copy">
-                <small>Pulang</small>
-                <strong id="returnDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
-              </span>
-            </button>
+            <div class="date-field-wrap" id="returnDateWrap" hidden>
+              <div class="meta-card date-display">
+                <span class="meta-icon return">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
+                </span>
+                <span class="meta-copy">
+                  <small>Pulang</small>
+                  <strong id="returnDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
+                </span>
+              </div>
+              <input id="returnDateInput" class="date-overlay-input" type="date" aria-label="Tanggal pulang">
+            </div>
 
             <button class="meta-card" id="passengerBtn" type="button">
               <span class="meta-icon">
@@ -146,9 +152,6 @@
               </span>
             </button>
           </div>
-
-          <input id="departDateInput" class="native-date-input" type="date" aria-label="Tanggal berangkat">
-          <input id="returnDateInput" class="native-date-input" type="date" aria-label="Tanggal pulang">
 
           <div class="booking-assurance">
   <div><span class="assurance-dot"></span><span>Harga & jadwal real-time</span></div>

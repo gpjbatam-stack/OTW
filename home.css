@@ -1454,3 +1454,35 @@ svg{
 .app-shell{
   box-shadow:0 0 0 1px rgba(12,31,59,.025), 0 30px 80px rgba(12,31,59,.08);
 }
+
+
+/* DATE PICKER FIX — clickable native calendar field */
+.date-field-wrap{
+  position:relative;
+  min-width:0;
+}
+.date-field-wrap[hidden]{
+  display:none !important;
+}
+.date-field-wrap .meta-card{
+  width:100%;
+  height:100%;
+}
+.date-overlay-input{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:0;
+  cursor:pointer;
+  z-index:6;
+  border:0;
+}
+.date-field-wrap:hover .meta-card{
+  border-color:#cdd8e5;
+  box-shadow:0 5px 14px rgba(12,31,59,.055);
+}
+.date-field-wrap:focus-within .meta-card{
+  border-color:#b8cff7;
+  box-shadow:0 0 0 3px rgba(23,105,232,.08);
+}
