@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Lengkapi Akun — OTW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./auth.css">
+</head>
+<body>
+  <main class="auth-shell">
+    <div class="phone-frame">
+      <div class="brand">
+        <div class="brand-mark">OTW</div>
+        <div class="brand-copy">
+          <strong>Official Trip for Work</strong>
+          <span>Secure traveler profile.</span>
+        </div>
+      </div>
+
+      <section class="auth-card">
+        <div class="stepper"><span class="active"></span><span class="active"></span><span></span></div>
+        <p class="eyebrow">Lengkapi akun</p>
+        <h1>Siapkan profil perjalanan.</h1>
+        <p class="lead">Data ini membantu OTW memproses perjalanan dan dokumen dengan lebih cepat.</p>
+
+        <div id="notice" class="notice"></div>
+
+        <form id="profileForm" class="form-grid">
+          <div class="field">
+            <label for="full_name">Nama lengkap</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.6-4 4.2-6 8-6s6.4 2 8 6"/></svg>
+              <input id="full_name" name="full_name" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="phone">Nomor HP</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h3l1 5-2 1c1 3 3 5 6 6l1-2 5 1v3c0 2-2 4-4 4C9 20 4 15 3 7c0-2 2-4 4-4Z"/></svg>
+              <input id="phone" name="phone" inputmode="tel" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="employee_number">NIP / NIK Pegawai</label>
+            <div class="input-wrap no-icon">
+              <input id="employee_number" name="employee_number" placeholder="Masukkan nomor pegawai">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="position_title">Jabatan</label>
+            <div class="input-wrap no-icon">
+              <input id="position_title" name="position_title" placeholder="Contoh: Anggota DPRD / Staf">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="department">Bagian / Unit</label>
+            <div class="input-wrap no-icon">
+              <input id="department" name="department" placeholder="Contoh: Sekretariat DPRD">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="ktp_number">NIK KTP</label>
+            <div class="input-wrap no-icon">
+              <input id="ktp_number" name="ktp_number" inputmode="numeric" maxlength="16" placeholder="16 digit NIK">
+            </div>
+          </div>
+
+          <button id="submitBtn" class="primary-btn" type="submit">Simpan & Lanjutkan</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="./complete-account.js"></script>
+</body>
+</html>

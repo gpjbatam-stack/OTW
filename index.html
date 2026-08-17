@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1630">
+  <title>OTW — Official Trip for Work</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#0b1630;
+      --navy-2:#173665;
+      --blue:#2f6bff;
+      --white:#ffffff;
+      --muted:rgba(255,255,255,.68);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;min-height:100%;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b1630}
+    body{min-height:100vh;overflow:hidden}
+    .splash{
+      min-height:100vh;
+      position:relative;
+      display:grid;
+      place-items:center;
+      padding:28px;
+      color:#fff;
+      background:
+        radial-gradient(circle at 22% 18%,rgba(66,124,255,.33),transparent 28%),
+        radial-gradient(circle at 82% 78%,rgba(45,92,190,.20),transparent 32%),
+        linear-gradient(155deg,#081226 0%,#0b1630 46%,#102957 100%);
+      isolation:isolate;
+    }
+    .splash::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      opacity:.22;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+      background-size:38px 38px;
+      mask-image:linear-gradient(to bottom,rgba(0,0,0,.5),transparent 74%);
+      z-index:-1;
+    }
+    .center{
+      width:100%;
+      max-width:420px;
+      text-align:center;
+      animation:rise .7s cubic-bezier(.2,.8,.2,1) both;
+    }
+    .logo{
+      width:92px;
+      height:92px;
+      margin:0 auto 22px;
+      border-radius:28px;
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      font-size:24px;
+      letter-spacing:-.07em;
+      background:
+        linear-gradient(145deg,rgba(255,255,255,.98),rgba(237,244,255,.94));
+      color:var(--navy);
+      box-shadow:
+        0 28px 70px rgba(0,0,0,.26),
+        inset 0 1px 0 rgba(255,255,255,.8);
+      position:relative;
+    }
+    .logo::after{
+      content:"";
+      position:absolute;
+      inset:7px;
+      border-radius:22px;
+      border:1px solid rgba(20,55,105,.08);
+    }
+    h1{
+      margin:0;
+      font-size:28px;
+      line-height:1.08;
+      letter-spacing:-.045em;
+      font-weight:800;
+    }
+    .subtitle{
+      margin:9px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      letter-spacing:.01em;
+    }
+    .loading{
+      margin:42px auto 0;
+      width:54px;
+      height:4px;
+      overflow:hidden;
+      border-radius:99px;
+      background:rgba(255,255,255,.15);
+      position:relative;
+    }
+    .loading::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      width:45%;
+      border-radius:99px;
+      background:#fff;
+      animation:load 1s ease-in-out infinite;
+    }
+    .footer{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:calc(24px + env(safe-area-inset-bottom));
+      text-align:center;
+      font-size:10.5px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.42);
+    }
+    @keyframes rise{
+      from{opacity:0;transform:translateY(10px) scale(.985)}
+      to{opacity:1;transform:none}
+    }
+    @keyframes load{
+      0%{transform:translateX(-140%)}
+      55%{transform:translateX(85%)}
+      100%{transform:translateX(240%)}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .center,.loading::after{animation:none}
+    }
+  </style>
+</head>
+<body>
+  <main class="splash" aria-label="OTW splash screen">
+    <section class="center">
+      <div class="logo" aria-hidden="true">OTW</div>
+      <h1>Official Trip for Work</h1>
+      <p class="subtitle">Perjalanan dinas, lebih mudah.</p>
+      <div class="loading" aria-hidden="true"></div>
+    </section>
+    <div class="footer">Secure Business Travel Platform</div>
+  </main>
+
+  <script type="module" src="./splash.js"></script>
+</body>
+</html>

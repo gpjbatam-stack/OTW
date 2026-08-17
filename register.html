@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Daftar — OTW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./auth.css">
+</head>
+<body>
+  <main class="auth-shell">
+    <div class="phone-frame">
+      <div class="brand">
+        <div class="brand-mark">OTW</div>
+        <div class="brand-copy">
+          <strong>Official Trip for Work</strong>
+          <span>Business travel, simplified.</span>
+        </div>
+      </div>
+
+      <section class="auth-card">
+        <div class="stepper"><span class="active"></span><span></span><span></span></div>
+        <p class="eyebrow">Buat akun</p>
+        <h1>Mulai dengan identitas dasar.</h1>
+        <p class="lead">Gunakan data yang benar karena akan digunakan untuk perjalanan dan dokumen transaksi.</p>
+
+        <div id="notice" class="notice"></div>
+
+        <form id="registerForm" class="form-grid">
+          <div class="field">
+            <label for="fullName">Nama lengkap</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.6-4 4.2-6 8-6s6.4 2 8 6"/></svg>
+              <input id="fullName" name="fullName" autocomplete="name" placeholder="Sesuai identitas" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="phone">Nomor HP</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h3l1 5-2 1c1 3 3 5 6 6l1-2 5 1v3c0 2-2 4-4 4C9 20 4 15 3 7c0-2 2-4 4-4Z"/></svg>
+              <input id="phone" name="phone" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="nama@instansi.go.id" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Minimal 8 karakter" required minlength="8">
+            </div>
+            <div class="helper">Gunakan minimal 8 karakter. Hindari password yang sama dengan akun lain.</div>
+          </div>
+
+          <p class="legal">Dengan mendaftar, Anda menyetujui Syarat & Ketentuan serta Kebijakan Privasi OTW.</p>
+
+          <button id="submitBtn" class="primary-btn" type="submit">Buat Akun</button>
+        </form>
+
+        <p class="auth-footer">Sudah punya akun? <a href="login.html">Masuk</a></p>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="./register.js"></script>
+</body>
+</html>
