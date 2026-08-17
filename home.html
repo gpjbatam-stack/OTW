@@ -3,61 +3,385 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f5f7fb">
+  <meta name="theme-color" content="#08111f">
   <title>Home — OTW</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --navy:#0b1630;
-      --navy-2:#183e78;
-      --blue:#2f6bff;
-      --bg:#f5f7fb;
-      --surface:#fff;
-      --muted:#77849a;
-      --line:#e8edf4;
-      --shadow:0 18px 50px rgba(18,37,72,.08);
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--navy)}
-    main{max-width:430px;margin:auto;min-height:100vh;padding:24px 18px calc(30px + env(safe-area-inset-bottom))}
-    .top{display:flex;justify-content:space-between;align-items:center}
-    .kicker{font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-    #hello{display:block;margin-top:4px;font-size:18px;letter-spacing:-.02em}
-    .avatar{width:44px;height:44px;border-radius:15px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-weight:800;box-shadow:0 8px 22px rgba(16,31,61,.06)}
-    .hero{margin-top:24px;padding:24px;border-radius:26px;color:#fff;background:linear-gradient(145deg,var(--navy),var(--navy-2) 72%,var(--blue));box-shadow:0 20px 54px rgba(24,62,120,.22)}
-    .hero .mini{font-size:12px;opacity:.72}
-    .hero h1{margin:8px 0 0;font-size:29px;line-height:1.06;letter-spacing:-.045em}
-    .hero p{margin:11px 0 0;font-size:13px;line-height:1.6;opacity:.78}
-    .status{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:21px;padding:18px;box-shadow:var(--shadow)}
-    .status strong{font-size:14px}
-    .status p{margin:8px 0 0;color:var(--muted);font-size:12.5px;line-height:1.55}
-    .btn{margin-top:15px;width:100%;height:48px;border:0;border-radius:14px;background:var(--navy);color:#fff;font-weight:800}
-  </style>
+  <link rel="stylesheet" href="./home.css">
 </head>
 <body>
-  <main>
-    <div class="top">
-      <div>
-        <span class="kicker">Official Trip for Work</span>
-        <strong id="hello">Halo</strong>
+  <div class="app-shell">
+    <section class="hero-shell">
+      <div class="hero-orb hero-orb-a"></div>
+      <div class="hero-orb hero-orb-b"></div>
+
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">OTW</div>
+          <div>
+            <span class="brand-kicker">Official Trip for Work</span>
+            <h1 id="greeting">Halo</h1>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="icon-btn" aria-label="Notifikasi">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+            <span class="alert-dot"></span>
+          </button>
+          <button class="avatar-btn" id="profileBtn" aria-label="Profil">
+            <span id="avatar">OT</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="hero-copy">
+        <span class="hero-eyebrow">Business Travel, Elevated</span>
+        <h2>Perjalanan dinas, <span>lebih cerdas.</span></h2>
+        <p>Pesan, pantau, dan kelola dokumen perjalanan dalam satu alur yang rapi.</p>
       </div>
-      <div class="avatar" id="avatar">OT</div>
+
+    </section>
+
+    <div class="booking-overlap">
+      <section class="booking-card">
+        <div class="booking-head">
+          <div>
+            <span class="tiny-label">Rencana perjalanan</span>
+            <strong>Cari kebutuhan perjalanan</strong>
+          </div>
+          <span class="verified-badge">
+            <svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 2.7 8.3 7 10 4.3-1.7 7-5.5 7-10V6l-7-3Z"/><path d="m9.5 12 1.7 1.7 3.5-4"/></svg>
+            Dinas
+          </span>
+        </div>
+
+        <div class="travel-tabs" role="tablist">
+          <button class="travel-tab active" data-tab="flight">
+            <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/><path d="m11 14 4-4"/></svg></span>
+            Penerbangan
+          </button>
+          <button class="travel-tab" data-tab="train">
+            <span class="tab-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="4"/><path d="M8 21l2-3m6 3-2-3M8 8h8M8 13h.01M16 13h.01"/></svg></span>
+            Kereta
+          </button>
+          <button class="travel-tab" data-tab="hotel">
+            <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M4 20V5m16 15V9a2 2 0 0 0-2-2h-6v13M4 14h16M7 9h2"/></svg></span>
+            Hotel
+          </button>
+        </div>
+
+        <div id="flightPanel" class="booking-panel active">
+          <div class="trip-type-row">
+            <button class="trip-type active" data-trip="oneway">Sekali jalan</button>
+            <button class="trip-type" data-trip="roundtrip">Pulang-pergi</button>
+          </div>
+
+          <div class="route-card">
+            <button class="airport airport-left airport-button" id="originBtn" type="button">
+              <span class="airport-label">Dari</span>
+              <span class="airport-code" id="originCode">BTH</span>
+              <span class="airport-city" id="originCity">Batam</span>
+            </button>
+
+            <div class="route-center">
+              <div class="route-track">
+                <span class="route-dot"></span>
+                <span class="route-line"></span>
+                <button class="plane-chip swap-btn" id="swapRouteBtn" type="button" aria-label="Tukar rute">
+                  <svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3m3 13H7l3 3"/></svg>
+                </button>
+                <span class="route-line"></span>
+                <span class="route-dot hollow"></span>
+              </div>
+              <small id="tripTypeLabel">Sekali jalan</small>
+            </div>
+
+            <button class="airport airport-right airport-button" id="destinationBtn" type="button">
+              <span class="airport-label">Ke</span>
+              <span class="airport-code muted-code" id="destinationCode">—</span>
+              <span class="airport-city" id="destinationCity">Pilih tujuan</span>
+            </button>
+          </div>
+
+          <div class="booking-meta">
+            <button class="meta-card" id="departDateBtn" type="button">
+              <span class="meta-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
+              </span>
+              <span class="meta-copy">
+                <small>Berangkat</small>
+                <strong id="departDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
+              </span>
+            </button>
+
+            <button class="meta-card" id="returnDateBtn" type="button" hidden>
+              <span class="meta-icon return">
+                <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
+              </span>
+              <span class="meta-copy">
+                <small>Pulang</small>
+                <strong id="returnDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
+              </span>
+            </button>
+
+            <button class="meta-card" id="passengerBtn" type="button">
+              <span class="meta-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6 20c.8-4 2.8-6 6-6s5.2 2 6 6"/></svg>
+              </span>
+              <span class="meta-copy">
+                <small>Penumpang</small>
+                <strong id="passengerText">1 Dewasa</strong><span class="field-chevron">⌄</span>
+              </span>
+            </button>
+
+            <button class="meta-card" id="cabinBtn" type="button">
+              <span class="meta-icon">
+                <svg viewBox="0 0 24 24"><path d="M7 4v16M17 4v16M7 9h10M7 15h10"/></svg>
+              </span>
+              <span class="meta-copy">
+                <small>Kelas</small>
+                <strong id="cabinText">Ekonomi</strong><span class="field-chevron">⌄</span>
+              </span>
+            </button>
+          </div>
+
+          <input id="departDateInput" class="native-date-input" type="date" aria-label="Tanggal berangkat">
+          <input id="returnDateInput" class="native-date-input" type="date" aria-label="Tanggal pulang">
+
+          <div class="booking-assurance">
+  <div><span class="assurance-dot"></span><span>Harga & jadwal real-time</span></div>
+  <span class="assurance-sep"></span>
+  <div><span>Perjalanan dinas</span></div>
+</div>
+
+          <button class="primary-cta" id="searchFlightBtn">
+            <span>Cari Penerbangan</span>
+            <span class="cta-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+            </span>
+          </button>
+        </div>
+
+        <div id="trainPanel" class="booking-panel coming-panel">
+          <span class="coming-glyph"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="4"/><path d="M8 21l2-3m6 3-2-3M8 8h8"/></svg></span>
+          <strong>Kereta segera hadir</strong>
+          <small>Integrasi perjalanan kereta sedang disiapkan.</small>
+        </div>
+
+        <div id="hotelPanel" class="booking-panel coming-panel">
+          <span class="coming-glyph"><svg viewBox="0 0 24 24"><path d="M4 20V5m16 15V9a2 2 0 0 0-2-2h-6v13M4 14h16"/></svg></span>
+          <strong>Hotel segera hadir</strong>
+          <small>Pemesanan hotel dinas akan tersedia di sini.</small>
+        </div>
+      </section>
     </div>
 
-    <section class="hero">
-      <span class="mini">Fondasi OTW aktif</span>
-      <h1>Perjalanan dinas, lebih mudah.</h1>
-      <p>Autentikasi dan profil sudah tersambung ke Supabase. Home final akan menjadi tahap desain berikutnya.</p>
-    </section>
+    <main class="content-shell">
+      <section class="mini-status-row">
+        <article class="mini-status">
+          <div class="mini-status-icon blue">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h10v2M8 12h8"/></svg>
+          </div>
+          <div>
+            <span>Pesanan aktif</span>
+            <strong>0</strong>
+          </div>
+        </article>
+        <article class="mini-status">
+          <div class="mini-status-icon gold">
+            <svg viewBox="0 0 24 24"><path d="M5 3h14v18H5z"/><path d="M8 7h8m-8 4h8m-8 4h4"/></svg>
+          </div>
+          <div>
+            <span>Invoice</span>
+            <strong>0</strong>
+          </div>
+        </article>
+      </section>
 
-    <section class="status">
-      <strong>System ready</strong>
-      <p>Splash, session routing, register, login, complete account, profile, logout, dan Supabase connection sudah terpasang.</p>
-      <button class="btn" id="logoutBtn">Keluar</button>
-    </section>
-  </main>
+      <section class="quick-section">
+        <div class="section-title-row">
+          <div>
+            <span class="section-eyebrow">Akses cepat</span>
+            <h3>Kelola perjalanan</h3>
+          </div>
+          <button class="ghost-link">Lihat semua</button>
+        </div>
+
+        <div class="quick-scroll">
+          <button class="quick-action qa-dark">
+            <span class="qa-icon">
+              <svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4M9 12h6m-6 4h5"/></svg>
+            </span>
+            <strong>Pengajuan</strong>
+            <small>Buat perjalanan baru</small>
+          </button>
+
+          <button class="quick-action qa-blue">
+            <span class="qa-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h10v2M8 12h8"/></svg>
+            </span>
+            <strong>Pesanan</strong>
+            <small>Cek status perjalanan</small>
+          </button>
+
+          <button class="quick-action qa-gold">
+            <span class="qa-icon">
+              <svg viewBox="0 0 24 24"><path d="M5 3h14v18H5z"/><path d="M8 7h8m-8 4h8m-8 4h4"/></svg>
+            </span>
+            <strong>Invoice</strong>
+            <small>Dokumen transaksi</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="journey-section">
+        <div class="section-title-row">
+          <div>
+            <span class="section-eyebrow">Aktivitas</span>
+            <h3>Perjalanan saya</h3>
+          </div>
+          <button class="ghost-link">Riwayat</button>
+        </div>
+
+        <article class="empty-state-card">
+          <div class="empty-visual">
+            <div class="ticket-layer ticket-back"></div>
+            <div class="ticket-layer ticket-front"></div>
+            <div class="flight-orb">
+              <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
+            </div>
+          </div>
+          <div class="empty-copy">
+            <strong>Belum ada perjalanan aktif</strong>
+            <p>Ketika tiket sudah dipesan, detail keberangkatan akan tampil otomatis di sini.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="insight-card">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg>
+        </div>
+        <div>
+          <span>Butuh bantuan?</span>
+          <strong>Pusat Bantuan OTW tersedia 24/7</strong>
+        </div>
+        <button aria-label="Buka bantuan">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+        </button>
+      </section>
+
+      <div class="bottom-spacer"></div>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+        </span>
+        <span>Home</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h10v2M8 12h8"/></svg>
+        </span>
+        <span>Pesanan</span>
+      </button>
+      <button class="nav-item center-nav">
+        <span class="center-plus">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+        <span>Ajukan</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+        </span>
+        <span>Notifikasi</span>
+      </button>
+      <button class="nav-item" id="profileNav">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+        </span>
+        <span>Akun</span>
+      </button>
+    </nav>
+  </div>
+
+
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+
+  <section class="bottom-sheet" id="airportSheet" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div>
+        <span class="sheet-eyebrow">Pilih bandara</span>
+        <h4 id="airportSheetTitle">Tujuan</h4>
+      </div>
+      <button class="sheet-close" data-close-sheet type="button">×</button>
+    </div>
+    <div class="sheet-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input id="airportSearch" placeholder="Cari kota atau kode bandara" autocomplete="off">
+    </div>
+    <div class="airport-list" id="airportList"></div>
+  </section>
+
+  <section class="bottom-sheet" id="passengerSheet" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div>
+        <span class="sheet-eyebrow">Penumpang</span>
+        <h4>Atur penumpang</h4>
+      </div>
+      <button class="sheet-close" data-close-sheet type="button">×</button>
+    </div>
+
+    <div class="counter-row">
+      <div><strong>Dewasa</strong><span>12 tahun ke atas</span></div>
+      <div class="stepper">
+        <button type="button" data-counter="adult" data-step="-1">−</button>
+        <strong id="adultCount">1</strong>
+        <button type="button" data-counter="adult" data-step="1">+</button>
+      </div>
+    </div>
+    <div class="counter-row">
+      <div><strong>Anak</strong><span>2–11 tahun</span></div>
+      <div class="stepper">
+        <button type="button" data-counter="child" data-step="-1">−</button>
+        <strong id="childCount">0</strong>
+        <button type="button" data-counter="child" data-step="1">+</button>
+      </div>
+    </div>
+    <div class="counter-row">
+      <div><strong>Bayi</strong><span>Di bawah 2 tahun</span></div>
+      <div class="stepper">
+        <button type="button" data-counter="infant" data-step="-1">−</button>
+        <strong id="infantCount">0</strong>
+        <button type="button" data-counter="infant" data-step="1">+</button>
+      </div>
+    </div>
+
+    <button class="sheet-confirm" id="confirmPassengerBtn" type="button">Terapkan</button>
+  </section>
+
+  <section class="bottom-sheet" id="cabinSheet" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div>
+        <span class="sheet-eyebrow">Kelas kabin</span>
+        <h4>Pilih kelas</h4>
+      </div>
+      <button class="sheet-close" data-close-sheet type="button">×</button>
+    </div>
+    <div class="cabin-options">
+      <button class="cabin-option active" data-cabin="Ekonomi" type="button"><span>Ekonomi</span><small>Paling efisien</small></button>
+      <button class="cabin-option" data-cabin="Premium Ekonomi" type="button"><span>Premium Ekonomi</span><small>Lebih lega</small></button>
+      <button class="cabin-option" data-cabin="Bisnis" type="button"><span>Bisnis</span><small>Prioritas & kenyamanan</small></button>
+    </div>
+  </section>
 
   <script type="module" src="./home.js"></script>
 </body>
