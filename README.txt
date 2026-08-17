@@ -10,7 +10,7 @@ index.html
   -> Splash premium
   -> cek session Supabase
   -> belum login: login.html
-  -> sudah login tetapi profil belum lengkap: complete-account.html
+  -> sudah login tetapi profil belum lengkap: complete-account.html 
   -> sudah login dan profil lengkap: home.html
 
 SUPABASE
