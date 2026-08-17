@@ -1,0 +1,190 @@
+import { requireAuth } from "./guard.js";
+import { searchFlights } from "./jetwize-service.js";
+
+await requireAuth({ redirect: "login.html" });
+
+const qs = new URLSearchParams(location.search);
+const search = {
+  origin: qs.get("origin") || "BTH",
+  destination: qs.get("destination") || "",
+  depart: qs.get("depart") || "",
+  return: qs.get("return") || "",
+  trip: qs.get("trip") || "oneway",
+  adults: Number(qs.get("adults") || 1),
+  children: Number(qs.get("children") || 0),
+  infants: Number(qs.get("infants") || 0),
+  cabin: qs.get("cabin") || "Ekonomi",
+};
+
+const els = {
+  routeTitle: document.querySelector("#routeTitle"),
+  routeMeta: document.querySelector("#routeMeta"),
+  summaryOrigin: document.querySelector("#summaryOrigin"),
+  summaryDestination: document.querySelector("#summaryDestination"),
+  summaryDate: document.querySelector("#summaryDate"),
+  summaryPassengers: document.querySelector("#summaryPassengers"),
+  summaryCabin: document.querySelector("#summaryCabin"),
+  loading: document.querySelector("#loadingState"),
+  error: document.querySelector("#errorState"),
+  errorMessage: document.querySelector("#errorMessage"),
+  empty: document.querySelector("#emptyState"),
+  list: document.querySelector("#flightList"),
+  count: document.querySelector("#resultCount"),
+};
+
+let flights = [];
+let sortMode = "recommended";
+let stopFilter = "all";
+let timeFilter = null;
+
+function formatDate(value) {
+  if (!value) return "Tanggal belum dipilih";
+  const d = new Date(value + "T00:00:00");
+  return new Intl.DateTimeFormat("id-ID",{weekday:"short",day:"numeric",month:"short",year:"numeric"}).format(d);
+}
+function formatCurrency(value,currency="IDR") {
+  return new Intl.NumberFormat("id-ID",{style:"currency",currency,maximumFractionDigits:0}).format(Number(value||0));
+}
+function formatDuration(mins) {
+  const n=Number(mins||0); const h=Math.floor(n/60); const m=n%60;
+  return h ? `${h}j ${m ? m+"m":""}` : `${m}m`;
+}
+function timeOnly(value) {
+  if (!value) return "--:--";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value).slice(0,5);
+  return new Intl.DateTimeFormat("id-ID",{hour:"2-digit",minute:"2-digit",hour12:false}).format(d);
+}
+function passengerLabel() {
+  const arr=[`${search.adults} Dewasa`];
+  if(search.children) arr.push(`${search.children} Anak`);
+  if(search.infants) arr.push(`${search.infants} Bayi`);
+  return arr.join(", ");
+}
+
+function syncHeader(){
+  els.routeTitle.textContent=`${search.origin} → ${search.destination || "—"}`;
+  els.routeMeta.textContent=`${formatDate(search.depart)} · ${passengerLabel()}`;
+  els.summaryOrigin.textContent=search.origin;
+  els.summaryDestination.textContent=search.destination || "—";
+  els.summaryDate.textContent=formatDate(search.depart);
+  els.summaryPassengers.textContent=passengerLabel();
+  els.summaryCabin.textContent=search.cabin;
+}
+syncHeader();
+
+function normalizedFare(f) {
+  // supplier price + 3% internal OTW pricing
+  const base=Number(f.supplierPrice ?? f.price ?? f.amount ?? 0);
+  return Math.round(base * 1.03);
+}
+
+function render(){
+  let rows=[...flights];
+  if(stopFilter!=="all") rows=rows.filter(f=>Number(f.stops??0)===Number(stopFilter));
+  if(timeFilter){
+    rows=rows.filter(f=>{
+      const h=Number(String(f.departureTime||"").slice(0,2));
+      if(timeFilter==="morning") return h>=0&&h<10;
+      if(timeFilter==="day") return h>=10&&h<16;
+      if(timeFilter==="evening") return h>=16&&h<19;
+      return h>=19&&h<=23;
+    });
+  }
+  if(sortMode==="cheapest") rows.sort((a,b)=>normalizedFare(a)-normalizedFare(b));
+  if(sortMode==="fastest") rows.sort((a,b)=>Number(a.durationMinutes||99999)-Number(b.durationMinutes||99999));
+
+  els.count.textContent=`${rows.length} penerbangan ditemukan`;
+  els.list.innerHTML=rows.map((f,i)=>{
+    const price=normalizedFare(f);
+    const stops=Number(f.stops??0);
+    return `<article class="flight-card">
+      <div class="flight-top">
+        <div class="airline-wrap">
+          <div class="airline-logo">${f.airlineLogo?`<img src="${f.airlineLogo}" alt="">`:(f.airlineCode||"FL")}</div>
+          <div class="airline-name">
+            <strong>${f.airlineName||"Maskapai"}</strong>
+            <small>${f.flightNumber||f.airlineCode||""} · ${f.cabin||search.cabin}</small>
+          </div>
+        </div>
+        <span class="badge">${stops===0?"Langsung":stops+" transit"}</span>
+      </div>
+      <div class="flight-times">
+        <div class="time-block"><strong>${timeOnly(f.departureTime)}</strong><small>${search.origin}</small></div>
+        <div class="duration">
+          <div class="duration-line"><span></span><i></i><svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg><i></i><span></span></div>
+          <small>${formatDuration(f.durationMinutes)} · ${stops===0?"langsung":stops+" transit"}</small>
+        </div>
+        <div class="time-block right"><strong>${timeOnly(f.arrivalTime)}</strong><small>${search.destination}</small></div>
+      </div>
+      <div class="flight-info">
+        <span class="info-pill"><svg viewBox="0 0 24 24"><path d="M7 5h10v14H7z"/><path d="M9 5V3h6v2"/></svg>${f.baggage||"Bagasi sesuai fare"}</span>
+        <span class="info-pill">Harga real-time</span>
+      </div>
+      <div class="fare-row">
+        <div class="fare-copy">
+          <small>Harga tiket / orang</small>
+          <strong>${formatCurrency(price,f.currency||"IDR")}</strong>
+          <em>Belum termasuk biaya layanan OTW</em>
+        </div>
+        <button class="select-flight" data-index="${i}">Pilih</button>
+      </div>
+    </article>`;
+  }).join("");
+  els.list.querySelectorAll(".select-flight").forEach(btn=>{
+    btn.addEventListener("click",()=>selectFlight(rows[Number(btn.dataset.index)]));
+  });
+}
+
+function selectFlight(f){
+  sessionStorage.setItem("otw_selected_flight",JSON.stringify(f));
+  sessionStorage.setItem("otw_search",JSON.stringify(search));
+  window.location.href="flight-detail.html";
+}
+
+async function loadFlights(){
+  els.loading.classList.remove("hidden"); els.error.classList.add("hidden"); els.empty.classList.add("hidden"); els.list.classList.add("hidden");
+  els.count.textContent="Mencari penerbangan...";
+  try{
+    flights=await searchFlights(search);
+    els.loading.classList.add("hidden");
+    if(!flights.length){els.empty.classList.remove("hidden");els.count.textContent="Tidak ada penerbangan";return;}
+    els.list.classList.remove("hidden"); render();
+  }catch(err){
+    console.error(err);
+    els.loading.classList.add("hidden"); els.error.classList.remove("hidden");
+    els.count.textContent="Pencarian belum tersedia";
+    els.errorMessage.textContent=err.message==="JETWIZE_NOT_CONFIGURED"
+      ?"Adapter Jetwize sudah siap, tetapi endpoint dan autentikasi resmi Jetwize belum dimasukkan."
+      :(err.message||"Terjadi kesalahan saat mengambil penerbangan.");
+  }
+}
+loadFlights();
+
+document.querySelector("#backBtn").onclick=()=>history.back();
+document.querySelector("#editBtn").onclick=()=>location.href="home.html";
+document.querySelector("#changeSearchBtn").onclick=()=>location.href="home.html";
+document.querySelector("#retryBtn").onclick=loadFlights;
+
+document.querySelectorAll(".filter-chip[data-filter]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".filter-chip[data-filter]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active"); sortMode=btn.dataset.filter; render();
+  });
+});
+
+const sheet=document.querySelector("#filterSheet"),backdrop=document.querySelector("#sheetBackdrop");
+function openSheet(){sheet.classList.add("show");backdrop.classList.add("show");sheet.setAttribute("aria-hidden","false")}
+function closeSheet(){sheet.classList.remove("show");backdrop.classList.remove("show");sheet.setAttribute("aria-hidden","true")}
+document.querySelector("#filterBtn").onclick=openSheet;
+document.querySelector("#closeFilterBtn").onclick=closeSheet;
+backdrop.onclick=closeSheet;
+
+document.querySelectorAll("[data-stop]").forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll("[data-stop]").forEach(b=>b.classList.remove("active"));btn.classList.add("active");stopFilter=btn.dataset.stop;
+});
+document.querySelectorAll("[data-time]").forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll("[data-time]").forEach(b=>b.classList.remove("active"));
+  if(timeFilter===btn.dataset.time){timeFilter=null}else{btn.classList.add("active");timeFilter=btn.dataset.time}
+});
+document.querySelector("#applyFilterBtn").onclick=()=>{render();closeSheet()};

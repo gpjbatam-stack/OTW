@@ -53,6 +53,7 @@ const state = {
   infant: 0,
   cabin: "Ekonomi",
 };
+window.__OTW_SEARCH_STATE__ = state;
 
 const airports = [
   { code:"BTH", city:"Batam", name:"Hang Nadim International Airport" },
@@ -301,16 +302,19 @@ document.querySelectorAll(".cabin-option").forEach(btn => {
 
 /* Search validation */
 document.querySelector("#searchFlightBtn").addEventListener("click", () => {
+  const state = window.__OTW_SEARCH_STATE__;
+  if (!state) return;
+
   if (!state.destination) {
-    openAirportSelector("destination");
+    document.querySelector("#destinationBtn")?.click();
     return;
   }
   if (!state.departDate) {
-    openNativeDate(departInput);
+    document.querySelector("#departDateBtn")?.click();
     return;
   }
   if (state.tripType === "roundtrip" && !state.returnDate) {
-    openNativeDate(returnInput);
+    document.querySelector("#returnDateBtn")?.click();
     return;
   }
 
@@ -324,16 +328,9 @@ document.querySelector("#searchFlightBtn").addEventListener("click", () => {
     infants: state.infant,
     cabin: state.cabin,
   });
-
   if (state.returnDate) params.set("return", state.returnDate);
 
-  // search-flight.html will be built in the next stage.
-  console.log("[OTW] Flight search:", Object.fromEntries(params.entries()));
-  window.alert(
-    `Rute ${state.origin.code} → ${state.destination.code}\n` +
-    `${formatDate(state.departDate)}\n` +
-    `${document.querySelector("#passengerText").textContent} · ${state.cabin}`
-  );
+  window.location.href = `search-flight.html?${params.toString()}`;
 });
 
 document.querySelector("#profileBtn").addEventListener("click", () => {

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f3f6fa">
+  <title>Hasil Penerbangan — OTW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./search-flight.css">
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <button class="back-btn" id="backBtn" aria-label="Kembali">
+        <svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg>
+      </button>
+      <div class="topbar-copy">
+        <span class="eyebrow">Penerbangan</span>
+        <h1 id="routeTitle">BTH → CGK</h1>
+        <p id="routeMeta">Memuat pencarian...</p>
+      </div>
+      <button class="edit-btn" id="editBtn">Ubah</button>
+    </header>
+
+    <section class="search-summary">
+      <div class="summary-route">
+        <div>
+          <small>Dari</small>
+          <strong id="summaryOrigin">BTH</strong>
+        </div>
+        <div class="summary-flight">
+          <span></span>
+          <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
+          <span></span>
+        </div>
+        <div class="right">
+          <small>Ke</small>
+          <strong id="summaryDestination">CGK</strong>
+        </div>
+      </div>
+      <div class="summary-info">
+        <span id="summaryDate">—</span>
+        <i></i>
+        <span id="summaryPassengers">1 Dewasa</span>
+        <i></i>
+        <span id="summaryCabin">Ekonomi</span>
+      </div>
+    </section>
+
+    <section class="filter-bar">
+      <button class="filter-chip active" data-filter="recommended">
+        <svg viewBox="0 0 24 24"><path d="m12 3 2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.9-.9Z"/></svg>
+        Pilihan terbaik
+      </button>
+      <button class="filter-chip" data-filter="cheapest">Termurah</button>
+      <button class="filter-chip" data-filter="fastest">Tercepat</button>
+      <button class="filter-chip filter-open" id="filterBtn">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M7 12h10M10 17h4"/></svg>
+        Filter
+      </button>
+    </section>
+
+    <section class="result-head">
+      <div>
+        <span class="section-eyebrow">Hasil pencarian</span>
+        <h2 id="resultCount">Mencari penerbangan...</h2>
+      </div>
+      <span class="live-pill"><i></i> Real-time</span>
+    </section>
+
+    <section id="loadingState" class="loading-list">
+      <article class="skeleton-card">
+        <div class="skeleton airline"></div>
+        <div class="skeleton times"></div>
+        <div class="skeleton fare"></div>
+      </article>
+      <article class="skeleton-card">
+        <div class="skeleton airline"></div>
+        <div class="skeleton times"></div>
+        <div class="skeleton fare"></div>
+      </article>
+      <article class="skeleton-card">
+        <div class="skeleton airline"></div>
+        <div class="skeleton times"></div>
+        <div class="skeleton fare"></div>
+      </article>
+    </section>
+
+    <section id="errorState" class="state-card hidden">
+      <div class="state-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/></svg>
+      </div>
+      <strong>Belum dapat mengambil data penerbangan</strong>
+      <p id="errorMessage">Koneksi API penerbangan belum dikonfigurasi.</p>
+      <button id="retryBtn">Coba lagi</button>
+    </section>
+
+    <section id="emptyState" class="state-card hidden">
+      <div class="state-icon">
+        <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
+      </div>
+      <strong>Tidak ada penerbangan ditemukan</strong>
+      <p>Coba ubah tanggal, rute, atau filter pencarian.</p>
+      <button id="changeSearchBtn">Ubah pencarian</button>
+    </section>
+
+    <section id="flightList" class="flight-list hidden"></section>
+
+    <div class="bottom-spacer"></div>
+  </main>
+
+  <aside class="sheet" id="filterSheet" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div><span class="section-eyebrow">Filter</span><h3>Sesuaikan hasil</h3></div>
+      <button id="closeFilterBtn">×</button>
+    </div>
+    <div class="filter-group">
+      <label>Transit</label>
+      <div class="option-row">
+        <button class="option active" data-stop="all">Semua</button>
+        <button class="option" data-stop="0">Langsung</button>
+        <button class="option" data-stop="1">1 Transit</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>Waktu berangkat</label>
+      <div class="option-grid">
+        <button class="option" data-time="morning">Pagi<br><small>00–10</small></button>
+        <button class="option" data-time="day">Siang<br><small>10–16</small></button>
+        <button class="option" data-time="evening">Sore<br><small>16–19</small></button>
+        <button class="option" data-time="night">Malam<br><small>19–24</small></button>
+      </div>
+    </div>
+    <button class="apply-filter" id="applyFilterBtn">Terapkan Filter</button>
+  </aside>
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+
+  <script type="module" src="./search-flight.js"></script>
+</body>
+</html>

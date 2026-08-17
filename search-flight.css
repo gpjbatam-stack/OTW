@@ -1,0 +1,107 @@
+:root{
+  --bg:#f3f6fa;
+  --surface:#fff;
+  --ink:#0d1a2d;
+  --muted:#7e8a9a;
+  --line:#e5ebf1;
+  --blue:#1769e8;
+  --blue-soft:#edf4ff;
+  --navy:#0a1830;
+  --green:#1f9b72;
+  --gold:#b58a49;
+  --shadow:0 12px 32px rgba(12,31,59,.07);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+button{font:inherit;cursor:pointer}
+svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.page{width:100%;max-width:430px;min-height:100vh;margin:auto;padding:16px 16px 0}
+.topbar{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:10px}
+.back-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:13px;background:#fff;display:grid;place-items:center;box-shadow:0 4px 12px rgba(12,31,59,.04)}
+.back-btn svg{width:18px;height:18px}
+.topbar-copy{min-width:0}
+.eyebrow,.section-eyebrow{display:block;font-size:8px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:#8a96a6}
+.topbar h1{margin:3px 0 2px;font-size:18px;letter-spacing:-.04em}
+.topbar p{margin:0;color:var(--muted);font-size:8.5px}
+.edit-btn{height:35px;padding:0 11px;border:1px solid #d7e3f7;border-radius:11px;background:#f3f7ff;color:#1459c7;font-size:8.5px;font-weight:800}
+
+.search-summary{margin-top:16px;padding:14px;border-radius:19px;background:linear-gradient(145deg,#0a1830,#123460);color:#fff;box-shadow:0 14px 32px rgba(10,24,48,.16)}
+.summary-route{display:grid;grid-template-columns:1fr 105px 1fr;align-items:center}
+.summary-route small{display:block;color:rgba(255,255,255,.48);font-size:7px;text-transform:uppercase;letter-spacing:.08em}
+.summary-route strong{display:block;margin-top:3px;font-size:19px;letter-spacing:-.04em}
+.summary-route .right{text-align:right}
+.summary-flight{display:flex;align-items:center;color:#74c8ff}
+.summary-flight span{height:1px;background:rgba(255,255,255,.18);flex:1}
+.summary-flight svg{width:18px;height:18px;margin:0 7px}
+.summary-info{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.08);font-size:8px;color:rgba(255,255,255,.66)}
+.summary-info i{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.25)}
+
+.filter-bar{display:flex;gap:7px;overflow-x:auto;padding:14px 0 4px;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-chip{height:34px;white-space:nowrap;border:1px solid var(--line);border-radius:11px;background:#fff;color:#687587;padding:0 11px;font-size:8px;font-weight:750;display:flex;align-items:center;gap:5px}
+.filter-chip svg{width:13px;height:13px}
+.filter-chip.active{border-color:#c9daf7;background:#f2f6ff;color:#1459c7}
+.filter-open{margin-left:auto}
+
+.result-head{display:flex;justify-content:space-between;align-items:flex-end;margin:17px 1px 10px}
+.result-head h2{margin:4px 0 0;font-size:15px;letter-spacing:-.03em}
+.live-pill{display:flex;align-items:center;gap:5px;color:#4a7768;font-size:7.5px;font-weight:750}
+.live-pill i{width:6px;height:6px;border-radius:50%;background:#28ae7c;box-shadow:0 0 0 4px rgba(40,174,124,.09)}
+
+.flight-list{display:grid;gap:10px}
+.flight-card{background:#fff;border:1px solid var(--line);border-radius:19px;padding:14px;box-shadow:var(--shadow)}
+.flight-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.airline-wrap{display:flex;align-items:center;gap:9px;min-width:0}
+.airline-logo{width:34px;height:34px;border-radius:11px;border:1px solid #eef1f4;background:#fff;display:grid;place-items:center;overflow:hidden;color:#284462;font-weight:800;font-size:9px}
+.airline-logo img{width:100%;height:100%;object-fit:contain;padding:4px}
+.airline-name{display:flex;flex-direction:column;gap:2px}
+.airline-name strong{font-size:10px}
+.airline-name small{font-size:7.5px;color:#8b96a4}
+.badge{height:25px;padding:0 8px;border-radius:9px;background:#f4f7fb;color:#617084;font-size:7px;font-weight:750;display:flex;align-items:center}
+
+.flight-times{display:grid;grid-template-columns:1fr 110px 1fr;align-items:center;margin-top:14px}
+.time-block strong{display:block;font-size:19px;letter-spacing:-.045em}
+.time-block small{display:block;margin-top:2px;font-size:7.5px;color:#8390a1}
+.time-block.right{text-align:right}
+.duration{text-align:center}
+.duration-line{display:flex;align-items:center}
+.duration-line i{height:1px;flex:1;background:#dce3eb}
+.duration-line span{width:5px;height:5px;border-radius:50%;background:#c4cfda}
+.duration-line svg{width:14px;height:14px;color:#4e7fd5;margin:0 6px}
+.duration small{display:block;margin-top:4px;font-size:7px;color:#8b96a3}
+.flight-info{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px}
+.info-pill{height:25px;padding:0 8px;border-radius:9px;background:#f6f8fa;color:#657386;font-size:7px;font-weight:700;display:flex;align-items:center;gap:4px}
+.info-pill svg{width:11px;height:11px}
+.fare-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:13px;padding-top:12px;border-top:1px solid #edf0f3}
+.fare-copy small{display:block;font-size:7px;color:#8d98a5}
+.fare-copy strong{display:block;margin-top:2px;font-size:17px;color:#10264a;letter-spacing:-.035em}
+.fare-copy em{display:block;margin-top:2px;font-style:normal;font-size:6.8px;color:#9aa4b1}
+.select-flight{height:38px;padding:0 14px;border:0;border-radius:11px;background:linear-gradient(135deg,#115dd8,#2188ed);color:#fff;font-size:8.5px;font-weight:800;box-shadow:0 8px 17px rgba(23,105,232,.18)}
+
+.loading-list{display:grid;gap:10px}
+.skeleton-card{height:177px;padding:14px;border-radius:19px;background:#fff;border:1px solid var(--line)}
+.skeleton{border-radius:8px;background:linear-gradient(90deg,#eef2f6 25%,#f7f9fb 40%,#eef2f6 60%);background-size:300% 100%;animation:shimmer 1.35s infinite}
+.skeleton.airline{width:47%;height:31px}.skeleton.times{height:48px;margin-top:17px}.skeleton.fare{width:74%;height:29px;margin-top:18px}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+
+.state-card{margin-top:14px;padding:27px 18px;border:1px solid var(--line);border-radius:20px;background:#fff;text-align:center;box-shadow:var(--shadow)}
+.state-icon{width:46px;height:46px;margin:0 auto 11px;border-radius:15px;display:grid;place-items:center;background:#eef4ff;color:#1769e8}
+.state-icon svg{width:21px;height:21px}
+.state-card strong{font-size:11.5px}.state-card p{margin:5px auto 14px;max-width:270px;color:#8793a2;font-size:8.5px;line-height:1.55}
+.state-card button{height:38px;padding:0 14px;border:0;border-radius:11px;background:#0f2547;color:#fff;font-size:8px;font-weight:800}
+.hidden{display:none!important}
+.bottom-spacer{height:40px}
+
+.sheet-backdrop{position:fixed;z-index:80;inset:0;background:rgba(5,14,28,.45);backdrop-filter:blur(5px);opacity:0;pointer-events:none;transition:.2s}
+.sheet-backdrop.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;z-index:90;left:50%;bottom:0;width:min(430px,100%);transform:translate(-50%,105%);padding:10px 17px calc(20px + env(safe-area-inset-bottom));border-radius:23px 23px 0 0;background:#fff;box-shadow:0 -25px 70px rgba(9,27,52,.2);transition:.25s}
+.sheet.show{transform:translate(-50%,0)}
+.sheet-handle{width:37px;height:4px;margin:0 auto 15px;border-radius:99px;background:#dae0e7}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start}
+.sheet-head h3{margin:4px 0 0;font-size:18px;letter-spacing:-.04em}
+.sheet-head button{width:34px;height:34px;border:0;border-radius:11px;background:#f1f4f7;font-size:20px}
+.filter-group{margin-top:18px}.filter-group label{display:block;margin-bottom:8px;font-size:9px;font-weight:800}
+.option-row,.option-grid{display:grid;gap:7px}.option-row{grid-template-columns:repeat(3,1fr)}.option-grid{grid-template-columns:repeat(4,1fr)}
+.option{min-height:39px;border:1px solid var(--line);border-radius:11px;background:#fff;color:#6c7887;font-size:8px;font-weight:750}.option small{font-size:6.5px;color:#99a3af}
+.option.active{border-color:#c4d7f8;background:#f1f6ff;color:#1459c8}
+.apply-filter{width:100%;height:47px;margin-top:19px;border:0;border-radius:14px;background:linear-gradient(135deg,#115dd8,#2188ed);color:#fff;font-size:9px;font-weight:800}
