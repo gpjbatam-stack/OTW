@@ -3,11 +3,92 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f7fb">
   <title>Daftar — OTW</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./auth.css">
+  <style>
+    .upload-box{
+      position:relative;
+      border:1px dashed #cfd8e6;
+      background:#f9fbfe;
+      border-radius:16px;
+      padding:16px;
+      transition:.18s ease;
+    }
+    .upload-box:hover{border-color:#8cabff;background:#f5f8ff}
+    .upload-box input[type=file]{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      cursor:pointer;
+      width:100%;
+      height:100%;
+    }
+    .upload-inner{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      pointer-events:none;
+    }
+    .upload-icon{
+      width:42px;
+      height:42px;
+      border-radius:13px;
+      display:grid;
+      place-items:center;
+      background:#edf3ff;
+      color:#2f6bff;
+      flex:0 0 auto;
+    }
+    .upload-icon svg{width:20px;height:20px}
+    .upload-title{
+      font-size:12.5px;
+      font-weight:800;
+      color:#24324a;
+    }
+    .upload-sub{
+      margin-top:3px;
+      font-size:11.5px;
+      line-height:1.45;
+      color:#7b899d;
+    }
+    .preview{
+      display:none;
+      margin-top:12px;
+      border-radius:14px;
+      overflow:hidden;
+      border:1px solid #e6ebf2;
+      background:#fff;
+    }
+    .preview.show{display:block}
+    .preview img{
+      display:block;
+      width:100%;
+      max-height:190px;
+      object-fit:cover;
+    }
+    .privacy-note{
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+      padding:11px 12px;
+      border-radius:13px;
+      background:#f6f8fb;
+      color:#6f7d91;
+      font-size:11px;
+      line-height:1.5;
+    }
+    .privacy-note svg{
+      width:15px;
+      height:15px;
+      flex:0 0 auto;
+      margin-top:1px;
+      color:#47648d;
+    }
+  </style>
 </head>
 <body>
   <main class="auth-shell">
@@ -21,50 +102,72 @@
       </div>
 
       <section class="auth-card">
-        <div class="stepper"><span class="active"></span><span></span><span></span></div>
         <p class="eyebrow">Buat akun</p>
-        <h1>Mulai dengan identitas dasar.</h1>
-        <p class="lead">Gunakan data yang benar karena akan digunakan untuk perjalanan dan dokumen transaksi.</p>
+        <h1>Daftar ke OTW</h1>
+        <p class="lead">Satu langkah untuk menyiapkan akun perjalanan dinas Anda.</p>
 
         <div id="notice" class="notice"></div>
 
         <form id="registerForm" class="form-grid">
           <div class="field">
             <label for="fullName">Nama lengkap</label>
-            <div class="input-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.6-4 4.2-6 8-6s6.4 2 8 6"/></svg>
+            <div class="input-wrap no-icon">
               <input id="fullName" name="fullName" autocomplete="name" placeholder="Sesuai identitas" required>
             </div>
           </div>
 
           <div class="field">
             <label for="phone">Nomor HP</label>
-            <div class="input-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3h3l1 5-2 1c1 3 3 5 6 6l1-2 5 1v3c0 2-2 4-4 4C9 20 4 15 3 7c0-2 2-4 4-4Z"/></svg>
+            <div class="input-wrap no-icon">
               <input id="phone" name="phone" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx" required>
             </div>
           </div>
 
           <div class="field">
             <label for="email">Email</label>
-            <div class="input-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
-              <input id="email" name="email" type="email" autocomplete="email" placeholder="nama@instansi.go.id" required>
+            <div class="input-wrap no-icon">
+              <input id="email" name="email" type="email" autocomplete="email" placeholder="nama@email.com" required>
             </div>
           </div>
 
           <div class="field">
             <label for="password">Password</label>
-            <div class="input-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            <div class="input-wrap no-icon">
               <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Minimal 8 karakter" required minlength="8">
+              <button class="password-toggle" id="togglePassword" type="button">Lihat</button>
             </div>
-            <div class="helper">Gunakan minimal 8 karakter. Hindari password yang sama dengan akun lain.</div>
           </div>
 
-          <p class="legal">Dengan mendaftar, Anda menyetujui Syarat & Ketentuan serta Kebijakan Privasi OTW.</p>
+          <div class="field">
+            <label>Foto KTP</label>
+            <div class="upload-box">
+              <input id="ktpFile" name="ktpFile" type="file" accept="image/jpeg,image/png,image/webp" required>
+              <div class="upload-inner">
+                <div class="upload-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="3" y="5" width="18" height="14" rx="2"/>
+                    <circle cx="9" cy="11" r="2"/>
+                    <path d="m5 17 4-3 3 2 3-3 4 4"/>
+                  </svg>
+                </div>
+                <div>
+                  <div id="fileTitle" class="upload-title">Pilih foto KTP</div>
+                  <div class="upload-sub">JPG, PNG, atau WEBP · maksimal 5 MB</div>
+                </div>
+              </div>
+            </div>
+            <div id="preview" class="preview"><img id="previewImg" alt="Preview KTP"></div>
+          </div>
 
-          <button id="submitBtn" class="primary-btn" type="submit">Buat Akun</button>
+          <div class="privacy-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="5" y="10" width="14" height="10" rx="2"/>
+              <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+            </svg>
+            Foto KTP disimpan secara privat dan digunakan untuk verifikasi identitas perjalanan.
+          </div>
+
+          <button id="submitBtn" class="primary-btn" type="submit">Daftar & Masuk</button>
         </form>
 
         <p class="auth-footer">Sudah punya akun? <a href="login.html">Masuk</a></p>

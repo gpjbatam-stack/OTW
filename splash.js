@@ -1,5 +1,4 @@
 import { getSession } from "./auth-service.js";
-import { getMyProfile } from "./profile-service.js";
 
 const MIN_SPLASH_MS = 900;
 const startedAt = performance.now();
@@ -18,31 +17,8 @@ async function finishSplash() {
 async function route() {
   try {
     const session = await getSession();
-
-    if (!session) {
-      await finishSplash();
-      window.location.replace("login.html");
-      return;
-    }
-
-    let profile = null;
-
-    try {
-      profile = await getMyProfile();
-    } catch (error) {
-      console.warn("[OTW] Profile check failed:", error);
-    }
-
     await finishSplash();
-
-    const incomplete =
-      !profile ||
-      !profile.full_name ||
-      !profile.phone;
-
-    window.location.replace(
-      incomplete ? "complete-account.html" : "home.html"
-    );
+    window.location.replace(session ? "home.html" : "login.html");
   } catch (error) {
     console.error("[OTW] Splash routing error:", error);
     await finishSplash();

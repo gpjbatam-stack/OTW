@@ -1,6 +1,5 @@
 import { signIn } from "./auth-service.js";
 import { redirectIfAuthenticated } from "./guard.js";
-import { getMyProfile } from "./profile-service.js";
 
 await redirectIfAuthenticated({ redirect: "home.html" });
 
@@ -25,24 +24,14 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   notice.className = "notice";
 
-  const email = form.email.value.trim();
-  const password = form.password.value;
-
   btn.disabled = true;
   btn.textContent = "Memproses...";
 
   try {
-    await signIn({ email, password });
-
-    let profile = null;
-    try {
-      profile = await getMyProfile();
-    } catch (_) {}
-
-    if (!profile?.employee_number || !profile?.phone) {
-      window.location.replace("complete-account.html");
-      return;
-    }
+    await signIn({
+      email: form.email.value.trim().toLowerCase(),
+      password: form.password.value,
+    });
 
     window.location.replace("home.html");
   } catch (error) {
