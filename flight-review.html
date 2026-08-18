@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061a3a">
+  <title>Review Perjalanan — OTW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./flight-review.css?v=20260819-premium-v1">
+</head>
+<body>
+<main class="app">
+  <header class="topbar">
+    <button id="backBtn" class="icon-btn" type="button" aria-label="Kembali">
+      <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div class="top-copy">
+      <span>LANGKAH 3 DARI 3</span>
+      <h1>Review perjalanan</h1>
+      <p>Pastikan semuanya sudah benar.</p>
+    </div>
+    <div class="step"><strong>3</strong><small>/3</small></div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-check">
+      <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
+    </div>
+    <div>
+      <span class="hero-kicker">FINAL CHECK</span>
+      <h2>Satu cek terakhir.<br><em>Setelah ini, OTW.</em></h2>
+      <p>Periksa penerbangan, penumpang, dokumen, dan rincian biaya sebelum mengajukan pemesanan.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <div><span>PENERBANGAN</span><h2>Perjalanan Anda</h2></div>
+      <button class="text-btn" id="editFlightBtn" type="button">Ubah</button>
+    </div>
+
+    <article class="flight-card">
+      <div class="airline-row">
+        <div class="airline">
+          <div class="logo" id="airlineLogo"><span>FL</span></div>
+          <div><strong id="airlineName">Maskapai</strong><small id="flightNumber">—</small></div>
+        </div>
+        <span class="direct-badge" id="stopBadge">Langsung</span>
+      </div>
+
+      <div class="route">
+        <div class="route-point">
+          <strong id="departTime">--:--</strong>
+          <b id="origin">---</b>
+          <small id="originLabel">Keberangkatan</small>
+        </div>
+        <div class="route-center">
+          <span id="duration">—</span>
+          <div><i></i><svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg><i></i></div>
+          <small id="routeType">Penerbangan langsung</small>
+        </div>
+        <div class="route-point right">
+          <strong id="arriveTime">--:--</strong>
+          <b id="destination">---</b>
+          <small id="destinationLabel">Kedatangan</small>
+        </div>
+      </div>
+
+      <div class="flight-date" id="flightDate">—</div>
+      <div class="flight-tags">
+        <span><svg viewBox="0 0 24 24"><path d="M4 8h16v10H4z"/><path d="M8 8V5h8v3"/></svg><b id="baggage">Bagasi —</b></span>
+        <span><svg viewBox="0 0 24 24"><path d="M4 18h16M7 18V8h10v10"/></svg><b id="cabin">Ekonomi</b></span>
+      </div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <div><span>PENUMPANG</span><h2>Data penumpang</h2></div>
+      <button class="text-btn" id="editPassengersBtn" type="button">Ubah</button>
+    </div>
+    <div class="passenger-list" id="passengerList"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <div><span>DOKUMEN DINAS</span><h2>Surat Perintah Tugas</h2></div>
+      <button class="text-btn" id="editSptBtn" type="button">Ubah</button>
+    </div>
+
+    <article class="document-card" id="documentCard">
+      <span class="doc-icon">
+        <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+      </span>
+      <div class="doc-copy">
+        <strong id="sptName">SPT</strong>
+        <small id="sptMeta">Dokumen perjalanan dinas</small>
+      </div>
+      <span class="verified"><svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg> Terunggah</span>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <div><span>RINCIAN BIAYA</span><h2>Harga perjalanan</h2></div>
+      <span class="price-lock"><i></i> Live fare</span>
+    </div>
+
+    <article class="price-card">
+      <div class="price-main">
+        <div>
+          <span>Harga tiket</span>
+          <small id="paxPriceNote">Harga penerbangan terpilih</small>
+        </div>
+        <strong id="ticketPrice">Rp0</strong>
+      </div>
+
+      <div class="price-breakdown">
+        <div><span>Tarif dasar</span><b id="basePrice">Rp0</b></div>
+        <div><span>Pajak & biaya maskapai</span><b id="taxPrice">Rp0</b></div>
+        <div class="otw-row"><span>Biaya layanan OTW <i>Transparan</i></span><b id="serviceFee">Rp150.000</b></div>
+      </div>
+
+      <div class="total-row">
+        <div><span>Total perjalanan</span><small id="totalNote">Termasuk biaya layanan OTW</small></div>
+        <strong id="grandTotal">Rp0</strong>
+      </div>
+
+      <div class="pricing-info">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
+        <p>Harga penerbangan dapat berubah sampai proses pemesanan dikonfirmasi oleh supplier. OTW akan melakukan pengecekan harga final sebelum penerbitan.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="section">
+    <article class="notice-card">
+      <span class="notice-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+      <div>
+        <strong>Belum ada tiket yang diterbitkan</strong>
+        <p>Menekan tombol di bawah hanya mengirim konfirmasi pemesanan. Sistem akan memeriksa harga dan ketersediaan sebelum proses berikutnya.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="agreement">
+    <label>
+      <input type="checkbox" id="agreementCheck">
+      <span class="check-ui"><svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg></span>
+      <span class="agreement-copy">Saya telah memeriksa data penerbangan, penumpang, SPT, dan rincian biaya di atas.</span>
+    </label>
+    <small id="agreementError"></small>
+  </section>
+
+  <div class="safe-space"></div>
+</main>
+
+<footer class="sticky">
+  <div class="sticky-inner">
+    <div class="sticky-total">
+      <small>Total</small>
+      <strong id="stickyTotal">Rp0</strong>
+    </div>
+    <button id="confirmBtn" class="confirm-btn" type="button">
+      <span>
+        <small>FINAL CHECK</small>
+        <strong>Konfirmasi pemesanan</strong>
+      </span>
+      <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+</footer>
+
+<div class="modal-backdrop hidden" id="confirmModal">
+  <section class="modal">
+    <button class="modal-close" id="closeModalBtn" type="button" aria-label="Tutup">
+      <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+    <span class="modal-kicker">SIAP DIPROSES</span>
+    <h3>Konfirmasi perjalanan ini?</h3>
+    <p>OTW akan melanjutkan ke proses pemesanan. Harga dan ketersediaan akan diperiksa kembali sebelum tiket diterbitkan.</p>
+    <div class="modal-summary">
+      <span><small>Rute</small><strong id="modalRoute">--- → ---</strong></span>
+      <span><small>Total</small><strong id="modalTotal">Rp0</strong></span>
+    </div>
+    <button class="modal-primary" id="finalConfirmBtn" type="button">
+      <span>Ya, lanjutkan pemesanan</span>
+      <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <button class="modal-secondary" id="cancelModalBtn" type="button">Periksa lagi</button>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+<script defer src="./flight-review.js?v=20260819-premium-v1"></script>
+</body>
+</html>
