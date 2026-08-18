@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071a39">
+<title>Admin Add-ons — OTW</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./admin-addons.css?v=20260819-1">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand"><span class="brandmark">O</span><div><b>OTW</b><small>ADMIN CONSOLE</small></div></div>
+    <nav>
+      <a href="./admin.html"><span>⌂</span>Dashboard</a>
+      <a href="./admin-pricing.html"><span>₽</span>Pricing tiket</a>
+      <a class="active" href="./admin-addons.html"><span>＋</span>Add-on pricing</a>
+      <a href="./admin-orders.html"><span>▤</span>Pesanan</a>
+    </nav>
+    <div class="side-note"><small>PRICING ENGINE</small><b>Controlled pricing</b><p>Harga customer dikendalikan dari database, bukan dari frontend.</p></div>
+  </aside>
+
+  <main>
+    <header class="mobile-head">
+      <div class="brand"><span class="brandmark">O</span><div><b>OTW</b><small>ADMIN</small></div></div>
+      <button id="mobileMenu" class="ghost">Menu</button>
+    </header>
+
+    <div class="page">
+      <section class="heading">
+        <div><span class="eyebrow">PRICING CONTROL CENTER</span><h1>Add-on Pricing</h1><p>Kelola harga referensi, buffer perlindungan, dan harga tayang customer.</p></div>
+        <button id="addBtn" class="primary">＋ Tambah add-on</button>
+      </section>
+
+      <section class="stats">
+        <article><span class="stat-icon">＋</span><div><small>Total add-on</small><strong id="statTotal">—</strong><em id="statTotalNote">Memuat data</em></div></article>
+        <article><span class="stat-icon green">✓</span><div><small>Aktif</small><strong id="statActive">—</strong><em>Tayang ke customer</em></div></article>
+        <article><span class="stat-icon amber">%</span><div><small>Buffer rata-rata</small><strong id="statBuffer">—</strong><em>Proteksi harga</em></div></article>
+        <article><span class="stat-icon blue">Rp</span><div><small>Rata-rata harga jual</small><strong id="statAvg">—</strong><em>Semua add-on aktif</em></div></article>
+      </section>
+
+      <section class="toolbar">
+        <div class="search"><span>⌕</span><input id="searchInput" placeholder="Cari maskapai atau add-on..."></div>
+        <select id="airlineFilter"><option value="">Semua maskapai</option></select>
+        <select id="typeFilter"><option value="">Semua jenis</option><option>BAGGAGE</option><option>SEAT</option><option>MEAL</option></select>
+        <select id="statusFilter"><option value="">Semua status</option><option value="active">Aktif</option><option value="inactive">Nonaktif</option></select>
+        <button id="refreshBtn" class="ghost">↻ Refresh</button>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div><span class="eyebrow">LIVE DATABASE</span><h2>Katalog harga</h2></div>
+          <div class="sync" id="syncState"><i></i><span>Memuat...</span></div>
+        </div>
+
+        <div class="desktop-table">
+          <table>
+            <thead><tr><th>Maskapai / Add-on</th><th>Referensi</th><th>Buffer</th><th>Minimum</th><th>Harga tayang</th><th>Margin buffer</th><th>Status</th><th></th></tr></thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="mobile-list" id="mobileList"></div>
+        <div class="empty hidden" id="emptyState"><div>＋</div><b>Tidak ada add-on</b><p>Ubah filter atau tambahkan konfigurasi harga baru.</p></div>
+      </section>
+
+      <section class="protection">
+        <div class="protect-icon">◇</div><div><span class="eyebrow">OTW MARGIN GUARD</span><h3>Proteksi anti-rugi</h3><p>Harga tayang otomatis dihitung dari harga referensi + buffer, lalu dibandingkan dengan harga minimum. Manual price hanya digunakan jika admin sengaja mengaktifkannya.</p></div>
+        <span class="guard-badge">ACTIVE</span>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="backdrop hidden" id="drawer">
+  <aside class="drawer">
+    <div class="drawer-head"><div><span class="eyebrow">ADD-ON EDITOR</span><h2 id="drawerTitle">Tambah add-on</h2></div><button id="closeDrawer" class="x">×</button></div>
+    <form id="addonForm">
+      <input type="hidden" id="rowId">
+      <div class="form-section">
+        <h3>Maskapai & produk</h3>
+        <div class="grid2">
+          <label>Kode maskapai<input id="airlineCode" maxlength="3" placeholder="JT" required></label>
+          <label>Nama maskapai<input id="airlineName" placeholder="Lion Air" required></label>
+        </div>
+        <div class="grid2">
+          <label>Jenis add-on<select id="addonType" required><option>BAGGAGE</option><option>SEAT</option><option>MEAL</option></select></label>
+          <label>Kode add-on<input id="addonCode" placeholder="BAG-20" required></label>
+        </div>
+        <label>Nama add-on<input id="addonName" placeholder="Bagasi tambahan 20 kg" required></label>
+        <label id="weightWrap">Berat bagasi (kg)<input id="weightKg" type="number" min="0" step="1" placeholder="20"></label>
+      </div>
+
+      <div class="form-section">
+        <h3>Pricing engine</h3>
+        <label>Harga referensi <div class="money"><span>Rp</span><input id="referencePrice" inputmode="numeric" type="number" min="0" required></div></label>
+        <div class="grid2">
+          <label>Buffer perlindungan (%)<input id="bufferPercent" type="number" min="0" step=".01" value="15" required></label>
+          <label>Harga minimum<div class="money"><span>Rp</span><input id="minimumPrice" type="number" min="0" value="0" required></div></label>
+        </div>
+        <label>Manual selling price <small>Opsional — kosongkan untuk harga otomatis</small><div class="money"><span>Rp</span><input id="manualPrice" type="number" min="0" placeholder="Otomatis"></div></label>
+        <div class="preview">
+          <div><small>Harga otomatis</small><strong id="autoPreview">Rp0</strong></div><span>→</span><div><small>Harga tayang</small><strong id="sellingPreview">Rp0</strong></div>
+        </div>
+        <div class="risk hidden" id="riskBox">⚠ Harga manual berada di bawah harga referensi. Konfigurasi ini berisiko rugi.</div>
+      </div>
+
+      <div class="form-section">
+        <label class="toggle-row"><span><b>Aktifkan add-on</b><small>Jika nonaktif, produk tidak ditampilkan ke customer.</small></span><input id="isActive" type="checkbox" checked><i></i></label>
+        <label>Catatan internal<textarea id="notes" rows="3" placeholder="Catatan untuk admin..."></textarea></label>
+      </div>
+
+      <div class="drawer-actions"><button type="button" id="deleteBtn" class="danger hidden">Hapus</button><span></span><button type="button" id="cancelBtn" class="ghost">Batal</button><button class="primary" id="saveBtn" type="submit">Simpan perubahan</button></div>
+    </form>
+  </aside>
+</div>
+
+<div class="toast" id="toast"></div>
+<script type="module" src="./admin-addons.js?v=20260819-1"></script>
+</body>
+</html>
