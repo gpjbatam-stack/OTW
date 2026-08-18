@@ -1488,8 +1488,211 @@ svg{
 }
 
 
-/* V7 FUNCTION FIX */
-.date-field-wrap{position:relative;cursor:pointer;outline:none}
-.date-field-wrap:focus .meta-card,.date-field-wrap:focus-within .meta-card{border-color:#b8cff7;box-shadow:0 0 0 3px rgba(23,105,232,.08)}
-.date-overlay-input{position:absolute;inset:0;width:100%;height:100%;opacity:.001;cursor:pointer;z-index:8;border:0;padding:0;appearance:auto;-webkit-appearance:auto}
-.date-overlay-input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+/* =========================================================
+   OTW V8 — VISUAL + FUNCTION UPGRADE
+   ========================================================= */
+:root{
+  --v8-navy:#08172c;
+  --v8-navy2:#102d53;
+  --v8-blue:#1668e8;
+  --v8-cyan:#1aa8f8;
+  --v8-line:#e5ebf2;
+  --v8-soft:#f6f8fb;
+  --v8-text:#0c1d35;
+  --v8-muted:#7f8b9b;
+  --v8-green:#169a70;
+}
+
+.app-shell{
+  max-width:430px;
+  background:linear-gradient(180deg,#f7f9fc 0%,#f2f6fa 100%);
+}
+
+.hero-shell{
+  padding:18px 18px 90px;
+  background:
+    radial-gradient(circle at 88% 0%,rgba(32,154,246,.18),transparent 28%),
+    linear-gradient(160deg,#061326 0%,#0a1f3e 60%,#12335c 100%);
+  border-radius:0 0 30px 30px;
+}
+
+.booking-overlap{
+  padding:0 15px;
+  margin-top:-49px;
+}
+.booking-card{
+  padding:15px;
+  border-radius:22px;
+  background:rgba(255,255,255,.99);
+  border:1px solid rgba(12,31,59,.075);
+  box-shadow:0 25px 60px rgba(8,28,57,.13),0 5px 14px rgba(8,28,57,.05);
+}
+
+.travel-tabs{
+  height:47px;
+  padding:4px;
+  border-radius:14px;
+  background:#f0f3f7;
+  border:1px solid #e9eef4;
+}
+.travel-tab{
+  height:37px;
+  border-radius:10px;
+  font-size:9px;
+  font-weight:750;
+}
+.travel-tab.active{
+  color:#0d315f;
+  box-shadow:0 5px 13px rgba(11,35,70,.08);
+}
+
+.route-card{
+  border-radius:15px;
+  border-color:var(--v8-line);
+  box-shadow:0 3px 10px rgba(9,31,59,.025);
+}
+.airport-button{
+  position:relative;
+  z-index:2;
+}
+.airport-button:active,.meta-card:active,.trip-type:active,.travel-tab:active{
+  transform:scale(.985);
+}
+
+.meta-card{
+  height:59px;
+  min-height:59px;
+  border-radius:14px;
+  border:1px solid var(--v8-line);
+  box-shadow:0 3px 10px rgba(9,31,59,.028);
+  position:relative;
+  transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease,background .14s ease;
+}
+.meta-card:hover{
+  border-color:#ced9e7;
+  box-shadow:0 7px 16px rgba(9,31,59,.055);
+}
+.date-button{
+  width:100%;
+}
+#returnDateBtn[hidden]{display:none!important}
+.field-chevron{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:12px;
+  color:#9ca7b5;
+}
+
+.primary-cta{
+  height:50px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#0d5edc 0%,#177cf0 60%,#19a1f5 100%);
+  box-shadow:0 12px 25px rgba(23,105,232,.24),inset 0 1px 0 rgba(255,255,255,.22);
+}
+.primary-cta:active{
+  transform:translateY(1px) scale(.994);
+  box-shadow:0 7px 17px rgba(23,105,232,.18);
+}
+
+.quick-action{
+  border:1px solid rgba(13,35,66,.055);
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+.quick-action:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(10,31,58,.085)}
+.quick-action:active{transform:scale(.98)}
+
+.bottom-nav{
+  height:72px;
+  background:rgba(255,255,255,.965);
+  border-top:1px solid rgba(14,41,77,.075);
+  box-shadow:0 -10px 28px rgba(8,29,56,.07);
+}
+.nav-item{
+  min-height:52px;
+  border-radius:12px;
+  transition:transform .12s ease,color .12s ease;
+}
+.nav-item:active{transform:scale(.94)}
+.center-nav{transform:translateY(-8px)}
+.center-nav:active{transform:translateY(-7px) scale(.94)}
+
+/* custom calendar */
+.calendar-sheet{padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+.calendar-toolbar{
+  display:grid;
+  grid-template-columns:38px 1fr 38px;
+  align-items:center;
+  margin:4px 0 12px;
+}
+.calendar-toolbar strong{text-align:center;font-size:13px;color:var(--v8-text)}
+.calendar-nav{
+  width:36px;height:36px;border:1px solid var(--v8-line);border-radius:11px;
+  background:#f7f9fc;color:#244267;font-size:22px;display:grid;place-items:center;
+}
+.calendar-weekdays,.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
+.calendar-weekdays{margin-bottom:7px}
+.calendar-weekdays span{
+  text-align:center;font-size:7.5px;font-weight:800;color:#9aa5b3;text-transform:uppercase;
+}
+.calendar-day{
+  aspect-ratio:1/1;
+  border:0;
+  border-radius:11px;
+  background:transparent;
+  font-size:9px;
+  color:#26364d;
+  font-weight:700;
+  display:grid;
+  place-items:center;
+}
+.calendar-day:hover:not(:disabled){background:#eef5ff;color:#125fcf}
+.calendar-day.today{box-shadow:inset 0 0 0 1px #bad3fb}
+.calendar-day.selected{
+  background:linear-gradient(145deg,#0f62dd,#238af0);
+  color:#fff;
+  box-shadow:0 7px 15px rgba(23,105,232,.22);
+}
+.calendar-day.outside{color:#c4ccd6}
+.calendar-day:disabled{color:#d3d9e0;cursor:not-allowed}
+.calendar-footer-note{
+  margin-top:10px;text-align:center;font-size:7.5px;color:#97a2af;
+}
+
+/* generic action sheet */
+.action-sheet{text-align:center}
+.action-sheet-icon{
+  width:48px;height:48px;margin:2px auto 12px;border-radius:15px;
+  display:grid;place-items:center;background:#edf4ff;color:#1769e8;
+}
+.action-sheet-icon svg{width:20px;height:20px}
+.action-sheet h4{margin:5px 0 6px;font-size:18px;letter-spacing:-.04em}
+.action-sheet p{margin:0 auto;max-width:290px;color:#8290a0;font-size:9px;line-height:1.55}
+
+/* toast */
+.toast{
+  position:fixed;
+  z-index:120;
+  left:50%;
+  bottom:92px;
+  transform:translate(-50%,18px);
+  width:min(380px,calc(100% - 32px));
+  min-height:42px;
+  padding:11px 14px;
+  border-radius:13px;
+  background:rgba(7,22,43,.96);
+  color:#fff;
+  box-shadow:0 14px 30px rgba(7,22,43,.22);
+  font-size:9px;
+  font-weight:700;
+  text-align:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.2s ease;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}

@@ -26,7 +26,7 @@
         </div>
 
         <div class="top-actions">
-          <button class="icon-btn" type="button" aria-label="Notifikasi">
+          <button class="icon-btn" id="notificationBtn" type="button" aria-label="Notifikasi">
             <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
             <span class="alert-dot"></span>
           </button>
@@ -106,31 +106,27 @@
           </div>
 
           <div class="booking-meta">
-            <div class="date-field-wrap" id="departDateWrap" role="button" tabindex="0" aria-label="Pilih tanggal berangkat">
-              <div class="meta-card date-display">
-                <span class="meta-icon">
-                  <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
-                </span>
-                <span class="meta-copy">
-                  <small>Berangkat</small>
-                  <strong id="departDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
-                </span>
-              </div>
-              <input id="departDateInput" class="date-overlay-input" type="date" aria-label="Tanggal berangkat">
-            </div>
+            <button class="meta-card date-button" id="departDateBtn" type="button">
+      <span class="meta-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
+      </span>
+      <span class="meta-copy">
+        <small>Berangkat</small>
+        <strong id="departDateText">Pilih tanggal</strong>
+      </span>
+      <span class="field-chevron">⌄</span>
+    </button>
 
-            <div class="date-field-wrap" id="returnDateWrap" role="button" tabindex="0" aria-label="Pilih tanggal pulang" hidden>
-              <div class="meta-card date-display">
-                <span class="meta-icon return">
-                  <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
-                </span>
-                <span class="meta-copy">
-                  <small>Pulang</small>
-                  <strong id="returnDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
-                </span>
-              </div>
-              <input id="returnDateInput" class="date-overlay-input" type="date" aria-label="Tanggal pulang">
-            </div>
+            <button class="meta-card date-button" id="returnDateBtn" type="button" hidden>
+      <span class="meta-icon return">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
+      </span>
+      <span class="meta-copy">
+        <small>Pulang</small>
+        <strong id="returnDateText">Pilih tanggal</strong>
+      </span>
+      <span class="field-chevron">⌄</span>
+    </button>
 
             <button class="meta-card" id="passengerBtn" type="button">
               <span class="meta-icon">
@@ -209,11 +205,11 @@
             <span class="section-eyebrow">Akses cepat</span>
             <h3>Kelola perjalanan</h3>
           </div>
-          <button class="ghost-link">Lihat semua</button>
+          <button class="ghost-link" type="button" data-action="Semua layanan">Lihat semua</button>
         </div>
 
         <div class="quick-scroll">
-          <button class="quick-action qa-dark">
+          <button class="quick-action qa-dark" type="button" data-action="Pengajuan perjalanan">
             <span class="qa-icon">
               <svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4M9 12h6m-6 4h5"/></svg>
             </span>
@@ -221,7 +217,7 @@
             <small>Buat perjalanan baru</small>
           </button>
 
-          <button class="quick-action qa-blue">
+          <button class="quick-action qa-blue" type="button" data-action="Pesanan saya">
             <span class="qa-icon">
               <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h10v2M8 12h8"/></svg>
             </span>
@@ -229,7 +225,7 @@
             <small>Cek status perjalanan</small>
           </button>
 
-          <button class="quick-action qa-gold">
+          <button class="quick-action qa-gold" type="button" data-action="Invoice">
             <span class="qa-icon">
               <svg viewBox="0 0 24 24"><path d="M5 3h14v18H5z"/><path d="M8 7h8m-8 4h8m-8 4h4"/></svg>
             </span>
@@ -245,7 +241,7 @@
             <span class="section-eyebrow">Aktivitas</span>
             <h3>Perjalanan saya</h3>
           </div>
-          <button class="ghost-link">Riwayat</button>
+          <button class="ghost-link" type="button" data-action="Riwayat perjalanan">Riwayat</button>
         </div>
 
         <article class="empty-state-card">
@@ -271,7 +267,7 @@
           <span>Butuh bantuan?</span>
           <strong>Pusat Bantuan OTW tersedia 24/7</strong>
         </div>
-        <button aria-label="Buka bantuan">
+        <button id="helpBtn" type="button" aria-label="Buka bantuan">
           <svg viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
         </button>
       </section>
@@ -280,31 +276,31 @@
     </main>
 
     <nav class="bottom-nav">
-      <button class="nav-item active">
+      <button class="nav-item active" type="button" data-nav="home">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
         </span>
         <span>Home</span>
       </button>
-      <button class="nav-item">
+      <button class="nav-item" type="button" data-nav="orders">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h10v2M8 12h8"/></svg>
         </span>
         <span>Pesanan</span>
       </button>
-      <button class="nav-item center-nav">
+      <button class="nav-item center-nav" type="button" data-nav="apply">
         <span class="center-plus">
           <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
         </span>
         <span>Ajukan</span>
       </button>
-      <button class="nav-item">
+      <button class="nav-item" type="button" data-nav="notifications">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
         </span>
         <span>Notifikasi</span>
       </button>
-      <button class="nav-item" id="profileNav">
+      <button class="nav-item" id="profileNav" type="button" data-nav="account">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
         </span>
@@ -385,6 +381,41 @@
       <button class="cabin-option" data-cabin="Bisnis" type="button"><span>Bisnis</span><small>Prioritas & kenyamanan</small></button>
     </div>
   </section>
+
+
+  <section class="bottom-sheet calendar-sheet" id="calendarSheet" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <div>
+        <span class="sheet-eyebrow">Tanggal perjalanan</span>
+        <h4 id="calendarTitle">Pilih tanggal berangkat</h4>
+      </div>
+      <button class="sheet-close" data-close-sheet type="button">×</button>
+    </div>
+    <div class="calendar-toolbar">
+      <button class="calendar-nav" id="calendarPrev" type="button" aria-label="Bulan sebelumnya">‹</button>
+      <strong id="calendarMonthLabel"></strong>
+      <button class="calendar-nav" id="calendarNext" type="button" aria-label="Bulan berikutnya">›</button>
+    </div>
+    <div class="calendar-weekdays">
+      <span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="calendar-footer-note" id="calendarNote">Tanggal lampau tidak dapat dipilih.</div>
+  </section>
+
+  <section class="bottom-sheet action-sheet" id="actionSheet" aria-hidden="true">
+    <div class="sheet-handle"></div>
+    <div class="action-sheet-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg>
+    </div>
+    <span class="sheet-eyebrow">OTW</span>
+    <h4 id="actionSheetTitle">Fitur OTW</h4>
+    <p id="actionSheetText">Fitur ini siap disambungkan ke halaman berikutnya.</p>
+    <button class="sheet-confirm" id="actionSheetClose" type="button">Mengerti</button>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script type="module" src="./home.js"></script>
 </body>
