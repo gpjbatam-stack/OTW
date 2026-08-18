@@ -1486,3 +1486,10 @@ svg{
   border-color:#b8cff7;
   box-shadow:0 0 0 3px rgba(23,105,232,.08);
 }
+
+
+/* V7 FUNCTION FIX */
+.date-field-wrap{position:relative;cursor:pointer;outline:none}
+.date-field-wrap:focus .meta-card,.date-field-wrap:focus-within .meta-card{border-color:#b8cff7;box-shadow:0 0 0 3px rgba(23,105,232,.08)}
+.date-overlay-input{position:absolute;inset:0;width:100%;height:100%;opacity:.001;cursor:pointer;z-index:8;border:0;padding:0;appearance:auto;-webkit-appearance:auto}
+.date-overlay-input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
