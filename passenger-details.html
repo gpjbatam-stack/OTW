@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./passenger-details.css?v=20260819-premium-v3-supabase-spt">
+  <link rel="stylesheet" href="./passenger-details.css?v=20260819-premium-v2-spt">
 </head>
 <body>
   <main class="app-shell">
@@ -191,22 +191,19 @@
           </button>
         </div>
 
-        <div class="spt-upload-progress hidden" id="sptUploadProgress">
-          <div class="spt-progress-head">
-            <span id="sptProgressLabel">Mengunggah SPT...</span>
-            <strong id="sptProgressValue">0%</strong>
-          </div>
-          <div class="spt-progress-track"><i id="sptProgressBar"></i></div>
-        </div>
-
-        <div class="spt-upload-success hidden" id="sptUploadSuccess">
-          <span>
+        <div class="spt-status hidden" id="sptStatus">
+          <span class="spt-status-icon" id="sptStatusIcon">
             <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
           </span>
           <div>
-            <strong>SPT tersimpan aman</strong>
-            <small>Dokumen berhasil disimpan ke OTW.</small>
+            <strong id="sptStatusTitle">File dipilih</strong>
+            <small id="sptStatusText">Menunggu upload...</small>
           </div>
+        </div>
+
+        <div class="spt-progress hidden" id="sptProgress">
+          <div class="spt-progress-track"><i id="sptProgressBar"></i></div>
+          <span id="sptProgressText">Mengunggah SPT...</span>
         </div>
 
         <small class="field-error spt-error" id="sptError"></small>
@@ -363,6 +360,7 @@
     </article>
   </template>
 
-  <script type="module" src="./passenger-details.js?v=20260819-premium-v3-supabase-spt"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="./passenger-details.js?v=20260819-premium-v5-spt-fixed"></script>
 </body>
 </html>

@@ -230,14 +230,24 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 }
 .upload-note svg{width:12px;flex:0 0 auto;color:#5f7fa3;margin-top:1px}
 
-.spt-upload-progress{margin-top:9px;padding:10px;border:1px solid #dfe8f2;border-radius:13px;background:#f9fbfe}
-.spt-progress-head{display:flex;align-items:center;justify-content:space-between;font-size:6.8px;color:#71839a}
-.spt-progress-head strong{font-size:7px;color:#1269ed}
-.spt-progress-track{height:5px;margin-top:7px;border-radius:99px;background:#e8eef6;overflow:hidden}
-.spt-progress-track i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#1476ff,#22b8ff);transition:width .25s ease}
-.spt-upload-success{margin-top:9px;padding:9px 10px;border:1px solid #cfeade;border-radius:13px;background:#effaf5;display:flex;align-items:center;gap:8px}
-.spt-upload-success>span{width:28px;height:28px;border-radius:9px;background:#16b978;color:#fff;display:grid;place-items:center;flex:0 0 auto}
-.spt-upload-success svg{width:14px}
-.spt-upload-success strong{display:block;font-size:7.8px;color:#0d7754}
-.spt-upload-success small{display:block;margin-top:2px;font-size:6.3px;color:#6f8a80}
-.continue-btn.loading{pointer-events:none;opacity:.72}
+/* V5 — SPT immediate-feedback + upload state */
+.spt-status{
+  margin-top:9px;padding:9px 10px;border:1px solid #d9e5f2;border-radius:13px;
+  background:#f7fbff;display:flex;align-items:center;gap:8px
+}
+.spt-status.success{border-color:#cbe9dc;background:#effaf5}
+.spt-status.error{border-color:#f0d2d5;background:#fff4f5}
+.spt-status-icon{
+  width:28px;height:28px;border-radius:9px;background:#e8f2ff;color:#1476ff;
+  display:grid;place-items:center;flex:0 0 auto
+}
+.spt-status.success .spt-status-icon{background:#16b978;color:#fff}
+.spt-status.error .spt-status-icon{background:#e85b65;color:#fff}
+.spt-status-icon svg{width:13px}
+.spt-status strong{display:block;font-size:7.8px}
+.spt-status small{display:block;margin-top:2px;font-size:6.3px;color:#7d8ea3}
+.spt-progress{margin-top:8px}
+.spt-progress-track{height:5px;border-radius:99px;background:#e6edf5;overflow:hidden}
+.spt-progress-track i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#1476ff,#23b8ff);transition:width .22s ease}
+.spt-progress>span{display:block;margin-top:4px;font-size:6.3px;color:#7c8da1}
+.continue-btn.loading{opacity:.68;pointer-events:none}
