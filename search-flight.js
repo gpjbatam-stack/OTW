@@ -1,7 +1,11 @@
 import { requireAuth } from "./guard.js";
 
-await requireAuth({ redirect: "login.html" });
-console.info("[OTW] search-flight mobile v6 root airline logos loaded");
+try {
+  await requireAuth({ redirect: "login.html" });
+} catch (authError) {
+  console.error("[OTW] requireAuth gagal:", authError);
+}
+console.info("[OTW] search-flight mobile v8 root airline logos loaded");
 
 const SUPABASE_URL = "https://vumyxlbybhlaicubtgun.supabase.co";
 const EDGE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/jetwize-search`;
@@ -21,18 +25,33 @@ const AIRPORTS = Object.freeze({
 });
 
 const AIRLINE_LOGOS = Object.freeze({
-  // Logo maskapai asli berdasarkan kode IATA JetWize.
-  GA: "GA.png", // Garuda Indonesia
-  QG: "QG.png", // Citilink
-  JT: "JT.png", // Lion Air
-  ID: "ID.png", // Batik Air
-  IU: "IU.png", // Super Air Jet
-  QZ: "QZ.png", // Indonesia AirAsia
-  SJ: "SJ.png", // Sriwijaya Air
-  IN: "IN.png", // NAM Air
-  IW: "IW.png", // Wings Air
-  8B: "8B.png"  // TransNusa
+  GA: "GA.png",
+  JT: "JT.png",
+  QG: "QG.png",
+  ID: "ID.png",
+  IU: "IU.png",
+  "8B": "8B.png",
+  IN: "IN.png",
+  IP: "IP.png",
+  IW: "IW.png",
+  QZ: "QZ.png",
+  SJ: "SJ.png"
 });
+const AIRLINE_NAME_TO_CODE = Object.freeze({
+  "garuda indonesia": "GA",
+  "lion air": "JT",
+  "citilink": "QG",
+  "batik air": "ID",
+  "super air jet": "IU",
+  "transnusa": "8B",
+  "nam air": "IN",
+  "pelita air": "IP",
+  "wings air": "IW",
+  "indonesia airasia": "QZ",
+  "airasia indonesia": "QZ",
+  "sriwijaya air": "SJ"
+});
+
 
 const qs = new URLSearchParams(location.search);
 const search = {
@@ -174,23 +193,33 @@ function normalizeOffer(offer) {
   };
 }
 
+function resolveAirlineCode(code, airlineName = "") {
+  const direct = String(code || "").trim().toUpperCase();
+  if (AIRLINE_LOGOS[direct]) return direct;
+
+  const byName = AIRLINE_NAME_TO_CODE[String(airlineName || "").trim().toLowerCase()];
+  return byName || direct || "FL";
+}
+
 function airlineLogoMarkup(code, airlineName = "Maskapai") {
-  const normalizedCode = String(code || "").toUpperCase();
-  const src = AIRLINE_LOGOS[normalizedCode];
+  const resolvedCode = resolveAirlineCode(code, airlineName);
+  const src = AIRLINE_LOGOS[resolvedCode];
 
   if (!src) {
-    return `<span title="${escapeHtml(airlineName)}">${escapeHtml(normalizedCode || "FL")}</span>`;
+    return `<span class="airline-code-fallback">${escapeHtml(resolvedCode)}</span>`;
   }
 
-  return `<img
-      src="${src}"
+  return `
+    <img
+      src="./${src}?v=20260819-logo-v8"
       alt="Logo ${escapeHtml(airlineName)}"
       title="${escapeHtml(airlineName)}"
       loading="eager"
-      referrerpolicy="no-referrer"
-      onerror="this.hidden=true;this.nextElementSibling.hidden=false"
+      decoding="async"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"
     >
-    <span hidden title="${escapeHtml(airlineName)}">${escapeHtml(normalizedCode || "FL")}</span>`;
+    <span class="airline-code-fallback" style="display:none">${escapeHtml(resolvedCode)}</span>
+  `;
 }
 
 function render() {
@@ -324,20 +353,42 @@ function selectFlight(flight) {
 }
 
 function getSupabaseAccessToken() {
+  const candidates = [];
+
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (!key || !key.startsWith("sb-") || !key.endsWith("-auth-token")) continue;
-
-    try {
-      const raw = JSON.parse(localStorage.getItem(key));
-      const token = raw?.access_token || raw?.currentSession?.access_token || raw?.session?.access_token;
-      if (token) return token;
-    } catch {}
+    if (!key) continue;
+    if (key.startsWith("sb-") && key.endsWith("-auth-token")) {
+      candidates.push(localStorage.getItem(key));
+    }
   }
 
-  return sessionStorage.getItem("sb-access-token")
-    || localStorage.getItem("sb-access-token")
-    || null;
+  candidates.push(
+    sessionStorage.getItem("sb-access-token"),
+    localStorage.getItem("sb-access-token"),
+    sessionStorage.getItem("access_token"),
+    localStorage.getItem("access_token")
+  );
+
+  for (const item of candidates) {
+    if (!item) continue;
+
+    if (typeof item === "string" && item.split(".").length === 3) {
+      return item;
+    }
+
+    try {
+      const raw = JSON.parse(item);
+      const token =
+        raw?.access_token ||
+        raw?.currentSession?.access_token ||
+        raw?.session?.access_token ||
+        raw?.[0]?.access_token;
+      if (token) return token;
+    } catch (_) {}
+  }
+
+  return null;
 }
 
 async function searchFlights(searchData) {
@@ -345,7 +396,7 @@ async function searchFlights(searchData) {
   if (!searchData.depart) throw new Error("Pilih tanggal keberangkatan terlebih dahulu.");
 
   const token = getSupabaseAccessToken();
-  if (!token) throw new Error("Sesi login Supabase tidak ditemukan. Silakan login ulang.");
+  if (!token) throw new Error("Sesi login tidak ditemukan. Silakan kembali ke login lalu masuk kembali.");
 
   const payload = {
     origin: searchData.origin,
@@ -414,10 +465,10 @@ async function loadFlights() {
   }
 }
 
-document.querySelector("#backBtn").onclick = () => history.back();
-document.querySelector("#editBtn").onclick = () => location.href = "home.html";
-document.querySelector("#changeSearchBtn").onclick = () => location.href = "home.html";
-document.querySelector("#retryBtn").onclick = loadFlights;
+document.querySelector("#backBtn")?.addEventListener("click", () => history.back());
+document.querySelector("#editBtn")?.addEventListener("click", () => location.href = "home.html");
+document.querySelector("#changeSearchBtn")?.addEventListener("click", () => location.href = "home.html");
+document.querySelector("#retryBtn")?.addEventListener("click", loadFlights);
 
 document.querySelectorAll(".sort-chip[data-filter]").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -442,20 +493,20 @@ function closeSheet() {
   sheet.setAttribute("aria-hidden", "true");
 }
 
-document.querySelector("#filterBtn").onclick = openSheet;
-document.querySelector("#closeFilterBtn").onclick = closeSheet;
-backdrop.onclick = closeSheet;
+document.querySelector("#filterBtn")?.addEventListener("click", openSheet);
+document.querySelector("#closeFilterBtn")?.addEventListener("click", closeSheet);
+backdrop?.addEventListener("click", closeSheet);
 
 document.querySelectorAll("[data-stop]").forEach(btn => {
-  btn.onclick = () => {
+  btn.addEventListener("click", () => {
     document.querySelectorAll("[data-stop]").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     stopFilter = btn.dataset.stop;
-  };
+  });
 });
 
 document.querySelectorAll("[data-time]").forEach(btn => {
-  btn.onclick = () => {
+  btn.addEventListener("click", () => {
     document.querySelectorAll("[data-time]").forEach(b => b.classList.remove("active"));
     if (timeFilter === btn.dataset.time) {
       timeFilter = null;
@@ -463,12 +514,12 @@ document.querySelectorAll("[data-time]").forEach(btn => {
       btn.classList.add("active");
       timeFilter = btn.dataset.time;
     }
-  };
+  });
 });
 
-document.querySelector("#applyFilterBtn").onclick = () => {
+document.querySelector("#applyFilterBtn")?.addEventListener("click", () => {
   render();
   closeSheet();
-};
+});
 
 loadFlights();
