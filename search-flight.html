@@ -3,60 +3,97 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f3f6fa">
+  <meta name="theme-color" content="#eef4fb">
+  <meta name="description" content="Hasil pencarian penerbangan OTW">
   <title>Hasil Penerbangan — OTW</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./search-flight.css">
+
+  <!-- cache-busting sengaja dipasang agar commit baru tidak memakai CSS lama -->
+  <link rel="stylesheet" href="./search-flight.css?v=20260819-v3">
 </head>
 <body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
   <main class="page">
     <header class="topbar">
-      <button class="back-btn" id="backBtn" aria-label="Kembali">
+      <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
         <svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg>
       </button>
+
       <div class="topbar-copy">
-        <span class="eyebrow">Penerbangan</span>
+        <span class="eyebrow">PENERBANGAN</span>
         <h1 id="routeTitle">BTH → CGK</h1>
         <p id="routeMeta">Memuat pencarian...</p>
       </div>
-      <button class="edit-btn" id="editBtn">Ubah</button>
+
+      <button class="edit-btn" id="editBtn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+        <span>Ubah Pencarian</span>
+      </button>
     </header>
 
-    <section class="search-summary">
-      <div class="summary-route">
-        <div>
-          <small>Dari</small>
+    <section class="hero-search">
+      <div class="hero-glow"></div>
+      <div class="hero-grid">
+        <div class="airport-block">
+          <small>DARI</small>
           <strong id="summaryOrigin">BTH</strong>
+          <span id="originCity">Hang Nadim</span>
         </div>
-        <div class="summary-flight">
-          <span></span>
-          <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
-          <span></span>
+
+        <div class="route-visual">
+          <div class="route-line"></div>
+          <div class="route-plane">
+            <svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg>
+          </div>
+          <span class="route-status">langsung</span>
         </div>
-        <div class="right">
-          <small>Ke</small>
+
+        <div class="airport-block airport-right">
+          <small>KE</small>
           <strong id="summaryDestination">CGK</strong>
+          <span id="destinationCity">Soekarno-Hatta</span>
         </div>
       </div>
-      <div class="summary-info">
-        <span id="summaryDate">—</span>
-        <i></i>
-        <span id="summaryPassengers">1 Dewasa</span>
-        <i></i>
-        <span id="summaryCabin">Ekonomi</span>
+
+      <div class="hero-meta">
+        <div class="meta-chip">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>
+          <span id="summaryDate">—</span>
+        </div>
+        <div class="meta-chip">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          <span id="summaryPassengers">1 Dewasa</span>
+        </div>
+        <div class="meta-chip">
+          <svg viewBox="0 0 24 24"><path d="M4 20h16V8H4z"/><path d="M8 8V4h8v4"/></svg>
+          <span id="summaryCabin">Ekonomi</span>
+        </div>
+        <div class="live-badge"><i></i> Real-time</div>
       </div>
     </section>
 
-    <section class="filter-bar">
-      <button class="filter-chip active" data-filter="recommended">
-        <svg viewBox="0 0 24 24"><path d="m12 3 2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.9-.9Z"/></svg>
-        Pilihan terbaik
-      </button>
-      <button class="filter-chip" data-filter="cheapest">Termurah</button>
-      <button class="filter-chip" data-filter="fastest">Tercepat</button>
-      <button class="filter-chip filter-open" id="filterBtn">
+    <section class="toolbar">
+      <div class="sort-group">
+        <button class="sort-btn active" data-filter="recommended" type="button">
+          <svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.4 6 .9-4.35 4.2 1 6-5.35-2.85L6.65 19.5l1-6L3.3 9.3l6-.9Z"/></svg>
+          Pilihan terbaik
+        </button>
+        <button class="sort-btn" data-filter="cheapest" type="button">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 9.5c.4-1.2 1.5-2 3.2-2 1.8 0 3 .9 3 2.2 0 1.4-1.1 2-3.2 2.5-2 .5-3.1 1.1-3.1 2.5 0 1.4 1.3 2.4 3.4 2.4 1.8 0 3-.7 3.5-2M12 5v14"/></svg>
+          Termurah
+        </button>
+        <button class="sort-btn" data-filter="fastest" type="button">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>
+          Tercepat
+        </button>
+      </div>
+
+      <button class="filter-btn" id="filterBtn" type="button">
         <svg viewBox="0 0 24 24"><path d="M4 7h16M7 12h10M10 17h4"/></svg>
         Filter
       </button>
@@ -64,27 +101,24 @@
 
     <section class="result-head">
       <div>
-        <span class="section-eyebrow">Hasil pencarian</span>
+        <span class="eyebrow">HASIL PENCARIAN</span>
         <h2 id="resultCount">Mencari penerbangan...</h2>
       </div>
-      <span class="live-pill"><i></i> Real-time</span>
+      <div class="result-update">
+        <span class="pulse-dot"></span>
+        <span>Harga diperbarui otomatis</span>
+      </div>
     </section>
 
     <section id="loadingState" class="loading-list">
       <article class="skeleton-card">
-        <div class="skeleton airline"></div>
-        <div class="skeleton times"></div>
-        <div class="skeleton fare"></div>
+        <div class="skeleton s1"></div><div class="skeleton s2"></div><div class="skeleton s3"></div>
       </article>
       <article class="skeleton-card">
-        <div class="skeleton airline"></div>
-        <div class="skeleton times"></div>
-        <div class="skeleton fare"></div>
+        <div class="skeleton s1"></div><div class="skeleton s2"></div><div class="skeleton s3"></div>
       </article>
       <article class="skeleton-card">
-        <div class="skeleton airline"></div>
-        <div class="skeleton times"></div>
-        <div class="skeleton fare"></div>
+        <div class="skeleton s1"></div><div class="skeleton s2"></div><div class="skeleton s3"></div>
       </article>
     </section>
 
@@ -93,20 +127,35 @@
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/></svg>
       </div>
       <strong>Belum dapat mengambil data penerbangan</strong>
-      <p id="errorMessage">Koneksi API penerbangan belum dikonfigurasi.</p>
-      <button id="retryBtn">Coba lagi</button>
+      <p id="errorMessage">Terjadi gangguan saat mengambil hasil pencarian.</p>
+      <button id="retryBtn" type="button">Coba lagi</button>
     </section>
 
     <section id="emptyState" class="state-card hidden">
       <div class="state-icon">
-        <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg>
       </div>
       <strong>Tidak ada penerbangan ditemukan</strong>
       <p>Coba ubah tanggal, rute, atau filter pencarian.</p>
-      <button id="changeSearchBtn">Ubah pencarian</button>
+      <button id="changeSearchBtn" type="button">Ubah pencarian</button>
     </section>
 
     <section id="flightList" class="flight-list hidden"></section>
+
+    <section class="trust-strip">
+      <div class="trust-item">
+        <span class="trust-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <div><strong>Harga Real-time</strong><small>Data pencarian JetWize</small></div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+        <div><strong>Aman & Terlindungi</strong><small>Credential tidak disimpan di browser</small></div>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 11h8M8 14h5"/></svg></span>
+        <div><strong>Harga Transparan</strong><small>Pricing OTW dipisahkan dari supplier</small></div>
+      </div>
+    </section>
 
     <div class="bottom-spacer"></div>
   </main>
@@ -114,30 +163,38 @@
   <aside class="sheet" id="filterSheet" aria-hidden="true">
     <div class="sheet-handle"></div>
     <div class="sheet-head">
-      <div><span class="section-eyebrow">Filter</span><h3>Sesuaikan hasil</h3></div>
-      <button id="closeFilterBtn">×</button>
+      <div>
+        <span class="eyebrow">FILTER</span>
+        <h3>Sesuaikan hasil</h3>
+      </div>
+      <button class="sheet-close" id="closeFilterBtn" type="button">×</button>
     </div>
+
     <div class="filter-group">
       <label>Transit</label>
       <div class="option-row">
-        <button class="option active" data-stop="all">Semua</button>
-        <button class="option" data-stop="0">Langsung</button>
-        <button class="option" data-stop="1">1 Transit</button>
+        <button class="option active" data-stop="all" type="button">Semua</button>
+        <button class="option" data-stop="0" type="button">Langsung</button>
+        <button class="option" data-stop="1" type="button">1 Transit</button>
       </div>
     </div>
+
     <div class="filter-group">
       <label>Waktu berangkat</label>
       <div class="option-grid">
-        <button class="option" data-time="morning">Pagi<br><small>00–10</small></button>
-        <button class="option" data-time="day">Siang<br><small>10–16</small></button>
-        <button class="option" data-time="evening">Sore<br><small>16–19</small></button>
-        <button class="option" data-time="night">Malam<br><small>19–24</small></button>
+        <button class="option" data-time="morning" type="button">Pagi<br><small>00–10</small></button>
+        <button class="option" data-time="day" type="button">Siang<br><small>10–16</small></button>
+        <button class="option" data-time="evening" type="button">Sore<br><small>16–19</small></button>
+        <button class="option" data-time="night" type="button">Malam<br><small>19–24</small></button>
       </div>
     </div>
-    <button class="apply-filter" id="applyFilterBtn">Terapkan Filter</button>
+
+    <button class="apply-filter" id="applyFilterBtn" type="button">Terapkan Filter</button>
   </aside>
+
   <div class="sheet-backdrop" id="sheetBackdrop"></div>
 
-  <script type="module" src="./search-flight.js"></script>
+  <!-- cache-busting sengaja dipasang agar commit baru tidak memakai JS lama -->
+  <script type="module" src="./search-flight.js?v=20260819-v3"></script>
 </body>
 </html>
