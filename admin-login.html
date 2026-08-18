@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061a3a">
+  <title>Admin Login — OTW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./admin-login.css?v=20260819-premium-v1">
+</head>
+<body>
+  <main class="login-shell">
+    <section class="visual-panel">
+      <div class="brand-row">
+        <span class="brandmark">O</span>
+        <div><strong>OTW</strong><small>OFFICIAL TRIP FOR WORK</small></div>
+      </div>
+
+      <div class="visual-copy">
+        <span class="eyebrow">ADMIN CONSOLE</span>
+        <h1>Kendali perjalanan.<br><em>Dalam satu layar.</em></h1>
+        <p>Kelola pricing, pesanan, dokumen, dan operasional OTW dari dashboard khusus administrator.</p>
+      </div>
+
+      <div class="visual-grid">
+        <article><span>01</span><div><strong>Pricing Control</strong><small>Atur markup dan add-on.</small></div></article>
+        <article><span>02</span><div><strong>Order Oversight</strong><small>Pantau proses pemesanan.</small></div></article>
+        <article><span>03</span><div><strong>Secure Access</strong><small>Akses hanya untuk admin terdaftar.</small></div></article>
+      </div>
+
+      <div class="visual-orb orb-a"></div>
+      <div class="visual-orb orb-b"></div>
+    </section>
+
+    <section class="form-panel">
+      <div class="mobile-brand">
+        <span class="brandmark">O</span>
+        <div><strong>OTW</strong><small>ADMIN CONSOLE</small></div>
+      </div>
+
+      <div class="form-wrap">
+        <span class="eyebrow">SECURE ADMIN ACCESS</span>
+        <h2>Masuk ke Admin OTW</h2>
+        <p>Gunakan akun administrator yang telah terdaftar.</p>
+
+        <form id="loginForm">
+          <label>
+            Email admin
+            <div class="field">
+              <svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="m3 7 9 6 9-6"/></svg>
+              <input id="email" type="email" autocomplete="username" placeholder="admin@otw.com" required>
+            </div>
+            <small class="error" id="emailError"></small>
+          </label>
+
+          <label>
+            Password
+            <div class="field">
+              <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <input id="password" type="password" autocomplete="current-password" placeholder="Masukkan password" required>
+              <button id="togglePassword" class="password-toggle" type="button">Lihat</button>
+            </div>
+            <small class="error" id="passwordError"></small>
+          </label>
+
+          <label class="remember">
+            <input id="rememberMe" type="checkbox" checked>
+            <span></span>
+            <b>Ingat sesi admin di perangkat ini</b>
+          </label>
+
+          <button id="loginBtn" class="login-btn" type="submit">
+            <span>Masuk ke Admin Console</span>
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </form>
+
+        <div class="security-note">
+          <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+          <div><strong>Akses terlindungi</strong><small>Login admin diverifikasi melalui Supabase Auth dan tabel app_admins.</small></div>
+        </div>
+
+        <button id="backToApp" class="back-link" type="button">← Kembali ke aplikasi OTW</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script type="module" src="./admin-login.js?v=20260819-premium-v1"></script>
+</body>
+</html>

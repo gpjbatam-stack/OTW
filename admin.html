@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061a3a">
+  <title>Admin Dashboard — OTW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./admin.css?v=20260819-premium-v1">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand"><span class="brandmark">O</span><div><b>OTW</b><small>ADMIN CONSOLE</small></div></div>
+    <nav>
+      <a class="active" href="./admin.html">Dashboard</a>
+      <a href="./admin-pricing.html">Pricing tiket</a>
+      <a href="./admin-addons.html">Add-on pricing</a>
+      <a href="./admin-orders.html">Pesanan</a>
+    </nav>
+    <button id="logoutBtn" class="logout">Keluar admin</button>
+  </aside>
+
+  <main>
+    <header class="mobile-head">
+      <div class="brand"><span class="brandmark">O</span><div><b>OTW</b><small>ADMIN</small></div></div>
+      <button id="mobileLogout">Keluar</button>
+    </header>
+
+    <div class="page">
+      <section class="heading">
+        <div>
+          <span class="eyebrow">OTW CONTROL CENTER</span>
+          <h1 id="welcomeTitle">Selamat datang.</h1>
+          <p id="adminMeta">Memverifikasi administrator...</p>
+        </div>
+        <span class="secure-badge"><i></i> Secure session</span>
+      </section>
+
+      <section class="hero">
+        <div>
+          <span class="hero-kicker">OPERATIONS AT A GLANCE</span>
+          <h2>Kendali penuh.<br><em>Tetap sederhana.</em></h2>
+          <p>Pricing, perjalanan, dan aktivitas operasional dalam satu command center.</p>
+        </div>
+        <span class="hero-code">OTW<br><small>ADMIN</small></span>
+      </section>
+
+      <section class="cards">
+        <a href="./admin-addons.html">
+          <span class="card-icon">＋</span>
+          <div><small>PRICING</small><strong>Add-on Pricing</strong><p>Atur harga referensi, buffer, minimum price, dan status add-on.</p></div>
+          <b>→</b>
+        </a>
+        <a href="./admin-pricing.html">
+          <span class="card-icon blue">Rp</span>
+          <div><small>TICKET ENGINE</small><strong>Pricing Tiket</strong><p>Kelola markup tiket dan biaya layanan OTW.</p></div>
+          <b>→</b>
+        </a>
+        <a href="./admin-orders.html">
+          <span class="card-icon green">✓</span>
+          <div><small>OPERATIONS</small><strong>Pesanan</strong><p>Pantau pengajuan, fulfillment, issue, dan status perjalanan.</p></div>
+          <b>→</b>
+        </a>
+      </section>
+
+      <section class="status-panel">
+        <div><span class="eyebrow">SYSTEM STATUS</span><h2>Admin security</h2></div>
+        <div class="status-row"><span><i></i><b>Supabase Auth</b><small>Session aktif</small></span><strong>ONLINE</strong></div>
+        <div class="status-row"><span><i></i><b>Admin authorization</b><small id="roleText">Memeriksa role...</small></span><strong>SECURE</strong></div>
+      </section>
+    </div>
+  </main>
+</div>
+<div class="access hidden" id="accessDenied"><div><span>!</span><h2>Akses ditolak</h2><p>Akun ini bukan administrator aktif OTW.</p><button id="goLogin">Kembali ke Admin Login</button></div></div>
+<script type="module" src="./admin.js?v=20260819-premium-v1"></script>
+</body>
+</html>
