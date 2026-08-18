@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061a3a">
+  <title>Detail Penerbangan — OTW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./flight-detail.css?v=20260819-premium-v1">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
+        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="top-copy">
+        <span class="eyebrow">PENERBANGAN</span>
+        <h1>Detail perjalanan</h1>
+      </div>
+      <div class="verified-pill"><i></i> Live</div>
+    </header>
+
+    <section id="verifyBanner" class="verify-banner checking">
+      <span class="verify-icon" id="verifyIcon">
+        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l3 2"/></svg>
+      </span>
+      <div>
+        <strong id="verifyTitle">Memeriksa harga & ketersediaan</strong>
+        <small id="verifyText">Memastikan penawaran masih tersedia.</small>
+      </div>
+      <span class="spinner" id="verifySpinner"></span>
+    </section>
+
+    <section class="ticket-card">
+      <div class="ticket-top">
+        <div class="airline">
+          <div class="airline-logo" id="airlineLogo"><span id="airlineFallback">—</span></div>
+          <div>
+            <strong id="airlineName">Maskapai</strong>
+            <small><span id="flightNumber">—</span> · <span id="cabinClass">Ekonomi</span></small>
+          </div>
+        </div>
+        <span class="direct-badge" id="stopBadge">Langsung</span>
+      </div>
+
+      <div class="flight-path">
+        <div class="path-end">
+          <strong id="departureTime">--:--</strong>
+          <b id="originCode">---</b>
+          <small id="originName">Bandara keberangkatan</small>
+        </div>
+        <div class="path-center">
+          <span id="durationLabel">—</span>
+          <div class="flight-line">
+            <i></i>
+            <span class="plane">
+              <svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg>
+            </span>
+            <i></i>
+          </div>
+          <small id="routeType">Penerbangan langsung</small>
+        </div>
+        <div class="path-end right">
+          <strong id="arrivalTime">--:--</strong>
+          <b id="destinationCode">---</b>
+          <small id="destinationName">Bandara tujuan</small>
+        </div>
+      </div>
+
+      <div class="ticket-divider"><span></span><i></i><span></span></div>
+
+      <div class="ticket-meta">
+        <div><span>Tanggal</span><strong id="flightDate">—</strong></div>
+        <div><span>Pesawat</span><strong id="aircraft">—</strong></div>
+        <div><span>Kursi</span><strong id="seatAvailability">—</strong></div>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-title">
+        <div><span class="eyebrow">PERJALANAN</span><h2>Detail penerbangan</h2></div>
+        <span class="mini-status"><i></i> Real-time</span>
+      </div>
+
+      <article class="timeline-card" id="timelineCard">
+        <div class="timeline-node start"><i></i></div>
+        <div class="timeline-content">
+          <div class="timeline-row">
+            <div><strong id="tlDepartTime">--:--</strong><small id="tlDepartDate">—</small></div>
+            <div><b id="tlOrigin">---</b><span id="tlOriginName">—</span></div>
+          </div>
+
+          <div class="timeline-flight">
+            <div class="timeline-rail"></div>
+            <div class="flight-info">
+              <span class="tiny-logo" id="tinyLogo"><span id="tinyFallback">—</span></span>
+              <div><strong id="tlAirline">Maskapai</strong><small id="tlFlightInfo">—</small></div>
+            </div>
+            <div class="duration-chip" id="tlDuration">—</div>
+          </div>
+
+          <div class="timeline-row">
+            <div><strong id="tlArrivalTime">--:--</strong><small id="tlArrivalDate">—</small></div>
+            <div><b id="tlDestination">---</b><span id="tlDestinationName">—</span></div>
+          </div>
+        </div>
+        <div class="timeline-node end"><i></i></div>
+      </article>
+    </section>
+
+    <section class="section-block">
+      <div class="section-title">
+        <div><span class="eyebrow">TERMASUK</span><h2>Fasilitas penerbangan</h2></div>
+      </div>
+      <div class="benefit-grid">
+        <article class="benefit">
+          <span class="benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M6 8h12l1 12H5L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+          </span>
+          <div><small>Bagasi</small><strong id="baggage">—</strong></div>
+        </article>
+        <article class="benefit">
+          <span class="benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M5 19V8h14v11M8 8V5h8v3"/></svg>
+          </span>
+          <div><small>Kabin</small><strong id="benefitCabin">Ekonomi</strong></div>
+        </article>
+        <article class="benefit">
+          <span class="benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"/></svg>
+          </span>
+          <div><small>Tambahan</small><strong>Nanti dipilih</strong></div>
+        </article>
+        <article class="benefit">
+          <span class="benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+          </span>
+          <div><small>Data harga</small><strong>JetWize</strong></div>
+        </article>
+      </div>
+      <p class="addon-note">Bagasi tambahan dan perlindungan perjalanan dapat dipilih setelah data penumpang.</p>
+    </section>
+
+    <section class="duty-card">
+      <span class="duty-icon">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M9 7V4h6v3M4 12h16"/></svg>
+      </span>
+      <div>
+        <span class="eyebrow">PERJALANAN DINAS</span>
+        <strong>Siap terhubung ke perjalanan Anda</strong>
+        <p>Detail penerbangan akan dibawa ke proses data penumpang dan dokumen perjalanan.</p>
+      </div>
+    </section>
+
+    <section class="price-card">
+      <div class="price-head">
+        <div><span class="eyebrow">RINGKASAN HARGA</span><h2>Harga penerbangan</h2></div>
+        <span class="price-status" id="priceStatus">Live</span>
+      </div>
+
+      <div class="price-line">
+        <span>Harga tiket</span>
+        <strong id="ticketPrice">Rp0</strong>
+      </div>
+      <div class="price-line muted hidden" id="serviceFeeRow">
+        <span>Biaya layanan</span>
+        <strong id="serviceFee">Rp0</strong>
+      </div>
+      <div class="price-divider"></div>
+      <div class="price-total">
+        <div><span>Total sementara</span><small id="priceNote">Untuk 1 penumpang</small></div>
+        <strong id="totalPrice">Rp0</strong>
+      </div>
+      <p class="price-disclaimer">Harga akan diverifikasi kembali sebelum melanjutkan proses pemesanan.</p>
+    </section>
+
+    <section id="expiredState" class="expired-card hidden">
+      <strong>Penawaran ini sudah tidak tersedia</strong>
+      <p>Harga atau ketersediaan penerbangan telah berubah. Silakan kembali ke hasil pencarian.</p>
+      <button id="backToSearchBtn" type="button">Cari penerbangan lain</button>
+    </section>
+
+    <div class="bottom-space"></div>
+  </main>
+
+  <footer class="sticky-checkout">
+    <div class="sticky-inner">
+      <div class="sticky-price">
+        <small>Total</small>
+        <strong id="stickyPrice">Rp0</strong>
+        <span id="stickyPassenger">1 penumpang</span>
+      </div>
+      <button id="continueBtn" class="continue-btn" type="button">
+        <span>Lanjutkan</span>
+        <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script type="module" src="./flight-detail.js?v=20260819-premium-v1"></script>
+</body>
+</html>
