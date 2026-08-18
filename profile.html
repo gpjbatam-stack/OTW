@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061a3a">
+  <title>Profil — OTW</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./profile.css?v=20260819-premium-v1">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
+        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="top-copy">
+        <span class="eyebrow">AKUN OTW</span>
+        <h1>Profil</h1>
+      </div>
+      <button class="icon-btn" id="settingsBtn" type="button" aria-label="Pengaturan">
+        <svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20.3h-3v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7 15a1.7 1.7 0 0 0-1.55-1.03H5.3v-3h.15A1.7 1.7 0 0 0 7 9.94a1.7 1.7 0 0 0-.34-1.88L6.6 8l2.12-2.12.06.06A1.7 1.7 0 0 0 10.66 6a1.7 1.7 0 0 0 1.03-1.55V4.3h3v.15A1.7 1.7 0 0 0 15.72 6a1.7 1.7 0 0 0 1.88-.34l.06-.06L19.78 8l-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1.03h.15v3h-.15A1.7 1.7 0 0 0 19.4 15Z"/></svg>
+      </button>
+    </header>
+
+    <section class="profile-hero">
+      <div class="hero-orb hero-orb-a"></div>
+      <div class="hero-orb hero-orb-b"></div>
+
+      <div class="profile-main">
+        <div class="avatar-wrap">
+          <div class="avatar" id="avatar">
+            <span id="avatarInitial">U</span>
+            <img id="avatarImg" class="hidden" alt="Foto profil">
+          </div>
+          <button id="editPhotoBtn" class="camera-btn" type="button" aria-label="Ubah foto profil">
+            <svg viewBox="0 0 24 24"><path d="M4 8h4l1.5-2h5L16 8h4v11H4z"/><circle cx="12" cy="13" r="3"/></svg>
+          </button>
+        </div>
+
+        <div class="identity">
+          <span class="verified-label"><i></i> Akun aktif</span>
+          <h2 id="profileName">Pengguna OTW</h2>
+          <p id="profileEmail">Memuat email...</p>
+        </div>
+      </div>
+
+      <div class="hero-meta">
+        <div><span>No. HP</span><strong id="profilePhone">—</strong></div>
+        <div><span>Status</span><strong id="accountStatus">Terverifikasi</strong></div>
+      </div>
+    </section>
+
+    <section class="quick-grid">
+      <button class="quick-card" id="ordersBtn" type="button">
+        <span class="quick-icon">
+          <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        </span>
+        <span><strong>Pesanan</strong><small>Lihat perjalanan aktif</small></span>
+        <b>›</b>
+      </button>
+
+      <button class="quick-card" id="historyBtn" type="button">
+        <span class="quick-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </span>
+        <span><strong>Riwayat</strong><small>Perjalanan sebelumnya</small></span>
+        <b>›</b>
+      </button>
+    </section>
+
+    <section class="section-block">
+      <div class="section-title">
+        <span class="eyebrow">DATA AKUN</span>
+        <h2>Informasi pribadi</h2>
+      </div>
+
+      <article class="menu-card">
+        <button class="menu-row" id="personalDataBtn" type="button">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          </span>
+          <span class="menu-copy"><strong>Data pribadi</strong><small>Nama, nomor HP, email, dan identitas</small></span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
+        <button class="menu-row" id="documentsBtn" type="button">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+          </span>
+          <span class="menu-copy"><strong>Dokumen perjalanan</strong><small>SPT dan dokumen yang pernah diunggah</small></span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
+        <button class="menu-row" id="securityBtn" type="button">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </span>
+          <span class="menu-copy"><strong>Keamanan akun</strong><small>Password dan keamanan login</small></span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </article>
+    </section>
+
+    <section class="section-block">
+      <div class="section-title">
+        <span class="eyebrow">OTW</span>
+        <h2>Bantuan & informasi</h2>
+      </div>
+
+      <article class="menu-card">
+        <button class="menu-row" id="helpBtn" type="button">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.7 2c-1 .6-1.5 1.1-1.5 2M12 17h.01"/></svg>
+          </span>
+          <span class="menu-copy"><strong>Pusat Bantuan</strong><small>Pertanyaan umum dan dukungan</small></span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
+        <button class="menu-row" id="aboutBtn" type="button">
+          <span class="menu-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
+          </span>
+          <span class="menu-copy"><strong>Tentang OTW</strong><small>Informasi aplikasi dan kebijakan</small></span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </article>
+    </section>
+
+    <section class="logout-card">
+      <div>
+        <span class="logout-icon">
+          <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M13 4h6v16h-6"/></svg>
+        </span>
+        <div><strong>Keluar dari akun</strong><small>Anda perlu login kembali untuk menggunakan OTW.</small></div>
+      </div>
+      <button id="logoutBtn" type="button">Logout</button>
+    </section>
+
+    <div class="version">OTW · Official Trip for Work · v1.0</div>
+    <div class="bottom-space"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="home.html">
+      <svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="orders.html">
+      <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span>Pesanan</span>
+    </a>
+    <a href="request.html" class="center-action">
+      <span class="center-icon">＋</span>
+      <span>Ajukan</span>
+    </a>
+    <a href="notifications.html">
+      <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 19h4"/></svg>
+      <span>Notifikasi</span>
+    </a>
+    <a href="profile.html" class="active">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      <span>Akun</span>
+    </a>
+  </nav>
+
+  <div class="modal-backdrop hidden" id="logoutModal">
+    <section class="modal">
+      <span class="modal-icon">
+        <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/><path d="M13 4h6v16h-6"/></svg>
+      </span>
+      <span class="eyebrow">KONFIRMASI</span>
+      <h3>Keluar dari OTW?</h3>
+      <p>Sesi akun di perangkat ini akan diakhiri.</p>
+      <button id="confirmLogoutBtn" class="modal-primary" type="button">Ya, logout</button>
+      <button id="cancelLogoutBtn" class="modal-secondary" type="button">Tetap masuk</button>
+    </section>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="./profile.js?v=20260819-premium-v1"></script>
+</body>
+</html>
