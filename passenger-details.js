@@ -524,7 +524,7 @@
       };
 
       sessionStorage.setItem("otw_passenger_details",JSON.stringify(data));
-      location.href="flight-addons.html";
+      location.href="flight-review.html";
     }finally{
       isSubmitting=false;
       btn.disabled=false;
