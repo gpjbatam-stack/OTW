@@ -437,3 +437,19 @@ function initUI() {
   $("#historyBtn")?.addEventListener("click", () => navigateTo(ROUTES.history));
   $("#helpBtn")?.addEventListener("click", () => navigateTo(ROUTES.help));
 }
+
+/* OTW V10 — Train & Hotel search panels */
+document.addEventListener("DOMContentLoaded", () => {
+  const $ = s => document.querySelector(s);
+  const today = new Date().toISOString().slice(0,10);
+  ["#trainDateInput","#hotelCheckinInput","#hotelCheckoutInput"].forEach(s=>{const el=$(s); if(el) el.min=today;});
+  const fmt=v=>v?new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"short",year:"numeric"}).format(new Date(v+"T00:00:00")):"Pilih tanggal";
+  $("#trainDateInput")?.addEventListener("change",e=>{$("#trainDateText").textContent=fmt(e.target.value)});
+  $("#hotelCheckinInput")?.addEventListener("change",e=>{ $("#hotelCheckinText").textContent=fmt(e.target.value); const out=$("#hotelCheckoutInput"); if(out) out.min=e.target.value||today; });
+  $("#hotelCheckoutInput")?.addEventListener("change",e=>{$("#hotelCheckoutText").textContent=fmt(e.target.value)});
+  $("#trainOriginBtn")?.addEventListener("click",()=>{const v=prompt("Masukkan stasiun asal");if(v)$("#trainOriginText").textContent=v});
+  $("#trainDestinationBtn")?.addEventListener("click",()=>{const v=prompt("Masukkan stasiun tujuan");if(v)$("#trainDestinationText").textContent=v});
+  $("#hotelCityBtn")?.addEventListener("click",()=>{const v=prompt("Masukkan kota atau area hotel");if(v)$("#hotelCityText").textContent=v});
+  $("#searchTrainBtn")?.addEventListener("click",()=>{const p=new URLSearchParams({origin:$("#trainOriginText")?.textContent||"",destination:$("#trainDestinationText")?.textContent||"",depart:$("#trainDateInput")?.value||"",adults:"1"});location.href=`search-train.html?${p}`});
+  $("#searchHotelBtn")?.addEventListener("click",()=>{const p=new URLSearchParams({city:$("#hotelCityText")?.textContent||"",checkin:$("#hotelCheckinInput")?.value||"",checkout:$("#hotelCheckoutInput")?.value||"",guests:"1"});location.href=`search-hotel.html?${p}`});
+});
