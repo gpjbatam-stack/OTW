@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071a39">
+  <title>Data Penumpang — OTW</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./passenger-details.css?v=20260819-premium-v2-spt">
+</head>
+<body>
+  <main class="app-shell">
+
+    <header class="topbar">
+      <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
+        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+
+      <div class="top-copy">
+        <span class="eyebrow">LANGKAH 2 DARI 4</span>
+        <h1>Data penumpang</h1>
+        <p>Isi sesuai identitas resmi.</p>
+      </div>
+
+      <div class="progress-ring">
+        <svg viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="16"></circle>
+          <circle class="progress" cx="20" cy="20" r="16"></circle>
+        </svg>
+        <span>2/4</span>
+      </div>
+    </header>
+
+    <section class="flight-mini-card">
+      <div class="airline-mini">
+        <div class="airline-logo" id="airlineLogo"><span id="airlineFallback">FL</span></div>
+        <div>
+          <strong id="airlineName">Maskapai</strong>
+          <small id="flightCode">—</small>
+        </div>
+      </div>
+
+      <div class="mini-route">
+        <div>
+          <strong id="originCode">---</strong>
+          <span id="departureTime">--:--</span>
+        </div>
+        <div class="mini-line">
+          <i></i>
+          <svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg>
+          <i></i>
+        </div>
+        <div class="right">
+          <strong id="destinationCode">---</strong>
+          <span id="arrivalTime">--:--</span>
+        </div>
+      </div>
+
+      <div class="mini-footer">
+        <span id="flightDate">—</span>
+        <span class="dot">•</span>
+        <span id="cabinClass">Ekonomi</span>
+        <span class="dot">•</span>
+        <span id="baggage">Bagasi —</span>
+      </div>
+    </section>
+
+    <section class="notice-card">
+      <span class="notice-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
+      </span>
+      <div>
+        <strong>Pastikan data sama dengan identitas</strong>
+        <p>Nama dan tanggal lahir harus sesuai KTP, paspor, atau dokumen resmi yang digunakan saat perjalanan.</p>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">KONTAK PEMESAN</span>
+          <h2>Kontak utama</h2>
+        </div>
+        <span class="secure-pill">
+          <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Aman
+        </span>
+      </div>
+
+      <article class="form-card">
+        <div class="field-group">
+          <label for="contactName">Nama pemesan</label>
+          <div class="field">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            </span>
+            <input id="contactName" type="text" autocomplete="name" placeholder="Nama lengkap">
+          </div>
+          <small class="field-error" data-error-for="contactName"></small>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label for="contactPhone">Nomor HP</label>
+            <div class="field">
+              <span class="field-prefix">+62</span>
+              <input id="contactPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="81234567890">
+            </div>
+            <small class="field-error" data-error-for="contactPhone"></small>
+          </div>
+
+          <div class="field-group">
+            <label for="contactEmail">Email</label>
+            <div class="field">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="m3 7 9 6 9-6"/></svg>
+              </span>
+              <input id="contactEmail" type="email" autocomplete="email" placeholder="nama@email.com">
+            </div>
+            <small class="field-error" data-error-for="contactEmail"></small>
+          </div>
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="useForFirstPassenger">
+          <span class="checkmark">
+            <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
+          </span>
+          <span>
+            <strong>Gunakan sebagai penumpang pertama</strong>
+            <small>Nama pemesan akan otomatis disalin.</small>
+          </span>
+        </label>
+      </article>
+    </section>
+
+    <section class="section-block">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">DATA PERJALANAN</span>
+          <h2>Penumpang</h2>
+        </div>
+        <span class="count-pill" id="passengerCount">1 orang</span>
+      </div>
+
+      <div id="passengerList" class="passenger-list"></div>
+    </section>
+
+
+    <section class="section-block">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">DOKUMEN DINAS</span>
+          <h2>Surat Perintah Tugas</h2>
+        </div>
+        <span class="required-pill">Wajib</span>
+      </div>
+
+      <article class="upload-card" id="sptUploadCard">
+        <input id="sptFile" class="file-input" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+
+        <label class="upload-zone" for="sptFile" id="sptUploadZone">
+          <span class="upload-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 16V4"/>
+              <path d="m7 9 5-5 5 5"/>
+              <path d="M5 15v4h14v-4"/>
+            </svg>
+          </span>
+
+          <div class="upload-copy">
+            <strong>Upload SPT</strong>
+            <span>PDF, JPG atau PNG · maks. 10 MB</span>
+          </div>
+
+          <span class="upload-action">Pilih file</span>
+        </label>
+
+        <div class="file-preview hidden" id="sptPreview">
+          <span class="file-type" id="sptFileType">PDF</span>
+          <div class="file-meta">
+            <strong id="sptFileName">dokumen-spt.pdf</strong>
+            <span id="sptFileSize">0 KB</span>
+          </div>
+          <button class="remove-file" id="removeSptBtn" type="button" aria-label="Hapus file">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+
+        <small class="field-error spt-error" id="sptError"></small>
+
+        <div class="upload-note">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
+          <span>Pastikan dokumen terbaca jelas dan sesuai perjalanan dinas yang diajukan.</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="consent-card">
+      <label class="checkbox-row consent">
+        <input type="checkbox" id="consentCheck">
+        <span class="checkmark">
+          <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
+        </span>
+        <span>
+          <strong>Saya memastikan data penumpang sudah benar</strong>
+          <small>Kesalahan nama atau tanggal lahir dapat menyebabkan proses tiket gagal atau membutuhkan perubahan berbayar.</small>
+        </span>
+      </label>
+    </section>
+
+    <section class="trust-grid">
+      <article>
+        <span>
+          <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <div><strong>Data terlindungi</strong><small>Digunakan untuk proses tiket.</small></div>
+      </article>
+      <article>
+        <span>
+          <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M9 7V4h6v3M4 12h16"/></svg>
+        </span>
+        <div><strong>Perjalanan dinas</strong><small>Siap diteruskan ke proses berikutnya.</small></div>
+      </article>
+    </section>
+
+    <div class="bottom-space"></div>
+  </main>
+
+  <footer class="sticky-footer">
+    <div class="sticky-inner">
+      <div class="sticky-copy">
+        <small>Langkah berikutnya</small>
+        <strong>Tambahan perjalanan</strong>
+      </div>
+      <button id="continueBtn" class="continue-btn" type="button">
+        <span>Lanjutkan</span>
+        <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <template id="passengerTemplate">
+    <article class="passenger-card">
+      <button class="passenger-head" type="button">
+        <div class="passenger-index">
+          <span class="number">1</span>
+        </div>
+        <div class="passenger-title">
+          <strong>Penumpang 1</strong>
+          <small>Dewasa</small>
+        </div>
+        <span class="status-badge incomplete">Belum lengkap</span>
+        <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+
+      <div class="passenger-body">
+        <div class="field-group">
+          <label>Gelar</label>
+          <div class="segmented title-selector">
+            <button type="button" data-value="MR">Tn.</button>
+            <button type="button" data-value="MRS">Ny.</button>
+            <button type="button" data-value="MS">Nn.</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Nama lengkap sesuai identitas</label>
+          <div class="field">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            </span>
+            <input class="full-name" type="text" autocomplete="off" placeholder="Contoh: BAYU FEBRIONO">
+          </div>
+          <small class="hint">Gunakan nama lengkap tanpa gelar akademik.</small>
+          <small class="field-error name-error"></small>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Jenis identitas</label>
+            <div class="select-field">
+              <select class="identity-type">
+                <option value="KTP">KTP</option>
+                <option value="PASSPORT">Paspor</option>
+              </select>
+              <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Nomor identitas</label>
+            <div class="field">
+              <input class="identity-number" type="text" inputmode="numeric" placeholder="Nomor KTP">
+            </div>
+            <small class="field-error identity-error"></small>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Tanggal lahir</label>
+            <div class="field date-field">
+              <span class="field-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+              </span>
+              <input class="birth-date" type="date">
+            </div>
+            <small class="field-error birth-error"></small>
+          </div>
+
+          <div class="field-group gender-group">
+            <label>Jenis kelamin</label>
+            <div class="segmented gender-selector">
+              <button type="button" data-value="M">Pria</button>
+              <button type="button" data-value="F">Wanita</button>
+            </div>
+            <small class="field-error gender-error"></small>
+          </div>
+        </div>
+
+        <div class="passport-extra hidden">
+          <div class="field-row">
+            <div class="field-group">
+              <label>Negara penerbit</label>
+              <div class="field">
+                <input class="passport-country" type="text" placeholder="Indonesia">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Berlaku sampai</label>
+              <div class="field date-field">
+                <input class="passport-expiry" type="date">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script type="module" src="./passenger-details.js?v=20260819-premium-v2-spt"></script>
+</body>
+</html>
