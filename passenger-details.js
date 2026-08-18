@@ -1,4 +1,5 @@
 import { requireAuth } from "./guard.js";
+import { supabase } from "./supabase.js";
 
 try { await requireAuth({ redirect: "login.html" }); }
 catch (e) { console.warn("[OTW] auth guard:", e); }
@@ -21,7 +22,10 @@ let selectedFlight = readJSON("otw_selected_flight");
 let search = readJSON("otw_search") || selectedFlight?.searchSnapshot || {};
 let passengerModels = [];
 let sptFile = null;
-const MAX_SPT_BYTES = 10 * 1024 * 1024;
+const MAX_SPT_BYTES = 5 * 1024 * 1024;
+const SPT_BUCKET = "spt-documents";
+let uploadedSptRecord = readJSON("otw_uploaded_spt") || null;
+let isSubmitting = false;
 
 function readJSON(key){
   try { return JSON.parse(sessionStorage.getItem(key) || localStorage.getItem(key) || "null"); }
@@ -274,6 +278,9 @@ function isAllowedSpt(file){
 
 function showSptFile(file){
   sptFile=file;
+  uploadedSptRecord=null;
+  sessionStorage.removeItem("otw_uploaded_spt");
+  $("#sptUploadSuccess")?.classList.add("hidden");
   $("#sptError").textContent="";
   $("#sptUploadZone").classList.add("hidden");
   $("#sptPreview").classList.remove("hidden");
@@ -283,12 +290,23 @@ function showSptFile(file){
   $("#sptFileType").textContent=ext==="JPEG"?"JPG":ext;
 }
 
-function clearSpt(){
+async function clearSpt(){
+  const hadUploaded=Boolean(uploadedSptRecord?.file_path);
+
   sptFile=null;
   $("#sptFile").value="";
   $("#sptPreview").classList.add("hidden");
   $("#sptUploadZone").classList.remove("hidden");
   $("#sptError").textContent="";
+  $("#sptUploadSuccess")?.classList.add("hidden");
+  hideUploadProgress();
+
+  if(hadUploaded){
+    await deleteUploadedSptIfNeeded();
+  }else{
+    uploadedSptRecord=null;
+    sessionStorage.removeItem("otw_uploaded_spt");
+  }
 }
 
 function handleSptFile(file){
@@ -305,6 +323,139 @@ function handleSptFile(file){
   }
 
   showSptFile(file);
+}
+
+
+function formatFileSize(bytes){
+  const n=Number(bytes||0);
+  if(n<1024) return `${n} B`;
+  if(n<1024*1024) return `${(n/1024).toFixed(n<10240?1:0)} KB`;
+  return `${(n/(1024*1024)).toFixed(1)} MB`;
+}
+
+function isAllowedSpt(file){
+  const allowedTypes=["application/pdf","image/jpeg","image/png"];
+  const allowedExt=/\.(pdf|jpe?g|png)$/i;
+  return allowedTypes.includes(file.type) || allowedExt.test(file.name||"");
+}
+
+function setUploadProgress(percent,label="Mengunggah SPT..."){
+  const box=$("#sptUploadProgress");
+  if(!box) return;
+  box.classList.remove("hidden");
+  $("#sptProgressLabel").textContent=label;
+  $("#sptProgressValue").textContent=`${percent}%`;
+  $("#sptProgressBar").style.width=`${percent}%`;
+}
+
+function hideUploadProgress(){
+  $("#sptUploadProgress")?.classList.add("hidden");
+}
+
+function sanitizeFileName(name){
+  const ext=(name.split(".").pop()||"bin").toLowerCase();
+  const base=name
+    .replace(/\.[^.]+$/,"")
+    .normalize("NFKD")
+    .replace(/[^\w-]+/g,"-")
+    .replace(/-+/g,"-")
+    .replace(/^-|-$/g,"")
+    .slice(0,80) || "spt";
+  return `${base}.${ext}`;
+}
+
+async function uploadSptToSupabase(){
+  if(uploadedSptRecord?.id && uploadedSptRecord?.file_path){
+    return uploadedSptRecord;
+  }
+  if(!sptFile) throw new Error("SPT belum dipilih.");
+
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+  if(authError) throw authError;
+
+  const user=authData?.user;
+  if(!user) throw new Error("Sesi login tidak ditemukan. Silakan login ulang.");
+
+  const safeName=sanitizeFileName(sptFile.name);
+  const uniqueName=`${Date.now()}-${crypto.randomUUID()}-${safeName}`;
+  const filePath=`${user.id}/${uniqueName}`;
+
+  setUploadProgress(20,"Menyiapkan dokumen...");
+
+  const { error: uploadError } = await supabase.storage
+    .from(SPT_BUCKET)
+    .upload(filePath,sptFile,{
+      cacheControl:"3600",
+      upsert:false,
+      contentType:sptFile.type || undefined
+    });
+
+  if(uploadError) throw new Error(`Upload SPT gagal: ${uploadError.message}`);
+
+  setUploadProgress(75,"Menyimpan data dokumen...");
+
+  const { data: documentRow, error: dbError } = await supabase
+    .from("trip_documents")
+    .insert({
+      user_id:user.id,
+      order_id:null,
+      document_type:"SPT",
+      file_name:sptFile.name,
+      file_path:filePath,
+      file_size:sptFile.size,
+      mime_type:sptFile.type || null,
+      status:"uploaded"
+    })
+    .select("id,user_id,document_type,file_name,file_path,file_size,mime_type,status,uploaded_at")
+    .single();
+
+  if(dbError){
+    try{
+      await supabase.storage.from(SPT_BUCKET).remove([filePath]);
+    }catch(rollbackError){
+      console.error("[OTW] rollback file SPT gagal:",rollbackError);
+    }
+    throw new Error(`Data SPT gagal disimpan: ${dbError.message}`);
+  }
+
+  setUploadProgress(100,"SPT berhasil disimpan.");
+
+  uploadedSptRecord=documentRow;
+  sessionStorage.setItem("otw_uploaded_spt",JSON.stringify(documentRow));
+  $("#sptUploadSuccess")?.classList.remove("hidden");
+
+  setTimeout(hideUploadProgress,500);
+  return documentRow;
+}
+
+async function deleteUploadedSptIfNeeded(){
+  if(!uploadedSptRecord?.file_path) return;
+
+  try{
+    await supabase.storage.from(SPT_BUCKET).remove([uploadedSptRecord.file_path]);
+
+    if(uploadedSptRecord.id){
+      await supabase.from("trip_documents").delete().eq("id",uploadedSptRecord.id);
+    }
+  }catch(error){
+    console.error("[OTW] gagal menghapus SPT lama:",error);
+  }finally{
+    uploadedSptRecord=null;
+    sessionStorage.removeItem("otw_uploaded_spt");
+  }
+}
+
+function restoreUploadedSptState(){
+  if(!uploadedSptRecord) return;
+
+  $("#sptUploadZone")?.classList.add("hidden");
+  $("#sptPreview")?.classList.remove("hidden");
+  $("#sptFileName").textContent=uploadedSptRecord.file_name || "SPT";
+  $("#sptFileSize").textContent=formatFileSize(uploadedSptRecord.file_size || 0);
+
+  const ext=(String(uploadedSptRecord.file_name||"").split(".").pop()||"FILE").toUpperCase();
+  $("#sptFileType").textContent=ext==="JPEG"?"JPG":ext;
+  $("#sptUploadSuccess")?.classList.remove("hidden");
 }
 
 function clearErrors(){
@@ -361,7 +512,7 @@ function validate(){
     if(!isPassengerComplete(p)) card.classList.add("open");
   });
 
-  if(!sptFile){
+  if(!sptFile && !uploadedSptRecord?.id){
     $("#sptError").textContent="Upload SPT wajib dilakukan sebelum melanjutkan.";
     ok=false;
   }
@@ -374,34 +525,65 @@ function validate(){
   return ok;
 }
 
-function saveAndContinue(){
+async function saveAndContinue(){
+  if(isSubmitting) return;
+
   copyContactToFirstPassenger();
 
   if(!validate()){
     const firstError=$(".field-error:not(:empty)");
-    firstError?.closest(".field-group")?.scrollIntoView({behavior:"smooth",block:"center"});
+    firstError?.closest(".field-group,.upload-card")?.scrollIntoView({behavior:"smooth",block:"center"});
     return;
   }
 
-  const data={
-    contact:{
-      name:$("#contactName").value.trim(),
-      phone:`+62${$("#contactPhone").value.trim().replace(/\D/g,"").replace(/^0+/,"")}`,
-      email:$("#contactEmail").value.trim()
-    },
-    passengers:passengerModels,
-    flightOfferId:sessionStorage.getItem("otw_selected_offer_id")||selectedFlight?.offerId||"",
-    spt:{
-      name:sptFile.name,
-      type:sptFile.type,
-      size:sptFile.size,
-      lastModified:sptFile.lastModified
-    },
-    updatedAt:new Date().toISOString()
-  };
+  const btn=$("#continueBtn");
+  const originalHtml=btn.innerHTML;
 
-  sessionStorage.setItem("otw_passenger_details",JSON.stringify(data));
-  location.href="flight-addons.html";
+  try{
+    isSubmitting=true;
+    btn.disabled=true;
+    btn.classList.add("loading");
+    btn.innerHTML="<span>Menyimpan...</span>";
+
+    let sptRecord=uploadedSptRecord;
+    if(!sptRecord?.id){
+      sptRecord=await uploadSptToSupabase();
+    }
+
+    const data={
+      contact:{
+        name:$("#contactName").value.trim(),
+        phone:`+62${$("#contactPhone").value.trim().replace(/\D/g,"").replace(/^0+/,"")}`,
+        email:$("#contactEmail").value.trim()
+      },
+      passengers:passengerModels,
+      flightOfferId:sessionStorage.getItem("otw_selected_offer_id")||selectedFlight?.offerId||"",
+      spt:{
+        documentId:sptRecord.id,
+        fileName:sptRecord.file_name,
+        filePath:sptRecord.file_path,
+        fileSize:sptRecord.file_size,
+        mimeType:sptRecord.mime_type,
+        status:sptRecord.status
+      },
+      updatedAt:new Date().toISOString()
+    };
+
+    sessionStorage.setItem("otw_passenger_details",JSON.stringify(data));
+    toast("Data penumpang dan SPT berhasil disimpan.");
+
+    setTimeout(()=>location.href="flight-addons.html",350);
+
+  }catch(error){
+    console.error("[OTW] simpan Passenger Details gagal:",error);
+    $("#sptError").textContent=error?.message || "SPT gagal disimpan.";
+    toast(error?.message || "Gagal menyimpan data.");
+  }finally{
+    isSubmitting=false;
+    btn.disabled=false;
+    btn.classList.remove("loading");
+    btn.innerHTML=originalHtml;
+  }
 }
 
 $("#backBtn")?.addEventListener("click",()=>history.back());
@@ -426,3 +608,4 @@ renderFlightSummary();
 populateContact();
 buildPassengerModels();
 renderPassengers();
+restoreUploadedSptState();

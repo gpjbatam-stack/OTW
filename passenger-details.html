@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./passenger-details.css?v=20260819-premium-v2-spt">
+  <link rel="stylesheet" href="./passenger-details.css?v=20260819-premium-v3-supabase-spt">
 </head>
 <body>
   <main class="app-shell">
@@ -174,7 +174,7 @@
 
           <div class="upload-copy">
             <strong>Upload SPT</strong>
-            <span>PDF, JPG atau PNG · maks. 10 MB</span>
+            <span>PDF, JPG atau PNG · maks. 5 MB</span>
           </div>
 
           <span class="upload-action">Pilih file</span>
@@ -189,6 +189,24 @@
           <button class="remove-file" id="removeSptBtn" type="button" aria-label="Hapus file">
             <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
           </button>
+        </div>
+
+        <div class="spt-upload-progress hidden" id="sptUploadProgress">
+          <div class="spt-progress-head">
+            <span id="sptProgressLabel">Mengunggah SPT...</span>
+            <strong id="sptProgressValue">0%</strong>
+          </div>
+          <div class="spt-progress-track"><i id="sptProgressBar"></i></div>
+        </div>
+
+        <div class="spt-upload-success hidden" id="sptUploadSuccess">
+          <span>
+            <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
+          </span>
+          <div>
+            <strong>SPT tersimpan aman</strong>
+            <small>Dokumen berhasil disimpan ke OTW.</small>
+          </div>
         </div>
 
         <small class="field-error spt-error" id="sptError"></small>
@@ -345,6 +363,6 @@
     </article>
   </template>
 
-  <script type="module" src="./passenger-details.js?v=20260819-premium-v2-spt"></script>
+  <script type="module" src="./passenger-details.js?v=20260819-premium-v3-supabase-spt"></script>
 </body>
 </html>

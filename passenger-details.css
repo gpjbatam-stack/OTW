@@ -229,3 +229,15 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
   font-size:6.5px;line-height:1.45
 }
 .upload-note svg{width:12px;flex:0 0 auto;color:#5f7fa3;margin-top:1px}
+
+.spt-upload-progress{margin-top:9px;padding:10px;border:1px solid #dfe8f2;border-radius:13px;background:#f9fbfe}
+.spt-progress-head{display:flex;align-items:center;justify-content:space-between;font-size:6.8px;color:#71839a}
+.spt-progress-head strong{font-size:7px;color:#1269ed}
+.spt-progress-track{height:5px;margin-top:7px;border-radius:99px;background:#e8eef6;overflow:hidden}
+.spt-progress-track i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#1476ff,#22b8ff);transition:width .25s ease}
+.spt-upload-success{margin-top:9px;padding:9px 10px;border:1px solid #cfeade;border-radius:13px;background:#effaf5;display:flex;align-items:center;gap:8px}
+.spt-upload-success>span{width:28px;height:28px;border-radius:9px;background:#16b978;color:#fff;display:grid;place-items:center;flex:0 0 auto}
+.spt-upload-success svg{width:14px}
+.spt-upload-success strong{display:block;font-size:7.8px;color:#0d7754}
+.spt-upload-success small{display:block;margin-top:2px;font-size:6.3px;color:#6f8a80}
+.continue-btn.loading{pointer-events:none;opacity:.72}
