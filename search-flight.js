@@ -1,7 +1,9 @@
 import { requireAuth } from "./guard.js";
-import { searchFlights } from "./jetwize-service.js";
 
 await requireAuth({ redirect: "login.html" });
+
+const SUPABASE_URL = "https://vumyxlbybhlaicubtgun.supabase.co";
+const EDGE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/jetwize-search`;
 
 const qs = new URLSearchParams(location.search);
 const search = {
@@ -51,9 +53,9 @@ function formatDuration(mins) {
 }
 function timeOnly(value) {
   if (!value) return "--:--";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return String(value).slice(0,5);
-  return new Intl.DateTimeFormat("id-ID",{hour:"2-digit",minute:"2-digit",hour12:false}).format(d);
+  const match = String(value).match(/T(\\d{2}):(\\d{2})/);
+  if (match) return `${match[1]}:${match[2]}`;
+  return String(value).slice(0,5);
 }
 function passengerLabel() {
   const arr=[`${search.adults} Dewasa`];
@@ -74,9 +76,86 @@ function syncHeader(){
 syncHeader();
 
 function normalizedFare(f) {
-  // supplier price + 3% internal OTW pricing
-  const base=Number(f.supplierPrice ?? f.price ?? f.amount ?? 0);
-  return Math.round(base * 1.03);
+  // Harga supplier asli. Markup akan diambil dari setting Admin pada tahap pricing.
+  return Number(f.supplierTotalPrice ?? 0);
+}
+
+function normalizeOffer(offer) {
+  const segments = Array.isArray(offer.segments) ? offer.segments : [];
+  const first = segments[0] || {};
+  const last = segments[segments.length - 1] || first;
+  return {
+    ...offer,
+    airlineCode: first.carrier || "",
+    airlineName: first.carrierName || first.carrier || "Maskapai",
+    flightNumber: segments.map(s => s.flightNumber).filter(Boolean).join(" · "),
+    departureTime: first.departureLocalTime || first.departureTime,
+    arrivalTime: last.arrivalLocalTime || last.arrivalTime,
+    durationMinutes: Number(offer.totalDuration || 0),
+    baggage: first.baggageAllowance || null,
+    cabin: first.cabinClass || search.cabin,
+    aircraft: first.aircraft || null
+  };
+}
+
+function getSupabaseAccessToken() {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || !key.startsWith("sb-") || !key.endsWith("-auth-token")) continue;
+    try {
+      const raw = JSON.parse(localStorage.getItem(key));
+      const token = raw?.access_token || raw?.currentSession?.access_token || raw?.session?.access_token;
+      if (token) return token;
+    } catch {}
+  }
+  return sessionStorage.getItem("sb-access-token") || localStorage.getItem("sb-access-token");
+}
+
+async function searchFlights(searchData) {
+  if (!searchData.destination) throw new Error("Pilih bandara tujuan terlebih dahulu.");
+  if (!searchData.depart) throw new Error("Pilih tanggal keberangkatan terlebih dahulu.");
+
+  const token = getSupabaseAccessToken();
+  if (!token) throw new Error("Sesi login Supabase tidak ditemukan. Silakan login ulang.");
+
+  const cabinMap = {
+    "Ekonomi": "ECONOMY",
+    "Premium Ekonomi": "PREMIUM_ECONOMY",
+    "Bisnis": "BUSINESS",
+    "First": "FIRST"
+  };
+
+  const payload = {
+    origin: searchData.origin,
+    destination: searchData.destination,
+    departDate: searchData.depart,
+    passengers: {
+      adult: searchData.adults,
+      child: searchData.children,
+      infant: searchData.infants
+    },
+    cabinClass: cabinMap[searchData.cabin] || "ECONOMY",
+    route: "ALL"
+  };
+
+  if (searchData.trip === "roundtrip" && searchData.return) {
+    payload.returnDate = searchData.return;
+  }
+
+  const response = await fetch(EDGE_FUNCTION_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data?.error) {
+    throw new Error(data?.error?.message || `Pencarian gagal (${response.status})`);
+  }
+  return (Array.isArray(data.results) ? data.results : []).map(normalizeOffer);
 }
 
 function render(){
@@ -84,7 +163,7 @@ function render(){
   if(stopFilter!=="all") rows=rows.filter(f=>Number(f.stops??0)===Number(stopFilter));
   if(timeFilter){
     rows=rows.filter(f=>{
-      const h=Number(String(f.departureTime||"").slice(0,2));
+      const match=String(f.departureTime||"").match(/T(\\d{2}):/); const h=match?Number(match[1]):-1;
       if(timeFilter==="morning") return h>=0&&h<10;
       if(timeFilter==="day") return h>=10&&h<16;
       if(timeFilter==="evening") return h>=16&&h<19;
@@ -123,9 +202,9 @@ function render(){
       </div>
       <div class="fare-row">
         <div class="fare-copy">
-          <small>Harga tiket / orang</small>
+          <small>Harga supplier saat ini</small>
           <strong>${formatCurrency(price,f.currency||"IDR")}</strong>
-          <em>Belum termasuk biaya layanan OTW</em>
+          <em>Markup & biaya layanan OTW belum diterapkan</em>
         </div>
         <button class="select-flight" data-index="${i}">Pilih</button>
       </div>
