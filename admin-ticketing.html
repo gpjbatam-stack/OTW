@@ -8,267 +8,293 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./admin-ticketing.css?v=20260819-v1">
+  <link rel="stylesheet" href="./admin-ticketing.css?v=20260819-v3-issuance-console">
 </head>
 <body>
-  <div class="admin-layout">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-mark">O</div>
-        <div><strong>OTW</strong><span>ADMIN CONSOLE</span></div>
-      </div>
+<div class="admin-app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">O</span>
+      <div><strong>OTW</strong><small>ADMIN CONSOLE</small></div>
+    </div>
 
-      <nav class="side-nav">
-        <a href="admin.html">
-          <svg viewBox="0 0 24 24"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z"/></svg>
-          Dashboard
-        </a>
-        <a href="admin-ticketing.html" class="active">
-          <svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 7v10M16 7v10"/></svg>
-          Ticketing
-          <span id="sideNewCount" class="nav-count">0</span>
-        </a>
-        <a href="admin-pricing.html">
-          <svg viewBox="0 0 24 24"><path d="M4 18V9M10 18V5M16 18v-7M22 18V3"/></svg>
-          Pricing
-        </a>
-        <a href="admin.html">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-          Admin
-        </a>
-      </nav>
+    <nav class="side-nav">
+      <a href="admin.html">
+        <svg viewBox="0 0 24 24"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z"/></svg>
+        Dashboard
+      </a>
+      <a class="active" href="admin-ticketing.html">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 7v10M16 7v10"/></svg>
+        Ticketing
+        <span class="nav-count" id="navQueueCount">0</span>
+      </a>
+      <a href="admin-pricing.html">
+        <svg viewBox="0 0 24 24"><path d="M4 18V9M10 18V5M16 18v-7M22 18V3"/></svg>
+        Pricing Tiket
+      </a>
+      <a href="admin-addons.html">
+        <svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"/></svg>
+        Add-on Pricing
+      </a>
+    </nav>
 
-      <div class="side-bottom">
-        <div class="secure-box">
-          <span class="secure-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
-          </span>
-          <div><strong>Secure Console</strong><small>Admin access protected</small></div>
-        </div>
-        <button id="logoutBtn" class="logout-btn" type="button">Keluar</button>
-      </div>
-    </aside>
-
-    <main class="workspace">
-      <header class="mobile-head">
-        <button id="mobileMenuBtn" class="icon-btn" type="button">
-          <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        </button>
-        <div><span>OTW ADMIN</span><strong>Ticketing</strong></div>
-        <button id="mobileRefreshBtn" class="icon-btn" type="button">
-          <svg viewBox="0 0 24 24"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M6 9a7 7 0 0 1 12-3l2 5M18 15a7 7 0 0 1-12 3l-2-5"/></svg>
-        </button>
-      </header>
-
-      <section class="page-head">
-        <div>
-          <span class="eyebrow">OPERATIONS / TICKETING</span>
-          <h1>Ticketing Command Center</h1>
-          <p>Kelola pengajuan, verifikasi, fulfillment supplier, PNR, e-ticket, dan penyelesaian perjalanan.</p>
-        </div>
-        <div class="head-actions">
-          <button id="refreshBtn" class="secondary-btn" type="button">
-            <svg viewBox="0 0 24 24"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M6 9a7 7 0 0 1 12-3l2 5M18 15a7 7 0 0 1-12 3l-2-5"/></svg>
-            Refresh
-          </button>
-          <button id="newestBtn" class="primary-btn" type="button">Pesanan Terbaru</button>
-        </div>
-      </section>
-
-      <section class="hero">
-        <div class="hero-glow"></div>
-        <div class="hero-copy">
-          <span class="hero-kicker">LIVE OPERATIONS</span>
-          <h2>Kelola tiket dengan <em>lebih cepat.</em></h2>
-          <p>Prioritaskan order baru, cek keberangkatan terdekat, lalu selesaikan fulfillment dari satu workspace.</p>
-        </div>
-        <div class="hero-status">
-          <span>Hari ini</span>
-          <strong id="todayCount">0</strong>
-          <small id="todayValue">Rp0 nilai pengajuan</small>
-        </div>
-      </section>
-
-      <section class="metrics">
-        <article class="metric-card">
-          <span class="metric-icon blue"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8"/></svg></span>
-          <div><small>ORDER BARU</small><strong id="newCount">0</strong><span>Perlu ditinjau</span></div>
-        </article>
-        <article class="metric-card">
-          <span class="metric-icon amber"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-          <div><small>DIPROSES</small><strong id="processCount">0</strong><span>Dalam fulfillment</span></div>
-        </article>
-        <article class="metric-card">
-          <span class="metric-icon violet"><svg viewBox="0 0 24 24"><path d="m3 12 4-4 4 4 6-6 4 4"/><path d="M17 6h4v4"/></svg></span>
-          <div><small>VERIFIED</small><strong id="verifiedCount">0</strong><span>Siap issue</span></div>
-        </article>
-        <article class="metric-card">
-          <span class="metric-icon green"><svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="m8 12 2 2 5-5"/></svg></span>
-          <div><small>TIKET TERBIT</small><strong id="issuedCount">0</strong><span>Issued</span></div>
-        </article>
-        <article class="metric-card">
-          <span class="metric-icon neutral"><svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg></span>
-          <div><small>SELESAI</small><strong id="completedCount">0</strong><span>Closed</span></div>
-        </article>
-      </section>
-
-      <section class="control-panel">
-        <div class="search-wrap">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-          <input id="searchInput" type="search" placeholder="Cari order, rute, maskapai, flight number...">
-        </div>
-
-        <div class="controls">
-          <select id="statusSelect" aria-label="Filter status">
-            <option value="ALL">Semua status</option>
-            <option value="SUBMITTED">Order baru</option>
-            <option value="PROCESSING">Diproses</option>
-            <option value="VERIFIED">Verified</option>
-            <option value="ISSUED">Tiket terbit</option>
-            <option value="COMPLETED">Selesai</option>
-            <option value="CANCELLED">Dibatalkan</option>
-          </select>
-
-          <select id="sortSelect" aria-label="Urutan">
-            <option value="NEWEST">Terbaru</option>
-            <option value="DEPARTURE">Keberangkatan terdekat</option>
-            <option value="HIGHEST">Nilai tertinggi</option>
-            <option value="OLDEST">Terlama</option>
-          </select>
-        </div>
-      </section>
-
-      <section class="queue-head">
-        <div><span class="eyebrow">WORK QUEUE</span><h2 id="resultLabel">Memuat order...</h2></div>
-        <span id="lastSync" class="last-sync">—</span>
-      </section>
-
-      <section id="loadingState" class="loading-grid">
-        <article class="skeleton"></article><article class="skeleton"></article><article class="skeleton"></article>
-      </section>
-
-      <section id="errorState" class="state-card hidden">
-        <span class="state-icon">!</span>
-        <strong>Ticketing belum dapat dimuat</strong>
-        <p id="errorMessage">Terjadi gangguan saat mengambil data.</p>
-        <button id="retryBtn" type="button">Coba lagi</button>
-      </section>
-
-      <section id="emptyState" class="state-card hidden">
-        <span class="state-icon">
-          <svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/></svg>
+    <div class="sidebar-foot">
+      <div class="security-card">
+        <span>
+          <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
         </span>
-        <strong>Tidak ada order pada filter ini</strong>
-        <p>Ubah filter atau kata pencarian untuk melihat order lainnya.</p>
-      </section>
-
-      <section id="ticketList" class="ticket-list hidden"></section>
-    </main>
-  </div>
-
-  <div id="drawerBackdrop" class="drawer-backdrop hidden">
-    <aside id="ticketDrawer" class="ticket-drawer">
-      <header class="drawer-head">
-        <div>
-          <span class="eyebrow">TICKETING WORKSPACE</span>
-          <h2 id="drawerOrderCode">OTW-—</h2>
-          <p id="drawerCreated">—</p>
-        </div>
-        <button id="closeDrawerBtn" class="close-btn" type="button">×</button>
-      </header>
-
-      <div class="drawer-scroll">
-        <section class="drawer-status-card">
-          <div>
-            <span>Status saat ini</span>
-            <strong id="drawerStatus">—</strong>
-          </div>
-          <span id="drawerStatusBadge" class="status-badge st-submitted"><i></i>Diajukan</span>
-        </section>
-
-        <section class="drawer-section">
-          <div class="section-head"><span>01</span><div><small>FLIGHT</small><strong>Detail perjalanan</strong></div></div>
-          <div class="flight-box">
-            <div class="flight-airline">
-              <span id="drawerAirlineCode">FL</span>
-              <div><strong id="drawerAirline">Maskapai</strong><small id="drawerFlightNumber">—</small></div>
-            </div>
-            <div class="flight-route">
-              <div><strong id="drawerOrigin">---</strong><small id="drawerDepart">—</small></div>
-              <div class="route-track"><i></i><svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg><i></i></div>
-              <div class="right"><strong id="drawerDestination">---</strong><small id="drawerArrival">—</small></div>
-            </div>
-          </div>
-        </section>
-
-        <section class="drawer-section">
-          <div class="section-head"><span>02</span><div><small>CUSTOMER</small><strong>Data pengajuan</strong></div></div>
-          <div class="info-grid">
-            <div><small>Penumpang</small><strong id="drawerPax">—</strong></div>
-            <div><small>Total</small><strong id="drawerTotal">—</strong></div>
-            <div><small>SPT</small><strong id="drawerSpt">—</strong></div>
-            <div><small>Add-on</small><strong id="drawerAddon">—</strong></div>
-          </div>
-          <button id="openCustomerDetailBtn" class="outline-full" type="button">Buka detail pesanan customer</button>
-        </section>
-
-        <section class="drawer-section">
-          <div class="section-head"><span>03</span><div><small>FULFILLMENT</small><strong>Supplier & tiket</strong></div></div>
-
-          <div class="form-grid">
-            <label>
-              <span>Supplier / Agen</span>
-              <input id="supplierInput" type="text" placeholder="Contoh: Supplier A">
-            </label>
-            <label>
-              <span>PNR / Booking Code</span>
-              <input id="pnrInput" type="text" placeholder="Contoh: ABC123">
-            </label>
-            <label class="full">
-              <span>URL E-ticket</span>
-              <input id="ticketUrlInput" type="url" placeholder="https://...">
-            </label>
-            <label class="full">
-              <span>Catatan Admin</span>
-              <textarea id="adminNotesInput" rows="4" placeholder="Catatan yang boleh dilihat customer..."></textarea>
-            </label>
-          </div>
-        </section>
-
-        <section class="drawer-section">
-          <div class="section-head"><span>04</span><div><small>STATUS CONTROL</small><strong>Update proses</strong></div></div>
-          <div class="status-flow" id="statusFlow">
-            <button type="button" data-status="SUBMITTED">Diajukan</button>
-            <button type="button" data-status="PROCESSING">Diproses</button>
-            <button type="button" data-status="VERIFIED">Verified</button>
-            <button type="button" data-status="ISSUED">Issued</button>
-            <button type="button" data-status="COMPLETED">Selesai</button>
-          </div>
-          <button id="cancelOrderBtn" class="danger-link" type="button">Batalkan pengajuan</button>
-        </section>
+        <div><strong>Secure Console</strong><small id="adminIdentity">Memverifikasi admin…</small></div>
       </div>
+      <button id="logoutBtn" class="logout-btn" type="button">Keluar Admin</button>
+    </div>
+  </aside>
 
-      <footer class="drawer-actions">
-        <button id="saveDraftBtn" class="secondary-btn" type="button">Simpan Data</button>
-        <button id="saveStatusBtn" class="primary-btn" type="button">Simpan & Update</button>
-      </footer>
-    </aside>
-  </div>
+  <main class="workspace">
+    <header class="mobile-header">
+      <button id="menuBtn" class="square-btn" type="button"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <div><small>OTW ADMIN</small><strong>Ticketing</strong></div>
+      <button id="mobileRefreshBtn" class="square-btn" type="button"><svg viewBox="0 0 24 24"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M6 9a7 7 0 0 1 12-3l2 5M18 15a7 7 0 0 1-12 3l-2-5"/></svg></button>
+    </header>
 
-  <div id="confirmBackdrop" class="modal-backdrop hidden">
-    <section class="confirm-modal">
-      <span class="confirm-icon">!</span>
-      <h3>Batalkan pengajuan?</h3>
-      <p>Pesanan akan berstatus CANCELLED dan perubahan akan terlihat pada halaman customer.</p>
+    <section class="page-header">
       <div>
-        <button id="cancelConfirmBtn" class="secondary-btn" type="button">Kembali</button>
-        <button id="confirmCancelBtn" class="danger-btn" type="button">Ya, batalkan</button>
+        <span class="eyebrow">OPERATIONS / AIR TICKETING</span>
+        <h1>Ticketing Command Center</h1>
+        <p>Verifikasi pengajuan, proses supplier, kelola PNR & e-ticket, lalu issue perjalanan dari satu workspace.</p>
+      </div>
+      <div class="header-actions">
+        <button id="refreshBtn" class="button ghost" type="button">
+          <svg viewBox="0 0 24 24"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M6 9a7 7 0 0 1 12-3l2 5M18 15a7 7 0 0 1-12 3l-2-5"/></svg>
+          Refresh
+        </button>
+        <button id="focusNewBtn" class="button primary" type="button">Fokus Order Baru</button>
       </div>
     </section>
-  </div>
 
-  <div id="toast" class="toast"></div>
+    <section class="ops-hero">
+      <div class="hero-orb"></div>
+      <div class="hero-copy">
+        <span>LIVE TICKETING OPERATIONS</span>
+        <h2>From request to <em>issued.</em></h2>
+        <p>Prioritaskan pekerjaan yang belum lengkap, pastikan dokumen resmi tersedia, dan terbitkan perjalanan tanpa kehilangan kontrol.</p>
+      </div>
+      <div class="hero-today">
+        <small>ORDER HARI INI</small>
+        <strong id="todayOrders">0</strong>
+        <span id="todayAmount">Rp0</span>
+      </div>
+    </section>
 
-  <script type="module" src="./admin-ticketing.js?v=20260819-v1"></script>
+    <section class="metrics">
+      <article><span class="metric-icon blue">01</span><div><small>ORDER BARU</small><strong id="metricSubmitted">0</strong><p>Perlu review</p></div></article>
+      <article><span class="metric-icon amber">02</span><div><small>PROCESSING</small><strong id="metricProcessing">0</strong><p>Fulfillment aktif</p></div></article>
+      <article><span class="metric-icon violet">03</span><div><small>VERIFIED</small><strong id="metricVerified">0</strong><p>Siap issue</p></div></article>
+      <article><span class="metric-icon green">04</span><div><small>ISSUED</small><strong id="metricIssued">0</strong><p>Tiket terbit</p></div></article>
+      <article><span class="metric-icon slate">05</span><div><small>COMPLETED</small><strong id="metricCompleted">0</strong><p>Closed</p></div></article>
+    </section>
+
+    <section class="workbar">
+      <div class="searchbox">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="searchInput" type="search" placeholder="Cari order, rute, maskapai, PNR, nomor tiket…">
+      </div>
+      <select id="statusFilter">
+        <option value="ALL">Semua status</option>
+        <option value="SUBMITTED">Order baru</option>
+        <option value="PROCESSING">Processing</option>
+        <option value="VERIFIED">Verified</option>
+        <option value="ISSUED">Issued</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="CANCELLED">Cancelled</option>
+      </select>
+      <select id="sortFilter">
+        <option value="NEWEST">Terbaru</option>
+        <option value="DEPARTURE">Keberangkatan terdekat</option>
+        <option value="HIGHEST">Nilai tertinggi</option>
+        <option value="OLDEST">Terlama</option>
+      </select>
+    </section>
+
+    <section class="queue-head">
+      <div><span class="eyebrow">WORK QUEUE</span><h2 id="queueLabel">Memuat ticketing…</h2></div>
+      <span id="syncLabel">—</span>
+    </section>
+
+    <section id="loadingState" class="loading-stack">
+      <div></div><div></div><div></div>
+    </section>
+
+    <section id="errorState" class="empty-state hidden">
+      <span>!</span><strong>Ticketing belum dapat dimuat</strong><p id="errorText">Terjadi gangguan.</p>
+      <button id="retryBtn" type="button">Coba lagi</button>
+    </section>
+
+    <section id="emptyState" class="empty-state hidden">
+      <span>✓</span><strong>Tidak ada order pada filter ini</strong><p>Antrean ticketing Anda bersih atau filter terlalu spesifik.</p>
+    </section>
+
+    <section id="orderList" class="order-list hidden"></section>
+  </main>
+</div>
+
+<div class="backdrop hidden" id="drawerBackdrop">
+  <aside class="drawer" id="drawer">
+    <header class="drawer-header">
+      <div>
+        <span class="eyebrow">TICKETING WORKSPACE</span>
+        <h2 id="drawerCode">OTW-—</h2>
+        <p id="drawerCreated">—</p>
+      </div>
+      <button id="closeDrawerBtn" type="button">×</button>
+    </header>
+
+    <div class="drawer-progress">
+      <div class="progress-meta"><span>Issue readiness</span><strong id="readinessPercent">0%</strong></div>
+      <div class="progress-track"><i id="readinessBar"></i></div>
+    </div>
+
+    <div class="drawer-scroll">
+      <section class="current-status">
+        <div><small>STATUS SAAT INI</small><strong id="drawerStatusText">Diajukan</strong></div>
+        <span id="drawerStatusBadge" class="status-pill submitted"><i></i>Diajukan</span>
+      </section>
+
+      <section class="workspace-card">
+        <header><span>01</span><div><small>TRIP</small><strong>Perjalanan & customer</strong></div></header>
+        <div class="flight-summary">
+          <div class="airline-row">
+            <span id="airlineCodeBadge">FL</span>
+            <div><strong id="drawerAirline">Maskapai</strong><small id="drawerFlightNo">—</small></div>
+            <b id="drawerDepartureDate">—</b>
+          </div>
+          <div class="route-row">
+            <div><strong id="drawerOrigin">---</strong><small id="drawerDepartTime">—</small></div>
+            <div class="route-line"><i></i><svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg><i></i></div>
+            <div class="right"><strong id="drawerDestination">---</strong><small id="drawerArrivalTime">—</small></div>
+          </div>
+        </div>
+        <div class="mini-grid">
+          <div><small>Penumpang</small><strong id="drawerPax">—</strong></div>
+          <div><small>Total customer</small><strong id="drawerTotal">—</strong></div>
+          <div><small>Add-on</small><strong id="drawerAddon">—</strong></div>
+          <div><small>SPT</small><strong id="drawerSptState">—</strong></div>
+        </div>
+        <div class="dual-actions">
+          <button id="viewSptBtn" type="button">
+            <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/></svg>
+            Lihat SPT
+          </button>
+          <button id="openCustomerBtn" type="button">Detail Customer ↗</button>
+        </div>
+      </section>
+
+      <section class="workspace-card">
+        <header><span>02</span><div><small>SUPPLIER FULFILLMENT</small><strong>Data pembelian tiket</strong></div></header>
+        <div class="form-grid">
+          <label><span>Supplier / Agen</span><input id="supplierInput" type="text" placeholder="Nama supplier"></label>
+          <label><span>Harga Aktual Supplier</span><input id="supplierCostInput" type="number" min="0" placeholder="0"></label>
+          <label><span>PNR / Booking Code</span><input id="pnrInput" type="text" maxlength="20" placeholder="ABC123"></label>
+          <label><span>Nomor E-ticket</span><input id="ticketNumberInput" type="text" placeholder="990-1234567890"></label>
+        </div>
+        <div class="margin-panel">
+          <div><small>Harga customer</small><strong id="customerAmount">Rp0</strong></div>
+          <div><small>Harga supplier</small><strong id="supplierAmount">Rp0</strong></div>
+          <div class="margin-result"><small>Estimasi selisih</small><strong id="marginAmount">Rp0</strong></div>
+        </div>
+      </section>
+
+      <section class="workspace-card">
+        <header><span>03</span><div><small>OFFICIAL E-TICKET</small><strong>Dokumen resmi supplier</strong></div></header>
+        <div class="upload-box" id="officialTicketBox">
+          <span class="upload-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/><path d="M12 16V9M9 12l3-3 3 3"/></svg></span>
+          <div><strong id="officialTicketName">Belum ada e-ticket resmi</strong><small id="officialTicketMeta">Upload PDF/JPG/PNG dari supplier atau maskapai.</small></div>
+          <label class="upload-button">Pilih File<input id="officialTicketInput" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"></label>
+        </div>
+        <div class="document-actions">
+          <button id="openOfficialTicketBtn" type="button" disabled>Lihat E-ticket Resmi</button>
+          <button id="removeOfficialTicketBtn" class="danger-text" type="button" disabled>Hapus</button>
+        </div>
+      </section>
+
+      <section class="workspace-card">
+        <header><span>04</span><div><small>ISSUANCE READINESS</small><strong>Validasi sebelum terbit</strong></div></header>
+        <div class="checklist" id="issueChecklist">
+          <div data-check="flight"><i></i><span><strong>Data penerbangan</strong><small>Rute, flight number, dan jadwal tersedia</small></span></div>
+          <div data-check="passenger"><i></i><span><strong>Data penumpang</strong><small>Minimal satu penumpang tersedia</small></span></div>
+          <div data-check="spt"><i></i><span><strong>SPT perjalanan</strong><small>Dokumen SPT tersimpan</small></span></div>
+          <div data-check="supplier"><i></i><span><strong>Supplier fulfillment</strong><small>Supplier dan harga aktual telah diisi</small></span></div>
+          <div data-check="pnr"><i></i><span><strong>PNR / booking code</strong><small>Kode booking resmi tersedia</small></span></div>
+          <div data-check="ticketNumber"><i></i><span><strong>Nomor e-ticket</strong><small>Nomor tiket resmi tersedia</small></span></div>
+          <div data-check="officialTicket"><i></i><span><strong>Official e-ticket</strong><small>Dokumen resmi supplier sudah di-upload</small></span></div>
+        </div>
+      </section>
+
+      <section class="workspace-card travel-doc-card">
+        <header><span>05</span><div><small>OTW TRAVEL DOCUMENT</small><strong>Dokumen perjalanan OTW</strong></div></header>
+        <div class="travel-doc-preview">
+          <div class="travel-doc-brand"><span>OTW</span><small>OFFICIAL TRIP FOR WORK</small></div>
+          <div><small>TRAVEL DOCUMENT</small><strong id="travelDocRoute">--- → ---</strong><span id="travelDocReference">Booking Reference: —</span></div>
+          <b>VERIFIED TRIP</b>
+        </div>
+        <p class="helper-copy">Dokumen OTW adalah ringkasan perjalanan. E-ticket resmi maskapai tetap disediakan terpisah.</p>
+        <div class="document-actions three">
+          <button id="previewTravelDocBtn" type="button">Preview</button>
+          <button id="generateTravelDocBtn" type="button">Generate</button>
+          <button id="printTravelDocBtn" type="button" disabled>Cetak / PDF</button>
+        </div>
+      </section>
+
+      <section class="workspace-card">
+        <header><span>06</span><div><small>COMMUNICATION</small><strong>Catatan operasional</strong></div></header>
+        <div class="form-grid one">
+          <label><span>Catatan internal admin</span><textarea id="internalNoteInput" rows="3" placeholder="Hanya untuk tim OTW. Tidak terlihat customer."></textarea></label>
+          <label><span>Catatan untuk customer</span><textarea id="customerNoteInput" rows="3" placeholder="Informasi yang akan tampil di Detail Pesanan customer."></textarea></label>
+        </div>
+      </section>
+
+      <section class="workspace-card status-control-card">
+        <header><span>07</span><div><small>STATUS CONTROL</small><strong>Lifecycle pesanan</strong></div></header>
+        <div class="status-flow" id="statusFlow">
+          <button data-status="SUBMITTED" type="button">Diajukan</button>
+          <button data-status="PROCESSING" type="button">Processing</button>
+          <button data-status="VERIFIED" type="button">Verified</button>
+          <button data-status="ISSUED" type="button">Issued</button>
+          <button data-status="COMPLETED" type="button">Completed</button>
+        </div>
+        <button id="cancelBtn" class="cancel-link" type="button">Batalkan pengajuan</button>
+      </section>
+    </div>
+
+    <footer class="drawer-footer">
+      <button id="saveDraftBtn" class="button ghost" type="button">Simpan Draft</button>
+      <button id="saveStatusBtn" class="button secondary" type="button">Update Status</button>
+      <button id="issueBtn" class="button issue" type="button">Generate & Issue</button>
+    </footer>
+  </aside>
+</div>
+
+<div class="modal-backdrop hidden" id="cancelModal">
+  <section class="confirm-modal">
+    <span>!</span><h3>Batalkan pengajuan?</h3><p>Status customer akan berubah menjadi CANCELLED.</p>
+    <div><button id="closeCancelBtn" class="button ghost" type="button">Kembali</button><button id="confirmCancelBtn" class="button danger" type="button">Batalkan Pesanan</button></div>
+  </section>
+</div>
+
+<div class="modal-backdrop hidden" id="travelDocModal">
+  <section class="travel-modal">
+    <header><div><span class="eyebrow">OTW TRAVEL DOCUMENT</span><h3>Preview dokumen</h3></div><button id="closeTravelDocBtn" type="button">×</button></header>
+    <div id="printableTravelDoc" class="printable-doc">
+      <div class="doc-top"><div><strong>OTW</strong><small>OFFICIAL TRIP FOR WORK</small></div><span>TRAVEL DOCUMENT</span></div>
+      <div class="doc-ref"><small>OTW ORDER</small><strong id="docOrderCode">—</strong><small>BOOKING REFERENCE</small><strong id="docPnr">—</strong></div>
+      <div class="doc-route"><div><small>FROM</small><strong id="docOrigin">---</strong><span id="docDepart">—</span></div><b>→</b><div><small>TO</small><strong id="docDestination">---</strong><span id="docArrival">—</span></div></div>
+      <div class="doc-grid"><div><small>AIRLINE</small><strong id="docAirline">—</strong></div><div><small>FLIGHT</small><strong id="docFlight">—</strong></div><div><small>PASSENGERS</small><strong id="docPax">—</strong></div><div><small>E-TICKET</small><strong id="docTicketNumber">—</strong></div></div>
+      <div class="doc-disclaimer">Dokumen ini adalah ringkasan perjalanan OTW. Gunakan e-ticket resmi maskapai/supplier untuk proses perjalanan.</div>
+    </div>
+    <footer><button id="modalPrintBtn" class="button primary" type="button">Cetak / Simpan PDF</button></footer>
+  </section>
+</div>
+
+<div id="toast" class="toast"></div>
+<script type="module" src="./admin-ticketing.js?v=20260819-v3-issuance-console"></script>
 </body>
 </html>
