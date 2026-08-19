@@ -12,6 +12,11 @@ let search=readJSON("otw_search")||flight?.searchSnapshot||{};
 let catalog=[];
 let selectedBaggage={};
 let selectedInsurance=null;
+const previousSelection=readJSON("otw_flight_addons");
+if(previousSelection?.airlineCode===airlineCode()){
+  selectedInsurance=previousSelection.insurance||null;
+}
+
 
 function readJSON(key){try{return JSON.parse(sessionStorage.getItem(key)||localStorage.getItem(key)||"null")}catch{return null}}
 function esc(v=""){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
@@ -47,22 +52,89 @@ function renderFlight(){
 
 async function loadCatalog(){
   const code=airlineCode();
-  let {data,error}=await supabase.from("addon_catalog_public").select("*").eq("airline_code",code).order("addon_type").order("weight_kg",{ascending:true});
-  if(error){
-    const fallback=await supabase.from("addon_catalog").select("*").eq("airline_code",code).order("addon_type").order("weight_kg",{ascending:true});
-    data=fallback.data;error=fallback.error;
+
+  $("#baggageState").classList.remove("hidden");
+  $("#insuranceState").classList.remove("hidden");
+  $("#baggageEmpty").classList.add("hidden");
+  $("#insuranceEmpty").classList.add("hidden");
+
+  try{
+    const {data,error}=await supabase.rpc("get_public_addon_catalog",{
+      p_airline_code:code
+    });
+
+    if(error) throw error;
+
+    catalog=(data||[]).map(item=>({
+      ...item,
+      selling_price:Number(item.selling_price||0),
+      weight_kg:item.weight_kg==null?null:Number(item.weight_kg)
+    }));
+
+    console.info("[OTW Add-ons] catalog loaded",code,catalog);
+
+    renderBaggage();
+    renderInsurance();
+
+  }catch(error){
+    console.error("[OTW Add-ons] public catalog:",error);
+    catalog=[];
+
+    $("#baggageState").classList.add("hidden");
+    $("#insuranceState").classList.add("hidden");
+
+    $("#baggageEmpty").classList.remove("hidden");
+    $("#insuranceEmpty").classList.remove("hidden");
+
+    $("#baggageEmpty").innerHTML=`
+      <span>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 17h.01"/></svg>
+      </span>
+      <strong>Harga bagasi belum dapat dimuat</strong>
+      <small>${esc(error?.message||"Periksa konfigurasi Add-on Pricing OTW.")}</small>
+      <button type="button" class="retry-addon" id="retryBaggage">Coba lagi</button>
+    `;
+
+    $("#insuranceEmpty").innerHTML=`
+      <span>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 17h.01"/></svg>
+      </span>
+      <strong>Harga asuransi belum dapat dimuat</strong>
+      <small>${esc(error?.message||"Periksa konfigurasi Add-on Pricing OTW.")}</small>
+      <button type="button" class="retry-addon" id="retryInsurance">Coba lagi</button>
+    `;
+
+    $("#retryBaggage")?.addEventListener("click",loadCatalog);
+    $("#retryInsurance")?.addEventListener("click",loadCatalog);
+
+    toast("Katalog add-on belum dapat dimuat.");
   }
-  catalog=error?[]:(data||[]);
-  if(error)console.error("[OTW Addons] catalog:",error);
-  renderBaggage();renderInsurance();
 }
+
 const baggageCatalog=()=>catalog.filter(x=>x.addon_type==="BAGGAGE");
 const insuranceCatalog=()=>catalog.filter(x=>["INSURANCE","PROTECTION"].includes(x.addon_type));
 
 function renderBaggage(){
   $("#baggageState").classList.add("hidden");
+
+  if(previousSelection?.airlineCode===airlineCode() && Array.isArray(previousSelection?.baggage)){
+    selectedBaggage={};
+    previousSelection.baggage.forEach(x=>{
+      const found=catalog.find(item=>String(item.id)===String(x.addonId));
+      if(found) selectedBaggage[String(x.passengerIndex)]=found;
+    });
+  }
   const options=baggageCatalog(),list=$("#baggagePassengers");
-  if(!options.length){$("#baggageEmpty").classList.remove("hidden");list.classList.add("hidden");return}
+  if(!options.length){
+    $("#baggageEmpty").classList.remove("hidden");
+    $("#baggageEmpty").innerHTML=`
+      <span><svg viewBox="0 0 24 24"><path d="M8 7V5a4 4 0 0 1 8 0v2"/><rect x="4" y="7" width="16" height="13" rx="3"/></svg></span>
+      <strong>Belum ada paket bagasi untuk ${esc(airlineCode())}</strong>
+      <small>Aktifkan harga bagasi maskapai ini dari Admin Add-on Pricing.</small>
+    `;
+    list.classList.add("hidden");
+    return
+  }
   $("#baggageEmpty").classList.add("hidden");list.classList.remove("hidden");list.innerHTML="";
   const template=$("#passengerTemplate");
 
@@ -80,6 +152,16 @@ function renderBaggage(){
       b.innerHTML=`<span><strong>${esc(item.addon_name)}</strong><small>${item.weight_kg?`Tambahan ${item.weight_kg} kg`:"Bagasi tambahan"}</small></span><b>${rupiah(item.selling_price)}</b>`;
       dynamic.appendChild(b);
     });
+
+    const existing=selectedBaggage[key];
+    if(existing){
+      $$("[data-addon-id]",card).forEach(btn=>{
+        btn.classList.toggle("active",String(btn.dataset.addonId)===String(existing.id));
+      });
+      $(".pax-choice",card).textContent=existing.weight_kg?`+${existing.weight_kg} kg`:"Dipilih";
+      card.classList.add("selected");
+    }
+    if(index===0) card.classList.add("open");
 
     $$("[data-addon-id]",card).forEach(btn=>btn.addEventListener("click",()=>{
       const id=btn.dataset.addonId||null;
@@ -99,7 +181,16 @@ function renderBaggage(){
 function renderInsurance(){
   $("#insuranceState").classList.add("hidden");
   const options=insuranceCatalog(),box=$("#insuranceOptions");
-  if(!options.length){$("#insuranceEmpty").classList.remove("hidden");box.classList.add("hidden");return}
+  if(!options.length){
+    $("#insuranceEmpty").classList.remove("hidden");
+    $("#insuranceEmpty").innerHTML=`
+      <span><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/></svg></span>
+      <strong>Asuransi belum diaktifkan</strong>
+      <small>Admin OTW dapat mengaktifkan paket global atau paket khusus maskapai.</small>
+    `;
+    box.classList.add("hidden");
+    return
+  }
   $("#insuranceEmpty").classList.add("hidden");box.classList.remove("hidden");box.innerHTML="";
 
   const none=document.createElement("button");
@@ -113,8 +204,15 @@ function renderInsurance(){
     btn.type="button";btn.className="insurance-option";
     btn.innerHTML=`<span class="radio"></span><span><strong>${esc(item.addon_name)}</strong><small>Perlindungan perjalanan OTW</small></span><b>${rupiah(item.selling_price)}</b>`;
     btn.onclick=()=>{selectedInsurance=item;$$(".insurance-option",box).forEach(x=>x.classList.toggle("active",x===btn));updateSummary()};
+    if(selectedInsurance && String(selectedInsurance.addonId||selectedInsurance.id)===String(item.id)){
+      none.classList.remove("active");
+      btn.classList.add("active");
+      selectedInsurance=item;
+    }
     box.appendChild(btn);
   });
+
+  updateSummary();
 }
 
 function updateSummary(){
