@@ -283,18 +283,41 @@
 <div class="modal-backdrop hidden" id="travelDocModal">
   <section class="travel-modal">
     <header><div><span class="eyebrow">OTW TRAVEL DOCUMENT</span><h3>Preview dokumen</h3></div><button id="closeTravelDocBtn" type="button">×</button></header>
-    <div id="printableTravelDoc" class="printable-doc">
-      <div class="doc-top"><div><strong>OTW</strong><small>OFFICIAL TRIP FOR WORK</small></div><span>TRAVEL DOCUMENT</span></div>
-      <div class="doc-ref"><small>OTW ORDER</small><strong id="docOrderCode">—</strong><small>BOOKING REFERENCE</small><strong id="docPnr">—</strong></div>
-      <div class="doc-route"><div><small>FROM</small><strong id="docOrigin">---</strong><span id="docDepart">—</span></div><b>→</b><div><small>TO</small><strong id="docDestination">---</strong><span id="docArrival">—</span></div></div>
-      <div class="doc-grid"><div><small>AIRLINE</small><strong id="docAirline">—</strong></div><div><small>FLIGHT</small><strong id="docFlight">—</strong></div><div><small>PASSENGERS</small><strong id="docPax">—</strong></div><div><small>E-TICKET</small><strong id="docTicketNumber">—</strong></div></div>
-      <div class="doc-disclaimer">Dokumen ini adalah ringkasan perjalanan OTW. Gunakan e-ticket resmi maskapai/supplier untuk proses perjalanan.</div>
+    <div id="printableTravelDoc" class="printable-doc premium-ticket">
+      <section class="ticket-masthead">
+        <div class="ticket-brand"><div class="brand-mark">OTW</div><div><strong>Official Trip for Work</strong><small>BUSINESS TRAVEL DOCUMENT</small></div></div>
+        <div class="ticket-verified"><i>✓</i><div><small>DOCUMENT STATUS</small><strong>VERIFIED</strong></div></div>
+      </section>
+      <section class="ticket-meta">
+        <div><small>OTW ORDER</small><strong id="docOrderCode">—</strong></div>
+        <div><small>BOOKING REFERENCE</small><strong id="docPnr">—</strong></div>
+        <div><small>DOCUMENT TYPE</small><strong>Travel Itinerary</strong></div>
+        <div class="ticket-qr"><div class="qr-pattern" aria-hidden="true"></div><span>SCAN TO VERIFY</span></div>
+      </section>
+      <section class="ticket-route">
+        <div class="airport"><small>DEPARTURE</small><strong id="docOrigin">---</strong><span id="docDepart">—</span></div>
+        <div class="flight-path"><div class="plane">✈</div><i></i><small>DIRECT FLIGHT</small></div>
+        <div class="airport destination"><small>ARRIVAL</small><strong id="docDestination">---</strong><span id="docArrival">—</span></div>
+      </section>
+      <section class="ticket-facts">
+        <div><span class="fact-icon">✈</span><small>AIRLINE</small><strong id="docAirline">—</strong></div>
+        <div><span class="fact-icon">#</span><small>FLIGHT</small><strong id="docFlight">—</strong></div>
+        <div><span class="fact-icon">◉</span><small>PASSENGERS</small><strong id="docPax">—</strong></div>
+        <div><span class="fact-icon">✓</span><small>E-TICKET NUMBER</small><strong id="docTicketNumber">—</strong></div>
+      </section>
+      <section class="ticket-passenger">
+        <div><small>PASSENGER</small><strong id="docPassengerName">Passenger</strong><span>Adult · Economy</span></div>
+        <div><small>BAGGAGE</small><strong id="docBaggage">Included</strong><span>According to booking</span></div>
+        <div><small>ISSUED BY</small><strong>OTW Ticketing</strong><span>Official Trip for Work</span></div>
+      </section>
+      <section class="ticket-notice"><span>i</span><p><strong>Informasi perjalanan</strong>Dokumen ini adalah ringkasan perjalanan resmi OTW. Untuk check-in dan boarding, gunakan e-ticket resmi maskapai/supplier dan identitas penumpang yang berlaku.</p></section>
+      <footer class="ticket-footer"><div><strong>OTW</strong><span>Official Trip for Work</span></div><div><small>SECURE TRAVEL DOCUMENT</small><span>Generated electronically by OTW Ticketing</span></div></footer>
     </div>
-    <footer><button id="modalPrintBtn" class="button primary" type="button">Cetak / Simpan PDF</button></footer>
+    <footer class="travel-actions"><button id="modalCloseBtn" class="button" type="button">Tutup</button><button id="modalPrintBtn" class="button primary" type="button">↓ &nbsp; Cetak / Simpan PDF</button></footer>
   </section>
 </div>
 
 <div id="toast" class="toast"></div>
-<script type="module" src="./admin-ticketing.js?v=20260819-v3-issuance-console"></script>
+<script type="module" src="./admin-ticketing.js?v=20260819-v4-premium-ticket"></script>
 </body>
 </html>

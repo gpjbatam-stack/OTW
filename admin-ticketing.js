@@ -156,6 +156,13 @@ async function uploadOfficialTicket(file){
 
 function fillTravelDoc(){
   $("#docOrderCode").textContent=currentOrder.order_code;$("#docPnr").textContent=$("#pnrInput").value.trim()||"—";$("#docOrigin").textContent=currentOrder.origin||"---";$("#docDestination").textContent=currentOrder.destination||"---";$("#docDepart").textContent=`${dateOnly(currentOrder.depart_at)} · ${hm(currentOrder.depart_at)}`;$("#docArrival").textContent=hm(currentOrder.arrival_at);$("#docAirline").textContent=currentOrder.airline_name||"—";$("#docFlight").textContent=currentOrder.flight_number||"—";$("#docPax").textContent=`${passengerCount(currentOrder)||1} orang`;$("#docTicketNumber").textContent=$("#ticketNumberInput").value.trim()||"—";
+  const p=currentOrder?.payload||{};
+  const pd=p.passengerDetails||p.passengers||{};
+  const first=Array.isArray(pd)?pd[0]:(pd.passengers?.[0]||pd.adults?.[0]||pd.primaryPassenger||pd);
+  const passengerName=[first?.title,first?.full_name||first?.fullName||first?.name].filter(Boolean).join(" ").trim();
+  $("#docPassengerName").textContent=passengerName||currentOrder?.passenger_name||"Passenger";
+  const baggage=p?.addons?.baggage?.label||p?.addons?.baggage||p?.selectedAddons?.baggage||p?.flight?.baggage;
+  $("#docBaggage").textContent=typeof baggage==="string"?baggage:(baggage?.label||"According to booking");
 }
 function previewTravelDoc(){fillTravelDoc();$("#travelDocModal").classList.remove("hidden")}
 function generateTravelDoc(){const r=syncReadiness();if(!r.ready){toast("Lengkapi seluruh Issue Readiness terlebih dahulu.");return}generatedDoc=true;syncTravelDoc();previewTravelDoc();toast("OTW Travel Document siap dicetak.");}
@@ -193,3 +200,5 @@ $("#previewTravelDocBtn").onclick=previewTravelDoc;$("#generateTravelDocBtn").on
 $("#closeTravelDocBtn").onclick=()=>$("#travelDocModal").classList.add("hidden");$("#modalPrintBtn").onclick=()=>window.print();
 
 (async()=>{try{if(!await ensureAdmin())return;await loadOrders()}catch(e){console.error(e);setLoading(false);$("#errorState").classList.remove("hidden");$("#errorText").textContent=e.message||"Gagal memuat ticketing."}})();
+
+$("#modalCloseBtn")?.addEventListener("click",()=>$("#travelDocModal").classList.add("hidden"));
