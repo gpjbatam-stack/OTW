@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./admin-addons.css?v=20260819-1">
+<link rel="stylesheet" href="./admin-addons.css?v=20260819-2">
 </head>
 <body>
 <div class="layout">
@@ -45,7 +45,7 @@
       <section class="toolbar">
         <div class="search"><span>⌕</span><input id="searchInput" placeholder="Cari maskapai atau add-on..."></div>
         <select id="airlineFilter"><option value="">Semua maskapai</option></select>
-        <select id="typeFilter"><option value="">Semua jenis</option><option>BAGGAGE</option><option>SEAT</option><option>MEAL</option></select>
+        <select id="typeFilter"><option value="">Semua jenis</option><option>BAGGAGE</option><option>INSURANCE</option><option>SEAT</option><option>MEAL</option></select>
         <select id="statusFilter"><option value="">Semua status</option><option value="active">Aktif</option><option value="inactive">Nonaktif</option></select>
         <button id="refreshBtn" class="ghost">↻ Refresh</button>
       </section>
@@ -82,11 +82,11 @@
       <div class="form-section">
         <h3>Maskapai & produk</h3>
         <div class="grid2">
-          <label>Kode maskapai<input id="airlineCode" maxlength="3" placeholder="JT" required></label>
-          <label>Nama maskapai<input id="airlineName" placeholder="Lion Air" required></label>
+          <label>Kode maskapai<input id="airlineCode" maxlength="3" placeholder="JT / ALL" required></label>
+          <label>Nama maskapai<input id="airlineName" placeholder="Lion Air / Semua Maskapai" required></label>
         </div>
         <div class="grid2">
-          <label>Jenis add-on<select id="addonType" required><option>BAGGAGE</option><option>SEAT</option><option>MEAL</option></select></label>
+          <label>Jenis add-on<select id="addonType" required><option>BAGGAGE</option><option>INSURANCE</option><option>SEAT</option><option>MEAL</option></select></label>
           <label>Kode add-on<input id="addonCode" placeholder="BAG-20" required></label>
         </div>
         <label>Nama add-on<input id="addonName" placeholder="Bagasi tambahan 20 kg" required></label>
@@ -118,6 +118,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<script type="module" src="./admin-addons.js?v=20260819-1"></script>
+<script type="module" src="./admin-addons.js?v=20260819-2"></script>
 </body>
 </html>

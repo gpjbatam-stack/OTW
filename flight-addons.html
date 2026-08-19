@@ -1,84 +1,17 @@
 <!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#061a3a">
-<title>Tambahan Perjalanan — OTW</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071a39"><title>Tambahan Perjalanan — OTW</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./flight-addons.css?v=20260819-premium-v3-fixed">
-</head>
-<body>
-<main class="app-shell">
-<header class="topbar">
-<button id="backBtn" class="icon-btn" type="button" aria-label="Kembali"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
-<div class="top-copy"><span class="eyebrow">LANGKAH 3 DARI 4</span><h1>Tambahan perjalanan</h1><p>Pilih hanya yang Anda perlukan.</p></div>
-<div class="step-badge"><strong>3</strong><span>/4</span></div>
-</header>
-
-<section class="flight-strip">
-<div class="flight-brand"><div class="airline-logo" id="airlineLogo"><span>FL</span></div><div><strong id="airlineName">Maskapai</strong><small id="flightNumber">—</small></div></div>
-<div class="route-inline">
-<div><strong id="origin">---</strong><span id="departTime">--:--</span></div>
-<div class="route-line"><i></i><svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg><i></i></div>
-<div class="right"><strong id="destination">---</strong><span id="arriveTime">--:--</span></div>
-</div>
-<div class="flight-meta"><span id="flightDate">—</span><b>•</b><span id="cabinClass">Ekonomi</span><b>•</b><span id="includedBaggage">Bagasi —</span></div>
-</section>
-
-<section class="hero">
-<div class="hero-orb hero-orb-a"></div><div class="hero-orb hero-orb-b"></div>
-<div class="hero-copy"><span class="hero-kicker">PERSONALISE YOUR TRIP</span><h2>Lebih siap.<br><em>Tanpa berlebihan.</em></h2><p>Tambahkan bagasi atau perlindungan perjalanan sebelum masuk ke review akhir.</p></div>
-<div class="hero-symbol"><span>+</span><small>TRIP</small></div>
-</section>
-
-<section class="section">
-<div class="section-head"><div><span class="eyebrow">BAGASI</span><h2>Bagasi tambahan</h2></div><span class="optional-pill">Opsional</span></div>
-<article class="section-card">
-<div class="section-card-head"><span class="section-icon"><svg viewBox="0 0 24 24"><path d="M8 7V5a4 4 0 0 1 8 0v2"/><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M8 11v5M16 11v5"/></svg></span><div><strong>Tambah ruang bagasi</strong><small>Bagasi bawaan: <b id="baseBaggage">sesuai fare</b></small></div></div>
-<div id="baggageState" class="loading-box"><span class="spinner"></span><div><strong>Memuat harga bagasi...</strong><small>Mengambil harga yang aktif dari OTW.</small></div></div>
-<div id="baggagePassengers" class="passenger-addons hidden"></div>
-<div id="baggageEmpty" class="empty-state hidden"><span><svg viewBox="0 0 24 24"><path d="M8 7V5a4 4 0 0 1 8 0v2"/><rect x="4" y="7" width="16" height="13" rx="3"/></svg></span><strong>Bagasi tambahan belum tersedia</strong><small>Harga untuk maskapai ini belum diaktifkan oleh OTW.</small></div>
-</article>
-</section>
-
-<section class="section">
-<div class="section-head"><div><span class="eyebrow">PERLINDUNGAN</span><h2>Asuransi perjalanan</h2></div><span class="optional-pill">Opsional</span></div>
-<article class="insurance-card">
-<div class="insurance-intro"><span class="shield"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></span><div><span class="recommended">TRAVEL PROTECTION</span><strong>Lindungi perjalanan Anda</strong><small>Pilih paket jika tersedia untuk perjalanan ini.</small></div></div>
-<div id="insuranceState" class="loading-box"><span class="spinner"></span><div><strong>Memuat perlindungan...</strong><small>Mengambil paket aktif dari OTW.</small></div></div>
-<div id="insuranceOptions" class="insurance-options hidden"></div>
-<div id="insuranceEmpty" class="empty-state hidden"><span><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/></svg></span><strong>Asuransi belum tersedia</strong><small>Anda tetap dapat melanjutkan tanpa perlindungan tambahan.</small></div>
-</article>
-</section>
-
-<section class="section">
-<div class="section-head"><div><span class="eyebrow">RINGKASAN</span><h2>Pilihan Anda</h2></div><button id="resetBtn" class="text-btn" type="button">Reset</button></div>
-<article class="summary-card">
-<div class="summary-line"><div><span class="summary-icon"><svg viewBox="0 0 24 24"><path d="M8 7V5a4 4 0 0 1 8 0v2"/><rect x="4" y="7" width="16" height="13" rx="3"/></svg></span><span><strong>Bagasi tambahan</strong><small id="baggageSummary">Tidak ada</small></span></div><b id="baggageTotal">Rp0</b></div>
-<div class="summary-line"><div><span class="summary-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/></svg></span><span><strong>Asuransi perjalanan</strong><small id="insuranceSummary">Tidak dipilih</small></span></div><b id="insuranceTotal">Rp0</b></div>
-<div class="summary-total"><div><span>Total add-on</span><small>Akan ditambahkan pada review perjalanan</small></div><strong id="addonGrandTotal">Rp0</strong></div>
-<div class="safe-note"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg><span>Harga yang tampil berasal dari konfigurasi OTW dan tidak dapat diubah dari halaman ini.</span></div>
-</article>
-</section>
-
-<button id="skipBtn" class="skip-card" type="button"><span><strong>Tidak perlu tambahan</strong><small>Lanjutkan langsung ke review perjalanan.</small></span><b>Lewati</b></button>
-<div class="bottom-space"></div>
+<link rel="stylesheet" href="./flight-addons.css?v=20260819-final"></head>
+<body><main class="shell">
+<header class="top"><button class="back" id="backBtn">‹</button><div><small>LANGKAH 3 DARI 4</small><h1>Tambahan perjalanan</h1><p>Pilih layanan yang Anda perlukan. Semua pilihan bersifat opsional.</p></div></header>
+<section class="trip" id="tripCard"><div><small>PENERBANGAN</small><b id="route">—</b></div><span id="airline">Memuat penerbangan…</span></section>
+<section class="section"><div class="title"><div><small>BAGASI</small><h2>Bagasi tambahan</h2></div><em>Opsional</em></div><div id="baggage"></div></section>
+<section class="section"><div class="title"><div><small>PERLINDUNGAN</small><h2>Asuransi perjalanan</h2></div><em>Opsional</em></div><div id="insurance"></div></section>
+<section class="section summary"><div class="title"><div><small>RINGKASAN</small><h2>Pilihan Anda</h2></div><button id="resetBtn">Reset</button></div>
+<div id="summaryRows"></div><div class="total"><span><small>Total add-on</small><b>Tambahan perjalanan</b></span><strong id="total">Rp0</strong></div></section>
+<div class="skip"><div><b>Tidak perlu tambahan</b><small>Lanjutkan langsung ke review perjalanan.</small></div><button id="skipBtn">Lewati</button></div>
 </main>
-
-<footer class="sticky-footer"><div class="sticky-inner"><div class="sticky-copy"><small>Total add-on</small><strong id="stickyAddonTotal">Rp0</strong></div><button id="continueBtn" class="continue-btn" type="button"><span><small>BERIKUTNYA</small><strong>Review perjalanan</strong></span><svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button></div></footer>
-
-<div class="toast" id="toast"></div>
-
-<template id="passengerTemplate">
-<article class="pax-card">
-<button class="pax-head" type="button"><span class="pax-avatar">1</span><span class="pax-copy"><strong>Penumpang 1</strong><small>Dewasa</small></span><span class="pax-choice">Tidak tambah</span><svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
-<div class="pax-body"><button type="button" class="option-card active" data-addon-id=""><span><strong>Tanpa tambahan</strong><small>Gunakan bagasi bawaan tiket</small></span><b>Rp0</b></button><div class="dynamic-options"></div></div>
-</article>
-</template>
-
-<script type="module" src="./flight-addons.js?v=20260819-premium-v3-fixed"></script>
-</body>
-</html>
+<footer><div><small>Total add-on</small><strong id="footerTotal">Rp0</strong></div><button id="continueBtn">Review perjalanan <span>›</span></button></footer>
+<div id="toast"></div><script type="module" src="./flight-addons.js?v=20260819-final"></script></body></html>
