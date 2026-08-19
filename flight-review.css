@@ -17,3 +17,49 @@ button,input{font:inherit}button{cursor:pointer}svg{fill:none;stroke:currentColo
 .modal-backdrop{position:fixed;z-index:80;inset:0;background:rgba(4,16,35,.58);backdrop-filter:blur(7px);display:flex;align-items:flex-end;justify-content:center;padding:15px}.modal{position:relative;width:min(100%,400px);background:#fff;border-radius:25px;padding:22px 17px calc(17px + env(safe-area-inset-bottom));box-shadow:0 28px 70px rgba(0,0,0,.25);text-align:center;animation:up .22s ease}.modal-close{position:absolute;right:13px;top:13px;width:31px;height:31px;border:0;border-radius:10px;background:#f2f5f8;color:#647b95;display:grid;place-items:center}.modal-close svg{width:13px}.modal-icon{width:52px;height:52px;border-radius:17px;margin:auto;background:#eaf8f3;color:#0c9a68;display:grid;place-items:center}.modal-icon svg{width:23px}.modal-kicker{display:block;font-size:5.7px;letter-spacing:.15em;font-weight:900;color:#0b9464;margin-top:11px}.modal h3{font-size:17px;letter-spacing:-.04em;margin:5px 0}.modal>p{font-size:6.6px;line-height:1.55;color:#7d8ea2;margin:0 auto;width:88%}.modal-summary{margin:14px 0 10px;border:1px solid #e3eaf2;border-radius:14px;padding:10px;display:grid;grid-template-columns:1fr 1fr;text-align:left}.modal-summary span+span{border-left:1px solid #e6edf4;padding-left:10px}.modal-summary small{display:block;font-size:5.5px;color:#8b99aa}.modal-summary strong{display:block;font-size:8px;margin-top:3px}.modal-primary{width:100%;height:48px;border:0;border-radius:14px;background:linear-gradient(135deg,#0a65e4,#2d98ff);color:#fff;font-size:8px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:7px}.modal-primary svg{width:14px}.modal-secondary{width:100%;height:38px;border:0;background:transparent;color:#6f8299;font-size:6.8px;font-weight:750}.toast{position:fixed;z-index:100;left:50%;bottom:98px;width:min(calc(100% - 42px),360px);transform:translate(-50%,12px);opacity:0;pointer-events:none;background:#071a39;color:#fff;border-radius:13px;padding:10px;text-align:center;font-size:7.5px;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}.safe-space{height:8px}
 @keyframes up{from{transform:translateY(25px);opacity:0}to{transform:none;opacity:1}}
 @media(max-width:350px){.route{grid-template-columns:1fr 92px 1fr}.confirm-btn{min-width:158px}}
+
+
+/* V2 — Add-ons review */
+.addons-review-card{
+  background:#fff;border:1px solid var(--line);border-radius:20px;
+  padding:10px 12px 12px;box-shadow:0 9px 28px rgba(20,52,92,.045)
+}
+.addons-list{display:grid}
+.addon-review-row{
+  min-height:58px;display:flex;justify-content:space-between;align-items:center;
+  gap:10px;border-bottom:1px solid #edf2f7
+}
+.addon-review-row:last-child{border-bottom:0}
+.addon-review-main{display:flex;align-items:center;gap:8px;min-width:0}
+.addon-review-icon{
+  width:32px;height:32px;border-radius:10px;background:#edf5ff;color:#1476ff;
+  display:grid;place-items:center;flex:0 0 auto
+}
+.addon-review-icon svg{width:14px}
+.addon-review-copy{min-width:0}
+.addon-review-copy strong{display:block;font-size:7.8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.addon-review-copy small{display:block;margin-top:3px;font-size:5.7px;color:#8998aa}
+.addon-review-row>b{font-size:7px;white-space:nowrap}
+.addons-total{
+  margin-top:8px;padding:10px 11px;border-radius:12px;background:#f4f8fc;
+  display:flex;align-items:center;justify-content:space-between
+}
+.addons-total span{font-size:6.5px;color:#687f99;font-weight:750}
+.addons-total strong{font-size:10px;color:#1476ff}
+.addons-empty{min-height:58px;display:flex;align-items:center;gap:9px}
+.addons-empty-icon{
+  width:34px;height:34px;border-radius:11px;background:#f0f5fa;color:#7189a2;
+  display:grid;place-items:center;flex:0 0 auto
+}
+.addons-empty-icon svg{width:15px}
+.addons-empty strong{display:block;font-size:7.8px}
+.addons-empty small{display:block;margin-top:3px;font-size:5.8px;color:#8998aa}
+
+/* V3 — pricing total audit */
+.price-audit{
+  margin-top:10px;padding:9px 10px;border-radius:11px;
+  background:#eef6ff;border:1px solid #dbeafa;
+  display:flex;justify-content:space-between;align-items:center;gap:10px
+}
+.price-audit span{font-size:5.9px;color:#6b829c}
+.price-audit b{font-size:6.4px;color:#0e66df;text-align:right}
