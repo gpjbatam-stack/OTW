@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061a3a">
+  <title>Pesanan — OTW</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./orders.css?v=20260819-premium-v1">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <button id="backBtn" class="icon-btn" type="button" aria-label="Kembali">
+        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+
+      <div class="top-copy">
+        <span class="eyebrow">PERJALANAN SAYA</span>
+        <h1>Pesanan</h1>
+        <p>Pantau semua pengajuan dan tiket perjalanan.</p>
+      </div>
+
+      <button id="homeBtn" class="icon-btn home-btn" type="button" aria-label="Home">
+        <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20h-6v-6H9v6H3Z"/></svg>
+      </button>
+    </header>
+
+    <section class="hero">
+      <div class="hero-glow hero-a"></div>
+      <div class="hero-glow hero-b"></div>
+
+      <div class="hero-copy">
+        <span class="hero-kicker">ORDER CONTROL</span>
+        <h2>Semua perjalanan,<br><em>dalam satu tempat.</em></h2>
+        <p>Lihat status terbaru, total biaya, dan detail setiap pengajuan tanpa harus mencari ulang.</p>
+      </div>
+
+      <div class="hero-metric">
+        <span>Total pesanan</span>
+        <strong id="heroTotalOrders">0</strong>
+        <small id="heroActiveOrders">0 sedang diproses</small>
+      </div>
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <span class="summary-icon blue">
+          <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        </span>
+        <div>
+          <small>AKTIF</small>
+          <strong id="activeCount">0</strong>
+        </div>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-icon green">
+          <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <div>
+          <small>TIKET TERBIT</small>
+          <strong id="issuedCount">0</strong>
+        </div>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-icon neutral">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </span>
+        <div>
+          <small>SELESAI</small>
+          <strong id="completedCount">0</strong>
+        </div>
+      </article>
+    </section>
+
+    <section class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="searchInput" type="search" placeholder="Cari nomor pesanan atau rute">
+      </div>
+
+      <button id="filterBtn" class="filter-btn" type="button" aria-label="Filter">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M7 12h10M10 17h4"/></svg>
+      </button>
+    </section>
+
+    <section class="tabs" id="statusTabs">
+      <button class="tab active" type="button" data-status="ALL">Semua</button>
+      <button class="tab" type="button" data-status="ACTIVE">Diproses</button>
+      <button class="tab" type="button" data-status="ISSUED">Tiket</button>
+      <button class="tab" type="button" data-status="COMPLETED">Selesai</button>
+      <button class="tab" type="button" data-status="CANCELLED">Batal</button>
+    </section>
+
+    <section class="list-head">
+      <div>
+        <span class="eyebrow">DAFTAR PESANAN</span>
+        <h2 id="resultLabel">Memuat pesanan...</h2>
+      </div>
+      <button id="refreshBtn" class="refresh-btn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M20 6v5h-5"/><path d="M4 18v-5h5"/><path d="M6.1 9A7 7 0 0 1 18 6l2 5M4 13l2 5a7 7 0 0 0 11.9-3"/></svg>
+        Refresh
+      </button>
+    </section>
+
+    <section id="loadingState" class="loading-list">
+      <article class="skeleton-card"><span class="sk sk-route"></span><span class="sk sk-line"></span><span class="sk sk-price"></span></article>
+      <article class="skeleton-card"><span class="sk sk-route"></span><span class="sk sk-line"></span><span class="sk sk-price"></span></article>
+      <article class="skeleton-card"><span class="sk sk-route"></span><span class="sk sk-line"></span><span class="sk sk-price"></span></article>
+    </section>
+
+    <section id="errorState" class="state-card hidden">
+      <span class="state-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01"/></svg>
+      </span>
+      <strong>Pesanan belum dapat dimuat</strong>
+      <p id="errorMessage">Terjadi gangguan saat mengambil daftar pesanan.</p>
+      <button id="retryBtn" type="button">Coba lagi</button>
+    </section>
+
+    <section id="emptyState" class="state-card hidden">
+      <span class="state-icon">
+        <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8"/></svg>
+      </span>
+      <strong id="emptyTitle">Belum ada pesanan</strong>
+      <p id="emptyText">Pengajuan perjalanan yang Anda buat akan muncul di sini.</p>
+      <button id="newTripBtn" type="button">Cari penerbangan</button>
+    </section>
+
+    <section id="orderList" class="order-list hidden"></section>
+
+    <div class="bottom-space"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="home.html">
+      <svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="orders.html" class="active">
+      <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span>Pesanan</span>
+    </a>
+    <a href="home.html" class="center-action">
+      <span class="center-icon">＋</span>
+      <span>Ajukan</span>
+    </a>
+    <a href="notifications.html">
+      <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 19h4"/></svg>
+      <span>Notifikasi</span>
+    </a>
+    <a href="profile.html">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+      <span>Akun</span>
+    </a>
+  </nav>
+
+  <div id="filterSheet" class="sheet-backdrop hidden">
+    <section class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <div><span class="eyebrow">FILTER</span><h3>Urutkan pesanan</h3></div>
+        <button id="closeFilterBtn" class="sheet-x" type="button">×</button>
+      </div>
+
+      <div class="filter-group">
+        <label>Urutan</label>
+        <div class="filter-options">
+          <button type="button" class="filter-option active" data-sort="NEWEST">Terbaru</button>
+          <button type="button" class="filter-option" data-sort="OLDEST">Terlama</button>
+          <button type="button" class="filter-option" data-sort="HIGHEST">Total tertinggi</button>
+        </div>
+      </div>
+
+      <button id="applyFilterBtn" class="apply-filter" type="button">Terapkan</button>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module" src="./orders.js?v=20260819-premium-v1"></script>
+</body>
+</html>
