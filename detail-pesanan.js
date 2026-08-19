@@ -25,19 +25,19 @@ const STATUS = {
     badge:"Diajukan",klass:"status-submitted",kicker:"PENGAJUAN DITERIMA",
     title:"Perjalanan sedang diproses.",
     text:"OTW sedang memeriksa detail perjalanan, dokumen, harga, dan ketersediaan.",
-    footer:"Diajukan",action:"Lihat Pesanan"
+    footer:"Diajukan",action:"Kembali ke Pesanan"
   },
   PROCESSING:{
     badge:"Diproses",klass:"status-processing",kicker:"SEDANG DIPROSES",
     title:"OTW sedang menyiapkan perjalanan.",
     text:"Harga dan ketersediaan sedang diverifikasi untuk proses fulfillment.",
-    footer:"Sedang diproses",action:"Pantau Pesanan"
+    footer:"Sedang diproses",action:"Lihat Pesanan"
   },
   VERIFIED:{
     badge:"Terverifikasi",klass:"status-processing",kicker:"VERIFIKASI SELESAI",
     title:"Pengajuan sudah terverifikasi.",
     text:"Detail perjalanan telah diperiksa dan siap masuk tahap penerbitan.",
-    footer:"Terverifikasi",action:"Pantau Pesanan"
+    footer:"Terverifikasi",action:"Lihat Pesanan"
   },
   ISSUED:{
     badge:"Tiket terbit",klass:"status-issued",kicker:"TIKET SIAP",
@@ -49,7 +49,7 @@ const STATUS = {
     badge:"Selesai",klass:"status-issued",kicker:"PERJALANAN SELESAI",
     title:"Perjalanan telah selesai.",
     text:"Pesanan ini telah menyelesaikan seluruh proses OTW.",
-    footer:"Selesai",action:"Lihat Pesanan"
+    footer:"Selesai",action:"Kembali ke Pesanan"
   },
   CANCELLED:{
     badge:"Dibatalkan",klass:"status-cancelled",kicker:"PESANAN DIBATALKAN",
@@ -410,7 +410,7 @@ function closeSheet(){
 }
 
 $("#backBtn")?.addEventListener("click",()=>history.back());
-$("#moreBtn")?.addEventListener("click",openSheet);
+$("#homeBtn")?.addEventListener("click",()=>location.href="home.html");
 $("#copyOrderBtn")?.addEventListener("click",copyCode);
 $("#copySheetBtn")?.addEventListener("click",()=>{copyCode();closeSheet()});
 $("#closeSheetBtn")?.addEventListener("click",closeSheet);
@@ -422,7 +422,13 @@ $("#primaryActionBtn")?.addEventListener("click",()=>{
   const status=String(order?.status||"").toUpperCase();
 
   if(status==="ISSUED"){
+    const ticketUrl=order?.ticket_url||order?.payload?.ticketUrl||order?.payload?.ticket_url||null;
+    if(ticketUrl){
+      location.href=ticketUrl;
+      return;
+    }
     $("#ticketSection")?.scrollIntoView({behavior:"smooth",block:"center"});
+    toast("E-ticket tersedia di bagian tiket.");
     return;
   }
 
@@ -431,7 +437,9 @@ $("#primaryActionBtn")?.addEventListener("click",()=>{
     return;
   }
 
-  window.scrollTo({top:0,behavior:"smooth"});
+  // Default action for SUBMITTED / PROCESSING / VERIFIED / COMPLETED:
+  // return to the user's order list instead of doing nothing.
+  location.href="orders.html";
 });
 
 $("#openTicketBtn")?.addEventListener("click",()=>{

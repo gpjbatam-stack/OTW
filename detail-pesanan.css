@@ -26,3 +26,13 @@ button{font:inherit;cursor:pointer}svg{fill:none;stroke:currentColor;stroke-widt
 .sheet-backdrop{position:fixed;z-index:80;inset:0;background:rgba(4,16,35,.55);backdrop-filter:blur(7px);display:flex;align-items:flex-end;justify-content:center}.sheet{width:min(100%,430px);background:#fff;border-radius:24px 24px 0 0;padding:9px 16px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -24px 70px rgba(0,0,0,.2)}.sheet-handle{width:38px;height:4px;border-radius:999px;background:#dce4ec;margin:0 auto 13px}.sheet button{width:100%;min-height:47px;border:0;border-bottom:1px solid #edf2f7;background:#fff;display:flex;align-items:center;gap:9px;text-align:left;font-size:7px;font-weight:750}.sheet button svg{width:16px;color:#1476ff}.sheet .sheet-close{border-bottom:0;justify-content:center;color:#7a8b9f}
 .toast{position:fixed;z-index:100;left:50%;bottom:94px;width:min(calc(100% - 42px),360px);transform:translate(-50%,12px);opacity:0;background:#071a39;color:#fff;border-radius:13px;padding:10px 12px;text-align:center;font-size:7px;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}.bottom-space{height:8px}
 @media(min-width:700px){body:before{content:"";position:fixed;inset:0;background:linear-gradient(90deg,rgba(226,234,244,.72),transparent 35%,transparent 65%,rgba(226,234,244,.72));pointer-events:none}.app-shell{box-shadow:0 0 55px rgba(19,50,88,.07)}}
+
+/* V2 — navigation fix */
+.home-btn{
+  background:linear-gradient(145deg,#ffffff,#f3f8ff);
+  color:#1476ff;
+  border-color:#d6e5f7;
+}
+.home-btn:active{
+  transform:scale(.97);
+}

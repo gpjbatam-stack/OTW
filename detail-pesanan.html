@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./detail-pesanan.css?v=20260819-premium-v1">
+  <link rel="stylesheet" href="./detail-pesanan.css?v=20260819-premium-v2-navfix">
 </head>
 <body>
   <main class="app-shell">
@@ -25,8 +25,8 @@
         <p id="createdAtTop">Memuat pesanan...</p>
       </div>
 
-      <button id="moreBtn" class="icon-btn" type="button" aria-label="Menu">
-        <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+      <button id="homeBtn" class="icon-btn home-btn" type="button" aria-label="Kembali ke Home">
+        <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20h-6v-6H9v6H3Z"/></svg>
       </button>
     </header>
 
@@ -317,7 +317,7 @@
         <small>Status pesanan</small>
         <strong id="footerStatus">Diajukan</strong>
       </div>
-      <button id="primaryActionBtn" type="button">Lihat Pesanan</button>
+      <button id="primaryActionBtn" type="button">Kembali ke Pesanan</button>
     </div>
   </footer>
 
@@ -338,6 +338,6 @@
 
   <div id="toast" class="toast"></div>
 
-  <script type="module" src="./detail-pesanan.js?v=20260819-premium-v1"></script>
+  <script type="module" src="./detail-pesanan.js?v=20260819-premium-v2-navfix"></script>
 </body>
 </html>
