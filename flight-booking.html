@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061a3a">
+  <title>Ajukan Perjalanan — OTW</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./flight-booking.css?v=20260819-premium-v1">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <button id="backBtn" class="icon-btn" type="button" aria-label="Kembali">
+        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+
+      <div class="top-copy">
+        <span class="eyebrow">FINALISASI</span>
+        <h1>Ajukan perjalanan</h1>
+        <p>Periksa sekali lagi sebelum dikirim.</p>
+      </div>
+
+      <span class="secure-pill">
+        <i></i>
+        Secure
+      </span>
+    </header>
+
+    <section class="hero">
+      <div class="hero-glow hero-glow-a"></div>
+      <div class="hero-glow hero-glow-b"></div>
+
+      <div class="hero-copy">
+        <span class="hero-kicker">READY FOR SUBMISSION</span>
+        <h2>Semua sudah siap.</h2>
+        <p>OTW akan menerima pengajuan perjalanan beserta penerbangan, penumpang, SPT, dan layanan tambahan yang Anda pilih.</p>
+      </div>
+
+      <div class="hero-check">
+        <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+    </section>
+
+    <section id="loadingCard" class="loading-card">
+      <span class="spinner"></span>
+      <div>
+        <strong>Menyiapkan pengajuan...</strong>
+        <small>Membaca data perjalanan dari tahap sebelumnya.</small>
+      </div>
+    </section>
+
+    <div id="content" class="hidden">
+      <section class="section">
+        <div class="section-title">
+          <div><span class="eyebrow">PENERBANGAN</span><h2>Perjalanan Anda</h2></div>
+          <button id="editFlightBtn" class="text-btn" type="button">Ubah</button>
+        </div>
+
+        <article class="flight-card">
+          <div class="flight-head">
+            <div class="airline-wrap">
+              <div class="airline-logo" id="airlineLogo"><span>FL</span></div>
+              <div>
+                <strong id="airlineName">Maskapai</strong>
+                <small id="flightNumber">—</small>
+              </div>
+            </div>
+            <span class="status-chip">Terpilih</span>
+          </div>
+
+          <div class="route">
+            <div>
+              <strong id="departTime">--:--</strong>
+              <span id="origin">---</span>
+            </div>
+
+            <div class="route-center">
+              <i></i>
+              <svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg>
+              <i></i>
+              <small id="duration">—</small>
+            </div>
+
+            <div class="right">
+              <strong id="arriveTime">--:--</strong>
+              <span id="destination">---</span>
+            </div>
+          </div>
+
+          <div class="flight-meta">
+            <span id="flightDate">—</span>
+            <b>•</b>
+            <span id="cabin">Ekonomi</span>
+            <b>•</b>
+            <span id="baggage">Bagasi —</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="summary-grid">
+        <article class="summary-mini">
+          <span class="summary-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+          </span>
+          <div><small>PENUMPANG</small><strong id="passengerCount">1 orang</strong></div>
+        </article>
+
+        <article class="summary-mini">
+          <span class="summary-icon">
+            <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>
+          </span>
+          <div><small>DOKUMEN</small><strong id="sptStatus">SPT siap</strong></div>
+        </article>
+
+        <article class="summary-mini">
+          <span class="summary-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"/></svg>
+          </span>
+          <div><small>ADD-ON</small><strong id="addonStatus">Tidak ada</strong></div>
+        </article>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <div><span class="eyebrow">RINCIAN BIAYA</span><h2>Total pengajuan</h2></div>
+          <span class="otw-price"><i></i> OTW Price</span>
+        </div>
+
+        <article class="price-card">
+          <div class="price-row">
+            <span>Harga penerbangan OTW</span>
+            <strong id="flightTotal">Rp0</strong>
+          </div>
+          <div class="price-row muted">
+            <span>Bagasi tambahan</span>
+            <strong id="baggageTotal">Rp0</strong>
+          </div>
+          <div class="price-row muted">
+            <span>Asuransi perjalanan</span>
+            <strong id="insuranceTotal">Rp0</strong>
+          </div>
+
+          <div class="price-total">
+            <div>
+              <span>Total perjalanan</span>
+              <small id="priceEquation">Harga final pengajuan</small>
+            </div>
+            <strong id="grandTotal">Rp0</strong>
+          </div>
+
+          <div class="price-note">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
+            <span>Harga dan ketersediaan akan diverifikasi kembali oleh OTW sebelum fulfillment. Jika ada perubahan, Anda akan diinformasikan terlebih dahulu.</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <div><span class="eyebrow">PROSES OTW</span><h2>Setelah dikirim</h2></div>
+        </div>
+
+        <article class="process-card">
+          <div class="process-step">
+            <span>1</span>
+            <div><strong>Pengajuan diterima</strong><small>Data perjalanan masuk ke sistem OTW.</small></div>
+          </div>
+          <i></i>
+          <div class="process-step">
+            <span>2</span>
+            <div><strong>Verifikasi & fulfillment</strong><small>Admin memeriksa harga, ketersediaan, dan dokumen.</small></div>
+          </div>
+          <i></i>
+          <div class="process-step">
+            <span>3</span>
+            <div><strong>Tiket diproses</strong><small>Status perjalanan dapat dipantau dari Pesanan.</small></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="agreement-card">
+        <label class="agreement">
+          <input id="agreeCheck" type="checkbox">
+          <span class="check-ui">
+            <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
+          </span>
+          <span>
+            <strong>Saya menyetujui pengajuan ini</strong>
+            <small>Saya telah memeriksa penerbangan, penumpang, SPT, layanan tambahan, dan total biaya.</small>
+          </span>
+        </label>
+        <small id="agreementError" class="field-error"></small>
+      </section>
+
+      <button id="submitBookingBtn" class="submit-booking" type="button">
+        <span>
+          <small>KIRIM KE OTW</small>
+          <strong>Ajukan perjalanan</strong>
+        </span>
+        <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+
+      <div class="bottom-space"></div>
+    </div>
+  </main>
+
+  <div id="successModal" class="modal-backdrop hidden">
+    <section class="success-modal">
+      <span class="success-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m8.5 12 2.3 2.3 4.8-5"/></svg>
+      </span>
+
+      <span class="eyebrow">PENGAJUAN BERHASIL</span>
+      <h3>Perjalanan sudah dikirim.</h3>
+      <p>Gunakan nomor pengajuan berikut untuk memantau prosesnya.</p>
+
+      <div class="booking-code">
+        <span>Nomor pengajuan</span>
+        <strong id="successOrderCode">OTW-—</strong>
+        <button id="copyCodeBtn" type="button">Salin</button>
+      </div>
+
+      <button id="viewOrderBtn" class="modal-primary" type="button">Lihat detail pesanan</button>
+      <button id="homeBtn" class="modal-secondary" type="button">Kembali ke Home</button>
+    </section>
+  </div>
+
+  <div id="errorModal" class="modal-backdrop hidden">
+    <section class="error-modal">
+      <span class="error-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01"/></svg>
+      </span>
+      <span class="eyebrow">BELUM TERKIRIM</span>
+      <h3>Pengajuan belum berhasil.</h3>
+      <p id="submitErrorText">Terjadi gangguan saat menyimpan pengajuan.</p>
+      <button id="retrySubmitBtn" class="modal-primary" type="button">Coba lagi</button>
+      <button id="closeErrorBtn" class="modal-secondary" type="button">Tutup</button>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script type="module" src="./flight-booking.js?v=20260819-premium-v1"></script>
+</body>
+</html>
