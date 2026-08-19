@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./flight-review.css?v=20260819-premium-v2-addons">
+  <link rel="stylesheet" href="./flight-review.css?v=20260819-premium-v1">
 </head>
 <body>
 <main class="app">
@@ -17,11 +17,11 @@
       <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
     </button>
     <div class="top-copy">
-      <span>LANGKAH 4 DARI 4</span>
+      <span>LANGKAH 3 DARI 3</span>
       <h1>Review perjalanan</h1>
       <p>Pastikan semuanya sudah benar.</p>
     </div>
-    <div class="step"><strong>4</strong><small>/4</small></div>
+    <div class="step"><strong>3</strong><small>/3</small></div>
   </header>
 
   <section class="hero">
@@ -105,60 +105,33 @@
 
   <section class="section">
     <div class="section-title">
-      <div><span>TAMBAHAN PERJALANAN</span><h2>Bagasi & perlindungan</h2></div>
-      <button class="text-btn" id="editAddonsBtn" type="button">Ubah</button>
-    </div>
-
-    <article class="addons-review-card">
-      <div id="addonsEmpty" class="addons-empty hidden">
-        <span class="addons-empty-icon">
-          <svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"/></svg>
-        </span>
-        <div>
-          <strong>Tidak ada tambahan perjalanan</strong>
-          <small>Anda melanjutkan tanpa bagasi tambahan atau asuransi.</small>
-        </div>
-      </div>
-
-      <div id="addonsList" class="addons-list"></div>
-
-      <div class="addons-total">
-        <span>Total add-on</span>
-        <strong id="addonsTotal">Rp0</strong>
-      </div>
-    </article>
-  </section>
-
-  <section class="section">
-    <div class="section-title">
       <div><span>RINCIAN BIAYA</span><h2>Harga perjalanan</h2></div>
-      <span class="price-lock"><i></i> OTW Price</span>
+      <span class="price-lock"><i></i> Live fare</span>
     </div>
 
     <article class="price-card">
       <div class="price-main">
         <div>
-          <span>Harga tiket OTW</span>
+          <span>Harga tiket</span>
           <small id="paxPriceNote">Harga penerbangan terpilih</small>
         </div>
         <strong id="ticketPrice">Rp0</strong>
       </div>
 
       <div class="price-breakdown">
-        <div><span>Harga penerbangan</span><b id="ticketFare">Rp0</b></div>
-        <div class="otw-row"><span>Biaya layanan OTW <i>Transparan</i></span><b id="serviceFee">Rp0</b></div>
-        <div><span>Bagasi tambahan</span><b id="reviewBaggageTotal">Rp0</b></div>
-        <div><span>Asuransi perjalanan</span><b id="reviewInsuranceTotal">Rp0</b></div>
+        <div><span>Tarif dasar</span><b id="basePrice">Rp0</b></div>
+        <div><span>Pajak & biaya maskapai</span><b id="taxPrice">Rp0</b></div>
+        <div class="otw-row"><span>Biaya layanan OTW <i>Transparan</i></span><b id="serviceFee">Rp150.000</b></div>
       </div>
 
       <div class="total-row">
-        <div><span>Total perjalanan</span><small id="totalNote">Tiket + layanan + add-on</small></div>
+        <div><span>Total perjalanan</span><small id="totalNote">Termasuk biaya layanan OTW</small></div>
         <strong id="grandTotal">Rp0</strong>
       </div>
 
       <div class="pricing-info">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
-        <p>Harga tiket menggunakan pricing OTW yang tersimpan dari langkah sebelumnya. Add-on mengikuti harga aktif yang dipilih saat pengajuan. Harga dan ketersediaan tetap diperiksa sebelum fulfillment.</p>
+        <p>Harga penerbangan dapat berubah sampai proses pemesanan dikonfirmasi oleh supplier. OTW akan melakukan pengecekan harga final sebelum penerbitan.</p>
       </div>
     </article>
   </section>
@@ -177,7 +150,7 @@
     <label>
       <input type="checkbox" id="agreementCheck">
       <span class="check-ui"><svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg></span>
-      <span class="agreement-copy">Saya telah memeriksa penerbangan, penumpang, SPT, tambahan perjalanan, dan seluruh rincian biaya di atas.</span>
+      <span class="agreement-copy">Saya telah memeriksa data penerbangan, penumpang, SPT, dan rincian biaya di atas.</span>
     </label>
     <small id="agreementError"></small>
   </section>
@@ -223,6 +196,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<script defer src="./flight-review.js?v=20260819-premium-v2-addons"></script>
+<script defer src="./flight-review.js?v=20260819-premium-v1"></script>
 </body>
 </html>

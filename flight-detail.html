@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./flight-detail.css?v=20260819-premium-v2-pricing">
+  <link rel="stylesheet" href="./flight-detail.css?v=20260819-premium-v3-inline-addons">
 </head>
 <body>
   <main class="app-shell">
@@ -132,7 +132,7 @@
           <span class="benefit-icon">
             <svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"/></svg>
           </span>
-          <div><small>Tambahan</small><strong>Setelah penumpang</strong></div>
+          <div><small>Tambahan</small><strong id="addonBenefitStatus">Pilih di bawah</strong></div>
         </article>
         <article class="benefit">
           <span class="benefit-icon">
@@ -141,7 +141,87 @@
           <div><small>Harga OTW</small><strong id="pricingSourceLabel">Terverifikasi</strong></div>
         </article>
       </div>
-      <p class="addon-note">Bagasi tambahan dan perlindungan perjalanan dipilih setelah data penumpang & SPT, sebelum review akhir.</p>
+      <p class="addon-note">Bagasi tambahan dan perlindungan perjalanan dapat dipilih langsung di halaman ini. Tarif mengikuti konfigurasi Admin OTW untuk maskapai yang sedang dipilih.</p>
+    </section>
+
+
+    <section class="section-block addon-section" id="addonSection">
+      <div class="section-title">
+        <div>
+          <span class="eyebrow">LAYANAN TAMBAHAN</span>
+          <h2>Personalisasi perjalanan</h2>
+        </div>
+        <span class="mini-status"><i></i> Harga OTW</span>
+      </div>
+
+      <article class="addon-shell">
+        <div class="addon-intro">
+          <div class="addon-intro-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"/></svg>
+          </div>
+          <div>
+            <strong>Pilih layanan yang Anda butuhkan</strong>
+            <small>Harga otomatis mengikuti maskapai dan tarif yang ditentukan Admin OTW.</small>
+          </div>
+        </div>
+
+        <div id="addonLoading" class="addon-loading">
+          <span class="spinner"></span>
+          <div>
+            <strong>Memuat layanan tambahan...</strong>
+            <small>Mencocokkan tarif dengan maskapai penerbangan ini.</small>
+          </div>
+        </div>
+
+        <div id="baggageArea" class="addon-group hidden">
+          <div class="addon-group-head">
+            <div>
+              <span>BAGASI</span>
+              <strong>Bagasi tambahan</strong>
+            </div>
+            <small id="baggageGroupNote">Per penumpang</small>
+          </div>
+          <div id="baggagePassengerList" class="addon-passenger-list"></div>
+        </div>
+
+        <div id="insuranceArea" class="addon-group hidden">
+          <div class="addon-group-head">
+            <div>
+              <span>PERLINDUNGAN</span>
+              <strong>Asuransi perjalanan</strong>
+            </div>
+            <small>Opsional</small>
+          </div>
+          <div id="insuranceOptions" class="addon-option-grid"></div>
+        </div>
+
+        <div id="addonEmpty" class="addon-empty hidden">
+          <span class="addon-empty-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"/></svg>
+          </span>
+          <div>
+            <strong>Belum ada layanan tambahan aktif</strong>
+            <small id="addonEmptyText">Admin OTW belum mengaktifkan tarif add-on untuk maskapai ini.</small>
+          </div>
+        </div>
+
+        <div id="addonError" class="addon-error hidden">
+          <strong>Tarif add-on belum dapat dimuat</strong>
+          <small id="addonErrorText">Silakan coba lagi.</small>
+          <button id="retryAddonBtn" type="button">Coba lagi</button>
+        </div>
+
+        <div class="addon-summary">
+          <div>
+            <span>Tambahan dipilih</span>
+            <strong id="addonSummaryText">Tidak ada</strong>
+          </div>
+          <div class="addon-summary-price">
+            <span>Total add-on</span>
+            <strong id="addonTotalPrice">Rp0</strong>
+          </div>
+        </div>
+      </article>
     </section>
 
     <section class="duty-card">
@@ -169,13 +249,17 @@
         <span>Biaya layanan OTW</span>
         <strong id="serviceFee">Rp0</strong>
       </div>
+      <div class="price-line muted" id="addonPriceRow">
+        <span>Layanan tambahan</span>
+        <strong id="addonPrice">Rp0</strong>
+      </div>
       <div class="pricing-sync" id="pricingSync">
         <span class="pricing-dot"></span>
         <span id="pricingSyncText">Memuat konfigurasi harga OTW...</span>
       </div>
       <div class="price-divider"></div>
       <div class="price-total">
-        <div><span>Total sementara</span><small id="priceNote">Untuk 1 penumpang</small></div>
+        <div><span>Total sementara</span><small id="priceNote">Tiket + layanan tambahan</small></div>
         <strong id="totalPrice">Rp0</strong>
       </div>
       <p class="price-disclaimer">Harga tiket telah dihitung menggunakan konfigurasi pricing OTW. Harga dan ketersediaan tetap diverifikasi kembali sebelum pemesanan final.</p>
@@ -206,6 +290,6 @@
 
   <div class="toast" id="toast" role="status"></div>
 
-  <script type="module" src="./flight-detail.js?v=20260819-premium-v2-pricing"></script>
+  <script type="module" src="./flight-detail.js?v=20260819-premium-v3-inline-addons"></script>
 </body>
 </html>

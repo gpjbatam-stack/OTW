@@ -8,6 +8,7 @@ const $ = (s) => document.querySelector(s);
 
 const API_URL = "https://vumyxlbybhlaicubtgun.supabase.co/functions/v1/jetwize-search";
 const PRICING_RPC = "calculate_public_flight_price";
+const ADDON_RPC = "get_public_addon_catalog";
 
 const LOGOS = Object.freeze({
   GA:"GA.png", JT:"JT.png", QG:"QG.png", ID:"ID.png", IU:"IU.png",
@@ -35,6 +36,11 @@ let selected = null;
 let search = readJSON("otw_search") || {};
 let offerId = sessionStorage.getItem("otw_selected_offer_id") || "";
 let pricingSnapshot = null;
+
+let addonCatalog = [];
+let selectedBaggage = {};
+let selectedInsurance = null;
+let addonTotal = 0;
 
 function readJSON(key){
   try {
@@ -69,9 +75,7 @@ function hm(v){
   if(!v) return "--:--";
   const match=String(v).match(/T(\d{2}):(\d{2})/);
   if(match) return `${match[1]}:${match[2]}`;
-  const d=new Date(v);
-  if(Number.isNaN(d.getTime())) return "--:--";
-  return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+  return "--:--";
 }
 
 function duration(m){
@@ -83,6 +87,11 @@ function duration(m){
 function resolveCode(code,name){
   const c=String(code||"").toUpperCase();
   return LOGOS[c]?c:(NAME_CODES[String(name||"").toLowerCase()]||c||"FL");
+}
+
+function selectedAirlineCode(){
+  const seg=selected?.segments?.[0]||{};
+  return resolveCode(seg.carrier||selected?.carrier||selected?.airlineCode,seg.carrierName||selected?.carrierName||selected?.airlineName);
 }
 
 function logoHTML(code,name){
@@ -131,7 +140,6 @@ function normalizeSelected(){
       return selected;
     }catch{}
   }
-
   return null;
 }
 
@@ -205,6 +213,24 @@ function setPricingState(state,text){
   $("#pricingSyncText").textContent=text;
 }
 
+function calculateVisibleTotal(){
+  const flightTotal=Number(pricingSnapshot?.totalPrice||0);
+  const visibleTotal=flightTotal+addonTotal;
+
+  $("#addonPrice").textContent=rupiah(addonTotal);
+  $("#totalPrice").textContent=rupiah(visibleTotal);
+  $("#stickyPrice").textContent=rupiah(visibleTotal);
+
+  if(pricingSnapshot){
+    pricingSnapshot={
+      ...pricingSnapshot,
+      addonTotal,
+      checkoutTotal:visibleTotal
+    };
+    sessionStorage.setItem("otw_flight_pricing",JSON.stringify(pricingSnapshot));
+  }
+}
+
 async function applyOtwPricing(f){
   const supplierPrice=supplierPriceOf(f);
 
@@ -250,8 +276,6 @@ async function applyOtwPricing(f){
   $("#ticketPrice").textContent=rupiah(pricingSnapshot.ticketPrice);
   $("#serviceFee").textContent=rupiah(pricingSnapshot.serviceFee);
   $("#serviceFeeRow").classList.toggle("hidden",pricingSnapshot.serviceFee<=0);
-  $("#totalPrice").textContent=rupiah(pricingSnapshot.totalPrice);
-  $("#stickyPrice").textContent=rupiah(pricingSnapshot.totalPrice);
   $("#priceStatus").textContent="OTW Price";
   $("#pricingSourceLabel").textContent="OTW Pricing";
   setPricingState("ready","Harga dihitung dari konfigurasi Admin OTW.");
@@ -265,8 +289,215 @@ async function applyOtwPricing(f){
   };
 
   sessionStorage.setItem("otw_selected_flight",JSON.stringify(selected));
-  sessionStorage.setItem("otw_flight_pricing",JSON.stringify(pricingSnapshot));
+  calculateVisibleTotal();
   $("#continueBtn").disabled=false;
+}
+
+function restoreAddonSelection(){
+  const saved=readJSON("otw_flight_addons");
+  const code=selectedAirlineCode();
+
+  if(!saved || saved.airlineCode!==code) return;
+
+  selectedBaggage={};
+  (saved.baggage||[]).forEach(item=>{
+    const found=addonCatalog.find(x=>String(x.id)===String(item.addonId));
+    if(found) selectedBaggage[String(item.passengerIndex)]=found;
+  });
+
+  if(saved.insurance){
+    selectedInsurance=addonCatalog.find(x=>String(x.id)===String(saved.insurance.addonId))||null;
+  }
+}
+
+function baggageCatalog(){
+  return addonCatalog.filter(x=>String(x.addon_type).toUpperCase()==="BAGGAGE");
+}
+
+function insuranceCatalog(){
+  return addonCatalog.filter(x=>String(x.addon_type).toUpperCase()==="INSURANCE");
+}
+
+function renderAddonChoices(){
+  $("#addonLoading").classList.add("hidden");
+  $("#addonError").classList.add("hidden");
+
+  const bags=baggageCatalog();
+  const ins=insuranceCatalog();
+
+  $("#baggageArea").classList.toggle("hidden",!bags.length);
+  $("#insuranceArea").classList.toggle("hidden",!ins.length);
+  $("#addonEmpty").classList.toggle("hidden",Boolean(bags.length||ins.length));
+
+  if(!bags.length && !ins.length){
+    $("#addonEmptyText").textContent=`Belum ada BAGGAGE atau INSURANCE aktif untuk ${selectedAirlineCode()}.`;
+  }
+
+  if(bags.length){
+    const list=$("#baggagePassengerList");
+    list.innerHTML="";
+
+    for(let i=0;i<passengerCount();i++){
+      const chosen=selectedBaggage[String(i)]||null;
+      const wrap=document.createElement("div");
+      wrap.className="addon-pax";
+
+      wrap.innerHTML=`
+        <div class="addon-pax-head">
+          <strong>Penumpang ${i+1}</strong>
+          <small>${chosen?esc(chosen.addon_name):"Tanpa tambahan"}</small>
+        </div>
+        <div class="addon-option-grid">
+          <button class="addon-option ${!chosen?"active":""}" type="button" data-pax="${i}" data-none="1">
+            <i class="radio"></i>
+            <b>Tanpa bagasi</b>
+            <small>Gunakan bagasi bawaan tiket</small>
+            <strong>Rp0</strong>
+          </button>
+          ${bags.map(item=>`
+            <button class="addon-option ${chosen&&String(chosen.id)===String(item.id)?"active":""}" type="button" data-pax="${i}" data-id="${esc(item.id)}">
+              <i class="radio"></i>
+              <b>${esc(item.addon_name)}</b>
+              <small>${item.weight_kg?`Tambahan ${Number(item.weight_kg)} kg`:"Bagasi tambahan"}</small>
+              <strong>${rupiah(item.selling_price)}</strong>
+            </button>
+          `).join("")}
+        </div>
+      `;
+
+      list.appendChild(wrap);
+    }
+
+    document.querySelectorAll("[data-pax]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const idx=String(btn.dataset.pax);
+
+        if(btn.dataset.none){
+          delete selectedBaggage[idx];
+        }else{
+          const item=bags.find(x=>String(x.id)===String(btn.dataset.id));
+          if(item) selectedBaggage[idx]=item;
+        }
+
+        renderAddonChoices();
+        updateAddonSummary();
+      });
+    });
+  }
+
+  if(ins.length){
+    const box=$("#insuranceOptions");
+    box.innerHTML=`
+      <button class="addon-option ${!selectedInsurance?"active":""}" type="button" data-ins-none="1">
+        <i class="radio"></i>
+        <b>Tanpa asuransi</b>
+        <small>Lanjut tanpa perlindungan tambahan</small>
+        <strong>Rp0</strong>
+      </button>
+      ${ins.map(item=>`
+        <button class="addon-option ${selectedInsurance&&String(selectedInsurance.id)===String(item.id)?"active":""}" type="button" data-ins-id="${esc(item.id)}">
+          <i class="radio"></i>
+          <b>${esc(item.addon_name)}</b>
+          <small>Perlindungan perjalanan</small>
+          <strong>${rupiah(item.selling_price)}</strong>
+        </button>
+      `).join("")}
+    `;
+
+    $("[data-ins-none]")?.addEventListener("click",()=>{
+      selectedInsurance=null;
+      renderAddonChoices();
+      updateAddonSummary();
+    });
+
+    document.querySelectorAll("[data-ins-id]").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        selectedInsurance=ins.find(x=>String(x.id)===String(btn.dataset.insId))||null;
+        renderAddonChoices();
+        updateAddonSummary();
+      });
+    });
+  }
+
+  updateAddonSummary();
+}
+
+function updateAddonSummary(){
+  const baggageItems=Object.values(selectedBaggage);
+  const baggageTotal=baggageItems.reduce((sum,x)=>sum+Number(x.selling_price||0),0);
+  const insuranceTotal=Number(selectedInsurance?.selling_price||0);
+
+  addonTotal=baggageTotal+insuranceTotal;
+
+  const count=baggageItems.length+(selectedInsurance?1:0);
+  $("#addonSummaryText").textContent=count
+    ? `${baggageItems.length} bagasi${selectedInsurance?" + asuransi":""}`
+    : "Tidak ada";
+
+  $("#addonTotalPrice").textContent=rupiah(addonTotal);
+  $("#addonBenefitStatus").textContent=count?`${count} dipilih`:"Opsional";
+
+  calculateVisibleTotal();
+  persistAddons();
+}
+
+function persistAddons(){
+  const baggage=Object.entries(selectedBaggage).map(([passengerIndex,item])=>({
+    passengerIndex:Number(passengerIndex),
+    addonId:item.id,
+    addonCode:item.addon_code,
+    addonName:item.addon_name,
+    weightKg:item.weight_kg==null?null:Number(item.weight_kg),
+    sellingPrice:Number(item.selling_price||0)
+  }));
+
+  const insurance=selectedInsurance?{
+    addonId:selectedInsurance.id,
+    addonCode:selectedInsurance.addon_code,
+    addonName:selectedInsurance.addon_name,
+    sellingPrice:Number(selectedInsurance.selling_price||0)
+  }:null;
+
+  sessionStorage.setItem("otw_flight_addons",JSON.stringify({
+    airlineCode:selectedAirlineCode(),
+    baggage,
+    insurance,
+    total:addonTotal,
+    currency:"IDR",
+    pricingSource:"OTW_ADMIN_CATALOG",
+    selectedAt:new Date().toISOString()
+  }));
+}
+
+async function loadAddonCatalog(){
+  $("#addonLoading").classList.remove("hidden");
+  $("#addonError").classList.add("hidden");
+  $("#addonEmpty").classList.add("hidden");
+
+  const code=selectedAirlineCode();
+
+  try{
+    const {data,error}=await supabase.rpc(ADDON_RPC,{
+      p_airline_code:code
+    });
+
+    if(error) throw error;
+
+    addonCatalog=(data||[]).map(x=>({
+      ...x,
+      selling_price:Number(x.selling_price||0),
+      weight_kg:x.weight_kg==null?null:Number(x.weight_kg)
+    }));
+
+    restoreAddonSelection();
+    renderAddonChoices();
+
+  }catch(error){
+    console.error("[OTW] add-on catalog:",error);
+    $("#addonLoading").classList.add("hidden");
+    $("#addonError").classList.remove("hidden");
+    $("#addonErrorText").textContent=error?.message||"Katalog add-on belum dapat dimuat.";
+  }
 }
 
 function setVerify(state,title,text){
@@ -285,6 +516,7 @@ async function verifyOffer(){
   if(!id){
     setVerify("verified","Detail siap","Harga akan diverifikasi kembali sebelum pemesanan.");
     await applyOtwPricing(selected);
+    await loadAddonCatalog();
     return;
   }
 
@@ -320,6 +552,7 @@ async function verifyOffer(){
       }
 
       await applyOtwPricing(selected);
+      await loadAddonCatalog();
       return;
     }
 
@@ -329,6 +562,7 @@ async function verifyOffer(){
     console.info("[OTW] price-check fallback:",e.message);
     setVerify("verified","Penerbangan siap dipilih","Menggunakan hasil pencarian real-time terakhir.");
     await applyOtwPricing(selected);
+    await loadAddonCatalog();
   }
 }
 
@@ -351,6 +585,7 @@ async function init(){
 
 $("#backBtn")?.addEventListener("click",()=>history.back());
 $("#backToSearchBtn")?.addEventListener("click",()=>history.back());
+$("#retryAddonBtn")?.addEventListener("click",loadAddonCatalog);
 
 $("#continueBtn")?.addEventListener("click",()=>{
   if(!selected){
@@ -362,6 +597,8 @@ $("#continueBtn")?.addEventListener("click",()=>{
     toast("Harga OTW belum berhasil dihitung.");
     return;
   }
+
+  persistAddons();
 
   sessionStorage.setItem("otw_selected_flight",JSON.stringify(selected));
   sessionStorage.setItem("otw_flight_pricing",JSON.stringify(pricingSnapshot));
