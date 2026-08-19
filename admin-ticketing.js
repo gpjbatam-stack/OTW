@@ -134,7 +134,9 @@ function syncReadiness(){
   return r;
 }
 function syncTravelDoc(){
-  $("#travelDocRoute").textContent=`${currentOrder?.origin||"---"} → ${currentOrder?.destination||"---"}`;$("#travelDocReference").textContent=`Booking Reference: ${$("#pnrInput").value.trim()||"—"}`;
+  const t=currentOrder?resolveTravelData(currentOrder):null;
+  $("#travelDocRoute").textContent=`${t?.origin||"---"} → ${t?.destination||"---"}`;
+  $("#travelDocReference").textContent=`Booking Reference: ${$("#pnrInput").value.trim()||"—"}`;
   $("#printTravelDocBtn").disabled=!generatedDoc;
 }
 function syncOfficialTicketUI(){
@@ -154,15 +156,249 @@ async function uploadOfficialTicket(file){
   officialTicketRef=path;syncOfficialTicketUI();syncReadiness();toast("E-ticket resmi berhasil di-upload.");
 }
 
+
+const AIRPORT_NAMES={
+  BTH:"Hang Nadim International Airport",
+  CGK:"Soekarno-Hatta International Airport",
+  HLP:"Halim Perdanakusuma International Airport",
+  DPS:"I Gusti Ngurah Rai International Airport",
+  SUB:"Juanda International Airport",
+  KNO:"Kualanamu International Airport",
+  PKU:"Sultan Syarif Kasim II International Airport",
+  PLM:"Sultan Mahmud Badaruddin II International Airport",
+  BPN:"Sultan Aji Muhammad Sulaiman Sepinggan Airport",
+  UPG:"Sultan Hasanuddin International Airport",
+  SOC:"Adi Soemarmo International Airport",
+  YIA:"Yogyakarta International Airport",
+  JOG:"Adisutjipto Airport",
+  SRG:"Jenderal Ahmad Yani International Airport",
+  BDJ:"Syamsudin Noor International Airport",
+  PNK:"Supadio International Airport",
+  PDG:"Minangkabau International Airport",
+  MDC:"Sam Ratulangi International Airport",
+  DJJ:"Sentani Airport",
+  AMQ:"Pattimura Airport"
+};
+
+function maskIdentity(value){
+  const raw=String(value||"").replace(/\s+/g,"");
+  if(!raw||raw==="Onfile")return"On file";
+  if(raw.length<=4)return`••${raw}`;
+  return`${"•".repeat(Math.min(8,raw.length-4))}${raw.slice(-4)}`;
+}
+
+function minutesBetween(a,b){
+  const aa=new Date(a||0),bb=new Date(b||0);
+  if(Number.isNaN(aa.getTime())||Number.isNaN(bb.getTime()))return 0;
+  return Math.max(0,Math.round((bb-aa)/60000));
+}
+
+function durationLabel(minutes){
+  const m=Number(minutes||0);
+  if(!m)return"—";
+  const h=Math.floor(m/60),r=m%60;
+  return [h?`${h}j`:"",r?`${r}m`:""].filter(Boolean).join(" ");
+}
+
+function resolveTravelData(order){
+  const payload=order?.payload||{};
+  const flight=payload.flight||{};
+  const search=flight.searchSnapshot||payload.search||payload.searchSnapshot||{};
+  const allSegments=Array.isArray(flight.segments)?flight.segments:[];
+
+  const origin=String(search.origin||allSegments[0]?.origin||flight.origin||order.origin||"---").toUpperCase();
+
+  let destination=String(search.destination||flight.destination||order.destination||"").toUpperCase();
+  if(!destination||destination===origin){
+    destination=String(allSegments.find(s=>String(s.destination||"").toUpperCase()!==origin)?.destination||"---").toUpperCase();
+  }
+
+  let outbound=[];
+  for(const seg of allSegments){
+    outbound.push(seg);
+    if(String(seg.destination||"").toUpperCase()===destination)break;
+  }
+  if(!outbound.length&&allSegments.length)outbound=[allSegments[0]];
+
+  const first=outbound[0]||{};
+  const last=outbound[outbound.length-1]||first;
+
+  const departAt=first.departureLocalTime||first.departureTime||order.depart_at;
+  const arriveAt=last.arrivalLocalTime||last.arrivalTime||order.arrival_at;
+  const durationMinutes=outbound.reduce((sum,s)=>sum+Number(s.duration||s.durationMinutes||0),0)
+    || Number(flight.totalDuration||flight.durationMinutes||0)
+    || minutesBetween(departAt,arriveAt);
+
+  const tripRaw=String(search.trip||search.tripType||payload.tripType||"oneway").toLowerCase();
+  const tripType=/round|return|pp/.test(tripRaw)?"Pulang-pergi":"Sekali jalan";
+
+  return {payload,flight,search,allSegments,outbound,first,last,origin,destination,departAt,arriveAt,durationMinutes,tripType};
+}
+
+function renderQr(orderCode){
+  const box=$("#docQr");
+  if(!box)return;
+  box.innerHTML="";
+  const verifyUrl=`${location.origin}${location.pathname.replace(/admin-ticketing\.html$/,"detail-pesanan.html")}?id=${encodeURIComponent(orderCode||"")}`;
+  if(window.QRCode){
+    new QRCode(box,{
+      text:verifyUrl,
+      width:48,
+      height:48,
+      colorDark:"#071d40",
+      colorLight:"#ffffff",
+      correctLevel:QRCode.CorrectLevel.M
+    });
+  }else{
+    box.textContent="OTW";
+  }
+}
+
 function fillTravelDoc(){
-  $("#docOrderCode").textContent=currentOrder.order_code;$("#docPnr").textContent=$("#pnrInput").value.trim()||"—";$("#docOrigin").textContent=currentOrder.origin||"---";$("#docDestination").textContent=currentOrder.destination||"---";$("#docDepart").textContent=`${dateOnly(currentOrder.depart_at)} · ${hm(currentOrder.depart_at)}`;$("#docArrival").textContent=hm(currentOrder.arrival_at);$("#docAirline").textContent=currentOrder.airline_name||"—";$("#docFlight").textContent=currentOrder.flight_number||"—";$("#docPax").textContent=`${passengerCount(currentOrder)||1} orang`;$("#docTicketNumber").textContent=$("#ticketNumberInput").value.trim()||"—";
-  const p=currentOrder?.payload||{};
-  const pd=p.passengerDetails||p.passengers||{};
-  const first=Array.isArray(pd)?pd[0]:(pd.passengers?.[0]||pd.adults?.[0]||pd.primaryPassenger||pd);
-  const passengerName=[first?.title,first?.full_name||first?.fullName||first?.name].filter(Boolean).join(" ").trim();
-  $("#docPassengerName").textContent=passengerName||currentOrder?.passenger_name||"Passenger";
-  const baggage=p?.addons?.baggage?.label||p?.addons?.baggage||p?.selectedAddons?.baggage||p?.flight?.baggage;
-  $("#docBaggage").textContent=typeof baggage==="string"?baggage:(baggage?.label||"According to booking");
+  if(!currentOrder)return;
+
+  const t=resolveTravelData(currentOrder);
+  const payload=t.payload;
+  const pd=payload.passengerDetails||{};
+  const paxList=Array.isArray(pd.passengers)?pd.passengers:(Array.isArray(payload.passengers)?payload.passengers:[]);
+  const ops=buildOps(true);
+  const addons=payload.addons||{};
+  const baggageItems=Array.isArray(addons.baggage)?addons.baggage:[];
+  const insurance=addons.insurance||null;
+
+  const pnr=$("#pnrInput").value.trim().toUpperCase()||ops.pnr||"—";
+  const ticketNumber=$("#ticketNumberInput").value.trim()||ops.ticketNumber||"—";
+  const airline=currentOrder.airline_name||t.first.carrierName||t.flight.airlineName||"—";
+  const flightNo=currentOrder.flight_number||t.first.flightNumber||t.flight.flightNumber||"—";
+  const cabin=t.first.cabinClass||t.flight.cabin||t.search.cabin||"Economy";
+  const fareClass=t.first.bookingClass||t.first.fareClass||t.first.fareBasis||t.flight.bookingClass||"—";
+  const stops=Math.max(0,t.outbound.length-1);
+  const routeType=stops?`${stops} transit`:"Direct / Non-stop";
+
+  const originName=t.first.originName||AIRPORT_NAMES[t.origin]||"Airport asal";
+  const destinationName=t.last.destinationName||AIRPORT_NAMES[t.destination]||"Airport tujuan";
+  const originTerminal=t.first.departureTerminal||t.first.originTerminal||t.first.terminal||"—";
+  const destinationTerminal=t.last.arrivalTerminal||t.last.destinationTerminal||"—";
+
+  const cabinBaggage=t.first.cabinBaggage||t.first.carryOn||t.flight.cabinBaggage||"According to booking";
+  const checkedBaggage=t.first.baggageAllowance||t.first.checkedBaggage||t.flight.baggage||"According to booking";
+
+  const extraKg=baggageItems.reduce((sum,x)=>sum+Number(x.weightKg||x.weight_kg||0),0);
+  const extraBaggage=extraKg?`${extraKg} kg`:baggageItems.length?`${baggageItems.length} add-on`:"Tidak ada";
+
+  $("#docOrderCode").textContent=currentOrder.order_code||"—";
+  $("#docPnr").textContent=pnr;
+  $("#docPnrSide").textContent=pnr;
+  $("#docOrigin").textContent=t.origin;
+  $("#docDestination").textContent=t.destination;
+  $("#docOriginName").textContent=originName;
+  $("#docDestinationName").textContent=destinationName;
+  $("#docDepart").textContent=`${dateOnly(t.departAt)} · ${hm(t.departAt)}`;
+  $("#docArrival").textContent=`${dateOnly(t.arriveAt)} · ${hm(t.arriveAt)}`;
+  $("#docOriginTerminal").textContent=`Terminal ${originTerminal}`;
+  $("#docDestinationTerminal").textContent=`Terminal ${destinationTerminal}`;
+  $("#docDuration").textContent=durationLabel(t.durationMinutes)||"—";
+  $("#docFlightType").textContent=routeType;
+  $("#docAirline").textContent=airline;
+  $("#docAirlineFact").textContent=airline;
+  $("#docFlight").textContent=flightNo;
+  $("#docFlightFact").textContent=flightNo;
+  $("#docPax").textContent=`${paxList.length||passengerCount(currentOrder)||1} orang`;
+  $("#docCabin").textContent=cabin;
+  $("#docFareClass").textContent=fareClass;
+  $("#docRouteType").textContent=routeType;
+  $("#docTicketNumber").textContent=ticketNumber;
+  $("#docStatus").textContent=selectedStatus==="ISSUED"?"ISSUED":"READY TO ISSUE";
+  $("#docTripType").textContent=t.tripType;
+  $("#docCabinBaggage").textContent=String(cabinBaggage);
+  $("#docCheckedBaggage").textContent=String(checkedBaggage);
+  $("#docExtraBaggage").textContent=extraBaggage;
+
+  const issuedAt=payload.ticketing?.issuedAt||new Date().toISOString();
+  $("#docIssuedAt").textContent=dt(issuedAt);
+
+  // Itinerary segments — use all available segments so round-trip / connecting bookings remain complete.
+  const segList=$("#docSegmentList");
+  const segments=t.allSegments.length?t.allSegments:t.outbound;
+  $("#docSegmentCount").textContent=`${segments.length||1} segment`;
+  segList.innerHTML=(segments.length?segments:[t.first]).map((seg,index)=>{
+    const segOrigin=String(seg.origin||"---").toUpperCase();
+    const segDest=String(seg.destination||"---").toUpperCase();
+    const dep=seg.departureLocalTime||seg.departureTime||"";
+    const arr=seg.arrivalLocalTime||seg.arrivalTime||"";
+    const segAirline=seg.carrierName||airline;
+    const segFlight=seg.flightNumber||flightNo;
+    const segClass=seg.bookingClass||seg.fareClass||seg.cabinClass||fareClass||cabin;
+    return `<div class="otwdoc-segment-row">
+      <div class="otwdoc-segment-airline">
+        <small>SEGMENT ${index+1}</small>
+        <strong>${esc(segAirline)}</strong>
+        <small>${esc(segFlight)}</small>
+      </div>
+      <div class="otwdoc-segment-airport">
+        <small>DEPART</small>
+        <strong>${esc(segOrigin)} · ${esc(hm(dep))}</strong>
+        <b>${esc(dateOnly(dep))}</b>
+      </div>
+      <div class="otwdoc-segment-line"><i></i><span>✈</span><i></i></div>
+      <div class="otwdoc-segment-airport">
+        <small>ARRIVE</small>
+        <strong>${esc(segDest)} · ${esc(hm(arr))}</strong>
+        <b>${esc(dateOnly(arr))}</b>
+      </div>
+      <div class="otwdoc-segment-meta">
+        <small>CLASS / FARE</small>
+        <strong>${esc(String(segClass||"—"))}</strong>
+      </div>
+    </div>`;
+  }).join("");
+
+  // Passenger list with masked identity.
+  const effectivePax=paxList.length?paxList:[pd.primaryPassenger||{}];
+  $("#docPassengerCount").textContent=`${effectivePax.length||1} PAX`;
+  $("#docPassengerList").innerHTML=effectivePax.map((p,index)=>{
+    const name=[p.title,p.fullName||p.full_name||p.name].filter(Boolean).join(" ").trim()||`Penumpang ${index+1}`;
+    const type=p.type||p.label||"ADULT";
+    const identity=p.identityNumber||p.identity_number||p.documentNumber||p.ktpNumber||"";
+    const nationality=p.nationality||"Indonesia";
+    const ticketForPax=p.ticketNumber||p.eTicketNumber||ticketNumber;
+    return `<div class="otwdoc-passenger-item">
+      <span class="otwdoc-pax-index">${index+1}</span>
+      <div class="otwdoc-passenger-main">
+        <strong>${esc(name.toUpperCase())}</strong>
+        <small>${esc(String(type).toUpperCase())} · ${esc(String(cabin).toUpperCase())}</small>
+      </div>
+      <div class="otwdoc-passenger-data">
+        <small>IDENTITY</small>
+        <strong>${esc(maskIdentity(identity))}</strong>
+      </div>
+      <div class="otwdoc-passenger-data">
+        <small>NATIONALITY</small>
+        <strong>${esc(nationality)}</strong>
+      </div>
+      <div class="otwdoc-passenger-data">
+        <small>E-TICKET</small>
+        <strong>${esc(ticketForPax||"—")}</strong>
+      </div>
+    </div>`;
+  }).join("");
+
+  // Dynamic travel services.
+  const services=[
+    {name:`Cabin baggage · ${cabinBaggage}`,state:"Included",ok:true},
+    {name:`Checked baggage · ${checkedBaggage}`,state:"Included",ok:true}
+  ];
+  if(baggageItems.length)services.push({name:`Extra baggage · ${extraBaggage}`,state:"Selected",ok:true});
+  if(insurance)services.push({name:insurance.addonName||insurance.name||"Asuransi perjalanan",state:"Selected",ok:true});
+  if(!insurance)services.push({name:"Asuransi perjalanan",state:"Not selected",ok:false});
+
+  $("#docServiceList").innerHTML=services.map(s=>`<div class="${s.ok?"":"none"}">
+    <span>${s.ok?"✓":"—"}</span>
+    <strong>${esc(s.name)}</strong>
+    <em>${esc(s.state)}</em>
+  </div>`).join("");
+
+  renderQr(currentOrder.order_code);
 }
 function previewTravelDoc(){fillTravelDoc();$("#travelDocModal").classList.remove("hidden")}
 function generateTravelDoc(){const r=syncReadiness();if(!r.ready){toast("Lengkapi seluruh Issue Readiness terlebih dahulu.");return}generatedDoc=true;syncTravelDoc();previewTravelDoc();toast("OTW Travel Document siap dicetak.");}
@@ -197,8 +433,10 @@ $("#saveDraftBtn").onclick=()=>saveOrder({status:String(currentOrder.status||"SU
 $("#saveStatusBtn").onclick=()=>saveOrder().catch(e=>toast(e.message));$("#issueBtn").onclick=()=>issueOrder().catch(e=>toast(e.message));
 $("#cancelBtn").onclick=()=>$("#cancelModal").classList.remove("hidden");$("#closeCancelBtn").onclick=()=>$("#cancelModal").classList.add("hidden");$("#confirmCancelBtn").onclick=()=>cancelOrder().catch(e=>toast(e.message));
 $("#previewTravelDocBtn").onclick=previewTravelDoc;$("#generateTravelDocBtn").onclick=generateTravelDoc;$("#printTravelDocBtn").onclick=()=>{previewTravelDoc();setTimeout(()=>window.print(),180)};
-$("#closeTravelDocBtn").onclick=()=>$("#travelDocModal").classList.add("hidden");$("#modalPrintBtn").onclick=()=>window.print();
+$("#closeTravelDocBtn").onclick=()=>$("#travelDocModal").classList.add("hidden");$("#modalPrintBtn").onclick=()=>{fillTravelDoc();setTimeout(()=>window.print(),120)};
 
 (async()=>{try{if(!await ensureAdmin())return;await loadOrders()}catch(e){console.error(e);setLoading(false);$("#errorState").classList.remove("hidden");$("#errorText").textContent=e.message||"Gagal memuat ticketing."}})();
 
 $("#modalCloseBtn")?.addEventListener("click",()=>$("#travelDocModal").classList.add("hidden"));
+
+console.info("[OTW] Admin Ticketing V6 Executive Ticket loaded");
