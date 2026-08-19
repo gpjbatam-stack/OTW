@@ -30,3 +30,28 @@ button{font:inherit}.hidden{display:none!important}
 .expired-card{margin-top:15px;text-align:center;background:#fff3f4;border:1px solid #f3d2d5;border-radius:18px;padding:16px}.expired-card strong{font-size:11px}.expired-card p{font-size:8px;color:#8b6970}.expired-card button{border:0;background:#8d2330;color:white;border-radius:10px;padding:9px 12px;font-size:9px;font-weight:800}
 .sticky-checkout{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(246,249,253,.84);backdrop-filter:blur(20px);border-top:1px solid rgba(217,226,238,.8)}.sticky-inner{width:min(100%,406px);margin:auto;background:#fff;border:1px solid #e2e9f2;border-radius:19px;padding:9px 9px 9px 13px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 12px 34px rgba(7,36,78,.12)}.sticky-price small{display:block;font-size:7px;color:#7b8ca4}.sticky-price strong{font-size:16px;letter-spacing:-.04em;color:#086fff;display:block}.sticky-price span{font-size:6.5px;color:#9ba7b7}.continue-btn{height:48px;min-width:148px;border:0;border-radius:14px;background:linear-gradient(135deg,#0968e8,#2c95ff);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 9px 20px rgba(16,116,241,.25);cursor:pointer}.continue-btn svg{width:16px;fill:none;stroke:currentColor;stroke-width:2}.continue-btn:disabled{opacity:.48;box-shadow:none}.bottom-space{height:10px}.toast{position:fixed;z-index:60;left:50%;bottom:104px;transform:translate(-50%,12px);width:min(calc(100% - 44px),360px);background:#071b3b;color:#fff;border-radius:13px;padding:10px 13px;font-size:9px;text-align:center;opacity:0;pointer-events:none;transition:.22s}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(min-width:700px){body:before{content:"";position:fixed;inset:0;background:linear-gradient(90deg,rgba(228,236,246,.7),transparent 35%,transparent 65%,rgba(228,236,246,.7));pointer-events:none}.app-shell{box-shadow:0 0 55px rgba(19,50,88,.08)}}
+
+/* V2 — OTW Admin Pricing */
+.pricing-sync{
+  margin:8px 0 2px;
+  padding:8px 9px;
+  border-radius:10px;
+  background:#f5f8fc;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:6.5px;
+  color:#72849b
+}
+.pricing-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#e0a126;
+  box-shadow:0 0 0 4px rgba(224,161,38,.09);
+  flex:0 0 auto
+}
+.pricing-sync.ready{background:#eefaf5;color:#0b815b}
+.pricing-sync.ready .pricing-dot{background:#16bd7d;box-shadow:0 0 0 4px rgba(22,189,125,.09)}
+.pricing-sync.error{background:#fff3f4;color:#b94450}
+.pricing-sync.error .pricing-dot{background:#df5560;box-shadow:0 0 0 4px rgba(223,85,96,.08)}
+.price-line.muted span{color:#71839b}
+.price-line.muted strong{color:#355578}

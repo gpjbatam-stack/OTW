@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./flight-detail.css?v=20260819-premium-v1">
+  <link rel="stylesheet" href="./flight-detail.css?v=20260819-premium-v2-pricing">
 </head>
 <body>
   <main class="app-shell">
@@ -132,16 +132,16 @@
           <span class="benefit-icon">
             <svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"/></svg>
           </span>
-          <div><small>Tambahan</small><strong>Nanti dipilih</strong></div>
+          <div><small>Tambahan</small><strong>Setelah penumpang</strong></div>
         </article>
         <article class="benefit">
           <span class="benefit-icon">
             <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
           </span>
-          <div><small>Data harga</small><strong>JetWize</strong></div>
+          <div><small>Harga OTW</small><strong id="pricingSourceLabel">Terverifikasi</strong></div>
         </article>
       </div>
-      <p class="addon-note">Bagasi tambahan dan perlindungan perjalanan dapat dipilih setelah data penumpang.</p>
+      <p class="addon-note">Bagasi tambahan dan perlindungan perjalanan dipilih setelah data penumpang & SPT, sebelum review akhir.</p>
     </section>
 
     <section class="duty-card">
@@ -166,15 +166,19 @@
         <strong id="ticketPrice">Rp0</strong>
       </div>
       <div class="price-line muted hidden" id="serviceFeeRow">
-        <span>Biaya layanan</span>
+        <span>Biaya layanan OTW</span>
         <strong id="serviceFee">Rp0</strong>
+      </div>
+      <div class="pricing-sync" id="pricingSync">
+        <span class="pricing-dot"></span>
+        <span id="pricingSyncText">Memuat konfigurasi harga OTW...</span>
       </div>
       <div class="price-divider"></div>
       <div class="price-total">
         <div><span>Total sementara</span><small id="priceNote">Untuk 1 penumpang</small></div>
         <strong id="totalPrice">Rp0</strong>
       </div>
-      <p class="price-disclaimer">Harga akan diverifikasi kembali sebelum melanjutkan proses pemesanan.</p>
+      <p class="price-disclaimer">Harga tiket telah dihitung menggunakan konfigurasi pricing OTW. Harga dan ketersediaan tetap diverifikasi kembali sebelum pemesanan final.</p>
     </section>
 
     <section id="expiredState" class="expired-card hidden">
@@ -202,6 +206,6 @@
 
   <div class="toast" id="toast" role="status"></div>
 
-  <script type="module" src="./flight-detail.js?v=20260819-premium-v1"></script>
+  <script type="module" src="./flight-detail.js?v=20260819-premium-v2-pricing"></script>
 </body>
 </html>
