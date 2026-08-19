@@ -1,11 +1,12 @@
 import { requireAuth } from "./guard.js";
+import { supabase } from "./supabase.js";
 
 try {
   await requireAuth({ redirect: "login.html" });
 } catch (authError) {
   console.error("[OTW] requireAuth gagal:", authError);
 }
-console.info("[OTW] search-flight mobile v8 root airline logos loaded");
+console.info("[OTW] search-flight v9 Supabase SDK auth loaded");
 
 const SUPABASE_URL = "https://vumyxlbybhlaicubtgun.supabase.co";
 const EDGE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/jetwize-search`;
@@ -352,51 +353,68 @@ function selectFlight(flight) {
   location.href = "flight-detail.html";
 }
 
-function getSupabaseAccessToken() {
-  const candidates = [];
+async function getValidAccessToken(forceRefresh = false) {
+  let session = null;
 
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (!key) continue;
-    if (key.startsWith("sb-") && key.endsWith("-auth-token")) {
-      candidates.push(localStorage.getItem(key));
+  if (forceRefresh) {
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error) throw error;
+    session = data?.session || null;
+  } else {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+    session = data?.session || null;
+
+    const expiresAt = Number(session?.expires_at || 0) * 1000;
+    if (session && expiresAt && expiresAt <= Date.now() + 60_000) {
+      const refreshed = await supabase.auth.refreshSession();
+      if (refreshed.error) throw refreshed.error;
+      session = refreshed.data?.session || null;
     }
   }
 
-  candidates.push(
-    sessionStorage.getItem("sb-access-token"),
-    localStorage.getItem("sb-access-token"),
-    sessionStorage.getItem("access_token"),
-    localStorage.getItem("access_token")
-  );
+  if (!session?.access_token) {
+    throw new Error("Sesi login tidak ditemukan atau sudah berakhir. Silakan login kembali.");
+  }
 
-  for (const item of candidates) {
-    if (!item) continue;
+  return session.access_token;
+}
 
-    if (typeof item === "string" && item.split(".").length === 3) {
-      return item;
-    }
+async function postFlightSearch(payload) {
+  const send = async (token) => {
+    const response = await fetch(EDGE_FUNCTION_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store"
+    });
 
+    const data = await response.json().catch(() => ({}));
+    return { response, data };
+  };
+
+  let token = await getValidAccessToken(false);
+  let result = await send(token);
+
+  // Recover once from a stale/expired browser session.
+  if (result.response.status === 401) {
     try {
-      const raw = JSON.parse(item);
-      const token =
-        raw?.access_token ||
-        raw?.currentSession?.access_token ||
-        raw?.session?.access_token ||
-        raw?.[0]?.access_token;
-      if (token) return token;
-    } catch (_) {}
+      token = await getValidAccessToken(true);
+      result = await send(token);
+    } catch (refreshError) {
+      console.warn("[OTW] refresh session gagal:", refreshError);
+    }
   }
 
-  return null;
+  return result;
 }
 
 async function searchFlights(searchData) {
   if (!searchData.destination) throw new Error("Pilih bandara tujuan terlebih dahulu.");
   if (!searchData.depart) throw new Error("Pilih tanggal keberangkatan terlebih dahulu.");
-
-  const token = getSupabaseAccessToken();
-  if (!token) throw new Error("Sesi login tidak ditemukan. Silakan kembali ke login lalu masuk kembali.");
 
   const payload = {
     origin: searchData.origin,
@@ -415,19 +433,13 @@ async function searchFlights(searchData) {
     payload.returnDate = searchData.return;
   }
 
-  const response = await fetch(EDGE_FUNCTION_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify(payload),
-    cache: "no-store"
-  });
-
-  const data = await response.json().catch(() => ({}));
+  const { response, data } = await postFlightSearch(payload);
 
   if (!response.ok || data?.error) {
+    if (response.status === 401) {
+      throw new Error("Sesi login tidak berlaku. Silakan logout, login kembali, lalu ulangi pencarian.");
+    }
+
     throw new Error(
       data?.error?.message ||
       data?.message ||
