@@ -30,6 +30,29 @@ async function verifyAdmin(){
   sessionStorage.setItem("otw_admin_profile",JSON.stringify({
     userId:user.id,email:user.email,role:admin.role
   }));
+
+  await loadTicketingQueue();
+}
+
+
+async function loadTicketingQueue(){
+  try{
+    const {count,error}=await supabase
+      .from("flight_orders")
+      .select("id",{count:"exact",head:true})
+      .in("status",["SUBMITTED","PROCESSING","VERIFIED"]);
+
+    if(error) throw error;
+
+    const el=$("#ticketingQueueText");
+    if(el){
+      el.textContent=count
+        ? `${count} order aktif perlu ditangani`
+        : "Tidak ada antrean aktif";
+    }
+  }catch(error){
+    console.warn("[OTW Admin] queue count:",error);
+  }
 }
 
 async function logout(){
