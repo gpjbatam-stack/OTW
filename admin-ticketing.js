@@ -261,6 +261,7 @@ function fillTravelDoc(){
   const payload=t.payload;
   const pd=payload.passengerDetails||{};
   const paxList=Array.isArray(pd.passengers)?pd.passengers:(Array.isArray(payload.passengers)?payload.passengers:[]);
+  const effectivePax=paxList.length?paxList:[pd.primaryPassenger||{}];
   const ops=buildOps(true);
   const addons=payload.addons||{};
   const baggageItems=Array.isArray(addons.baggage)?addons.baggage:[];
@@ -282,121 +283,72 @@ function fillTravelDoc(){
 
   const cabinBaggage=t.first.cabinBaggage||t.first.carryOn||t.flight.cabinBaggage||"According to booking";
   const checkedBaggage=t.first.baggageAllowance||t.first.checkedBaggage||t.flight.baggage||"According to booking";
-
   const extraKg=baggageItems.reduce((sum,x)=>sum+Number(x.weightKg||x.weight_kg||0),0);
   const extraBaggage=extraKg?`${extraKg} kg`:baggageItems.length?`${baggageItems.length} add-on`:"Tidak ada";
 
   $("#docOrderCode").textContent=currentOrder.order_code||"—";
   $("#docPnr").textContent=pnr;
-  $("#docPnrSide").textContent=pnr;
+  $("#docTicketNumber").textContent=ticketNumber;
   $("#docOrigin").textContent=t.origin;
   $("#docDestination").textContent=t.destination;
   $("#docOriginName").textContent=originName;
   $("#docDestinationName").textContent=destinationName;
   $("#docDepart").textContent=`${dateOnly(t.departAt)} · ${hm(t.departAt)}`;
   $("#docArrival").textContent=`${dateOnly(t.arriveAt)} · ${hm(t.arriveAt)}`;
-  $("#docOriginTerminal").textContent=`Terminal ${originTerminal}`;
-  $("#docDestinationTerminal").textContent=`Terminal ${destinationTerminal}`;
+  $("#docOriginTerminal").textContent=originTerminal&&originTerminal!=="—"?`Terminal ${originTerminal}`:"Terminal —";
+  $("#docDestinationTerminal").textContent=destinationTerminal&&destinationTerminal!=="—"?`Terminal ${destinationTerminal}`:"Terminal —";
   $("#docDuration").textContent=durationLabel(t.durationMinutes)||"—";
+  $("#docFlight").textContent=`${airline} · ${flightNo}`;
   $("#docFlightType").textContent=routeType;
-  $("#docAirline").textContent=airline;
   $("#docAirlineFact").textContent=airline;
-  $("#docFlight").textContent=flightNo;
   $("#docFlightFact").textContent=flightNo;
-  $("#docPax").textContent=`${paxList.length||passengerCount(currentOrder)||1} orang`;
   $("#docCabin").textContent=cabin;
   $("#docFareClass").textContent=fareClass;
-  $("#docRouteType").textContent=routeType;
-  $("#docTicketNumber").textContent=ticketNumber;
-  $("#docStatus").textContent=selectedStatus==="ISSUED"?"ISSUED":"READY TO ISSUE";
   $("#docTripType").textContent=t.tripType;
   $("#docCabinBaggage").textContent=String(cabinBaggage);
   $("#docCheckedBaggage").textContent=String(checkedBaggage);
   $("#docExtraBaggage").textContent=extraBaggage;
+  $("#docExtraBaggageRow").style.display=(extraBaggage==="Tidak ada")?"none":"block";
 
+  $("#docStatus").textContent=selectedStatus==="ISSUED"?"ISSUED":"READY TO ISSUE";
   const issuedAt=payload.ticketing?.issuedAt||new Date().toISOString();
   $("#docIssuedAt").textContent=dt(issuedAt);
 
-  // Itinerary segments — use all available segments so round-trip / connecting bookings remain complete.
-  const segList=$("#docSegmentList");
-  const segments=t.allSegments.length?t.allSegments:t.outbound;
-  $("#docSegmentCount").textContent=`${segments.length||1} segment`;
-  segList.innerHTML=(segments.length?segments:[t.first]).map((seg,index)=>{
-    const segOrigin=String(seg.origin||"---").toUpperCase();
-    const segDest=String(seg.destination||"---").toUpperCase();
-    const dep=seg.departureLocalTime||seg.departureTime||"";
-    const arr=seg.arrivalLocalTime||seg.arrivalTime||"";
-    const segAirline=seg.carrierName||airline;
-    const segFlight=seg.flightNumber||flightNo;
-    const segClass=seg.bookingClass||seg.fareClass||seg.cabinClass||fareClass||cabin;
-    return `<div class="otwdoc-segment-row">
-      <div class="otwdoc-segment-airline">
-        <small>SEGMENT ${index+1}</small>
-        <strong>${esc(segAirline)}</strong>
-        <small>${esc(segFlight)}</small>
-      </div>
-      <div class="otwdoc-segment-airport">
-        <small>DEPART</small>
-        <strong>${esc(segOrigin)} · ${esc(hm(dep))}</strong>
-        <b>${esc(dateOnly(dep))}</b>
-      </div>
-      <div class="otwdoc-segment-line"><i></i><span>✈</span><i></i></div>
-      <div class="otwdoc-segment-airport">
-        <small>ARRIVE</small>
-        <strong>${esc(segDest)} · ${esc(hm(arr))}</strong>
-        <b>${esc(dateOnly(arr))}</b>
-      </div>
-      <div class="otwdoc-segment-meta">
-        <small>CLASS / FARE</small>
-        <strong>${esc(String(segClass||"—"))}</strong>
-      </div>
-    </div>`;
-  }).join("");
+  // Round-trip: show only one compact return row, not a duplicated full itinerary table.
+  const returnSeg=t.allSegments.find(seg=>String(seg.origin||"").toUpperCase()===t.destination && String(seg.destination||"").toUpperCase()===t.origin);
+  const returnSection=$("#docReturnSection");
+  if(returnSeg){
+    returnSection.classList.remove("hidden");
+    $("#docReturnFlight").textContent=`${returnSeg.carrierName||airline} · ${returnSeg.flightNumber||"—"}`;
+    $("#docReturnOrigin").textContent=String(returnSeg.origin||t.destination).toUpperCase();
+    $("#docReturnDestination").textContent=String(returnSeg.destination||t.origin).toUpperCase();
+    $("#docReturnDepart").textContent=`${dateOnly(returnSeg.departureLocalTime||returnSeg.departureTime)} · ${hm(returnSeg.departureLocalTime||returnSeg.departureTime)}`;
+    $("#docReturnArrival").textContent=`${dateOnly(returnSeg.arrivalLocalTime||returnSeg.arrivalTime)} · ${hm(returnSeg.arrivalLocalTime||returnSeg.arrivalTime)}`;
+  }else{
+    returnSection.classList.add("hidden");
+  }
 
-  // Passenger list with masked identity.
-  const effectivePax=paxList.length?paxList:[pd.primaryPassenger||{}];
   $("#docPassengerCount").textContent=`${effectivePax.length||1} PAX`;
   $("#docPassengerList").innerHTML=effectivePax.map((p,index)=>{
     const name=[p.title,p.fullName||p.full_name||p.name].filter(Boolean).join(" ").trim()||`Penumpang ${index+1}`;
     const type=p.type||p.label||"ADULT";
-    const identity=p.identityNumber||p.identity_number||p.documentNumber||p.ktpNumber||"";
-    const nationality=p.nationality||"Indonesia";
-    const ticketForPax=p.ticketNumber||p.eTicketNumber||ticketNumber;
-    return `<div class="otwdoc-passenger-item">
-      <span class="otwdoc-pax-index">${index+1}</span>
-      <div class="otwdoc-passenger-main">
+    const paxTicket=p.ticketNumber||p.eTicketNumber||ticketNumber;
+    return `<div class="otwdoc-pax-simple">
+      <span>${index+1}</span>
+      <div>
         <strong>${esc(name.toUpperCase())}</strong>
         <small>${esc(String(type).toUpperCase())} · ${esc(String(cabin).toUpperCase())}</small>
       </div>
-      <div class="otwdoc-passenger-data">
-        <small>IDENTITY</small>
-        <strong>${esc(maskIdentity(identity))}</strong>
-      </div>
-      <div class="otwdoc-passenger-data">
-        <small>NATIONALITY</small>
-        <strong>${esc(nationality)}</strong>
-      </div>
-      <div class="otwdoc-passenger-data">
-        <small>E-TICKET</small>
-        <strong>${esc(ticketForPax||"—")}</strong>
-      </div>
+      <b>${esc(paxTicket||"—")}</b>
     </div>`;
   }).join("");
 
-  // Dynamic travel services.
-  const services=[
-    {name:`Cabin baggage · ${cabinBaggage}`,state:"Included",ok:true},
-    {name:`Checked baggage · ${checkedBaggage}`,state:"Included",ok:true}
-  ];
-  if(baggageItems.length)services.push({name:`Extra baggage · ${extraBaggage}`,state:"Selected",ok:true});
-  if(insurance)services.push({name:insurance.addonName||insurance.name||"Asuransi perjalanan",state:"Selected",ok:true});
-  if(!insurance)services.push({name:"Asuransi perjalanan",state:"Not selected",ok:false});
+  const serviceChips=[];
+  if(baggageItems.length)serviceChips.push(`Extra bagasi ${extraBaggage}`);
+  if(insurance)serviceChips.push(insurance.addonName||insurance.name||"Asuransi perjalanan");
+  if(!serviceChips.length)serviceChips.push("Tanpa add-on tambahan");
 
-  $("#docServiceList").innerHTML=services.map(s=>`<div class="${s.ok?"":"none"}">
-    <span>${s.ok?"✓":"—"}</span>
-    <strong>${esc(s.name)}</strong>
-    <em>${esc(s.state)}</em>
-  </div>`).join("");
+  $("#docServiceList").innerHTML=serviceChips.map((name,index)=>`<span class="otwdoc-service-chip ${!baggageItems.length&&!insurance?"none":""}">${esc(name)}</span>`).join("");
 
   renderQr(currentOrder.order_code);
 }
@@ -439,4 +391,6 @@ $("#closeTravelDocBtn").onclick=()=>$("#travelDocModal").classList.add("hidden")
 
 $("#modalCloseBtn")?.addEventListener("click",()=>$("#travelDocModal").classList.add("hidden"));
 
-console.info("[OTW] Admin Ticketing V6 Executive Ticket loaded");
+
+
+console.info("[OTW] Admin Ticketing V7 Airport Ready One Page loaded");
