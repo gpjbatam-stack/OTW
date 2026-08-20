@@ -281,8 +281,11 @@ function fillTravelDoc(){
   const originTerminal=t.first.departureTerminal||t.first.originTerminal||t.first.terminal||"—";
   const destinationTerminal=t.last.arrivalTerminal||t.last.destinationTerminal||"—";
 
-  const cabinBaggage=t.first.cabinBaggage||t.first.carryOn||t.flight.cabinBaggage||"According to booking";
-  const checkedBaggage=t.first.baggageAllowance||t.first.checkedBaggage||t.flight.baggage||"According to booking";
+  let cabinBaggage=t.first.cabinBaggage||t.first.carryOn||t.flight.cabinBaggage||"";
+  let checkedBaggage=t.first.baggageAllowance||t.first.checkedBaggage||t.flight.baggage||"";
+  cabinBaggage=cabinBaggage||"Sesuai ketentuan maskapai";
+  checkedBaggage=checkedBaggage||"Sesuai ketentuan maskapai";
+
   const extraKg=baggageItems.reduce((sum,x)=>sum+Number(x.weightKg||x.weight_kg||0),0);
   const extraBaggage=extraKg?`${extraKg} kg`:baggageItems.length?`${baggageItems.length} add-on`:"Tidak ada";
 
@@ -304,22 +307,22 @@ function fillTravelDoc(){
   $("#docFlightFact").textContent=flightNo;
   $("#docCabin").textContent=cabin;
   $("#docFareClass").textContent=fareClass;
-  $("#docTripType").textContent=t.tripType;
   $("#docCabinBaggage").textContent=String(cabinBaggage);
   $("#docCheckedBaggage").textContent=String(checkedBaggage);
   $("#docExtraBaggage").textContent=extraBaggage;
   $("#docExtraBaggageRow").style.display=(extraBaggage==="Tidak ada")?"none":"block";
 
-  $("#docStatus").textContent=selectedStatus==="ISSUED"?"ISSUED":"READY TO ISSUE";
-  const issuedAt=payload.ticketing?.issuedAt||new Date().toISOString();
+  const isIssued=selectedStatus==="ISSUED"||generatedDoc||Boolean(payload.ticketing?.travelDocumentGeneratedAt);
+  $("#docStatus").textContent=isIssued?"ISSUED":"DRAFT";
+  const issuedAt=payload.ticketing?.issuedAt||payload.ticketing?.travelDocumentGeneratedAt||new Date().toISOString();
   $("#docIssuedAt").textContent=dt(issuedAt);
 
-  // Round-trip: show only one compact return row, not a duplicated full itinerary table.
   const returnSeg=t.allSegments.find(seg=>String(seg.origin||"").toUpperCase()===t.destination && String(seg.destination||"").toUpperCase()===t.origin);
   const returnSection=$("#docReturnSection");
   if(returnSeg){
     returnSection.classList.remove("hidden");
     $("#docReturnFlight").textContent=`${returnSeg.carrierName||airline} · ${returnSeg.flightNumber||"—"}`;
+    $("#docTripType").textContent="Pulang-pergi";
     $("#docReturnOrigin").textContent=String(returnSeg.origin||t.destination).toUpperCase();
     $("#docReturnDestination").textContent=String(returnSeg.destination||t.origin).toUpperCase();
     $("#docReturnDepart").textContent=`${dateOnly(returnSeg.departureLocalTime||returnSeg.departureTime)} · ${hm(returnSeg.departureLocalTime||returnSeg.departureTime)}`;
@@ -333,12 +336,9 @@ function fillTravelDoc(){
     const name=[p.title,p.fullName||p.full_name||p.name].filter(Boolean).join(" ").trim()||`Penumpang ${index+1}`;
     const type=p.type||p.label||"ADULT";
     const paxTicket=p.ticketNumber||p.eTicketNumber||ticketNumber;
-    return `<div class="otwdoc-pax-simple">
+    return `<div class="otwdoc-pax-v8">
       <span>${index+1}</span>
-      <div>
-        <strong>${esc(name.toUpperCase())}</strong>
-        <small>${esc(String(type).toUpperCase())} · ${esc(String(cabin).toUpperCase())}</small>
-      </div>
+      <div><strong>${esc(name.toUpperCase())}</strong><small>${esc(String(type).toUpperCase())} · ${esc(String(cabin).toUpperCase())}</small></div>
       <b>${esc(paxTicket||"—")}</b>
     </div>`;
   }).join("");
@@ -347,8 +347,7 @@ function fillTravelDoc(){
   if(baggageItems.length)serviceChips.push(`Extra bagasi ${extraBaggage}`);
   if(insurance)serviceChips.push(insurance.addonName||insurance.name||"Asuransi perjalanan");
   if(!serviceChips.length)serviceChips.push("Tanpa add-on tambahan");
-
-  $("#docServiceList").innerHTML=serviceChips.map((name,index)=>`<span class="otwdoc-service-chip ${!baggageItems.length&&!insurance?"none":""}">${esc(name)}</span>`).join("");
+  $("#docServiceList").innerHTML=serviceChips.map(name=>`<span class="otwdoc-service-chip ${!baggageItems.length&&!insurance?"none":""}">${esc(name)}</span>`).join("");
 
   renderQr(currentOrder.order_code);
 }
@@ -393,4 +392,6 @@ $("#modalCloseBtn")?.addEventListener("click",()=>$("#travelDocModal").classList
 
 
 
-console.info("[OTW] Admin Ticketing V7 Airport Ready One Page loaded");
+
+
+console.info("[OTW] Admin Ticketing V8 Airport Executive loaded");

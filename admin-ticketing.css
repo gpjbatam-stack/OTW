@@ -768,3 +768,157 @@
   #travelDocModal .otwdoc-content-grid{margin-bottom:3mm}
   #travelDocModal .otwdoc-ticket-footer{min-height:14mm}
 }
+
+/* V8 Airport Executive */
+#travelDocModal .otwdoc-v8{width:min(900px,96vw)}
+#travelDocModal .otwdoc-airport-ticket{color:#071d40;font-family:Inter,system-ui,sans-serif;background:#fff}
+#travelDocModal .otwdoc-hero{min-height:104px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;color:#fff;background:radial-gradient(circle at 80% 30%,rgba(45,138,255,.22),transparent 32%),linear-gradient(120deg,#041834 0,#062d63 72%,#0d5fbe 150%)}
+#travelDocModal .otwdoc-logo-block{display:flex;align-items:center;gap:14px}
+#travelDocModal .otwdoc-logo-block>strong{font-size:44px;line-height:1;font-weight:900;letter-spacing:-.075em}
+#travelDocModal .otwdoc-logo-block span{display:block;font-size:12px;font-weight:800}
+#travelDocModal .otwdoc-logo-block small{display:block;margin-top:4px;font-size:7px;letter-spacing:.15em;color:#a7c4e5}
+#travelDocModal .otwdoc-hero-status{min-width:142px;padding:10px 12px;border:1px solid rgba(95,229,179,.3);border-radius:14px;background:rgba(18,171,119,.12)}
+#travelDocModal .otwdoc-hero-status small{display:block;font-size:6px;color:#9fbdda}
+#travelDocModal .otwdoc-hero-status strong{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11px;color:#6fe5b8}
+#travelDocModal .otwdoc-hero-status i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#15b77d;color:#fff;font-style:normal}
+
+#travelDocModal .otwdoc-ticket-id{min-height:92px;display:grid;grid-template-columns:1.05fr 1fr 1.05fr 95px;border-bottom:1px solid #dfe7ef}
+#travelDocModal .otwdoc-ticket-id>div{padding:17px 19px;border-right:1px solid #e5ebf1;display:flex;flex-direction:column;justify-content:center}
+#travelDocModal .otwdoc-ticket-id>div:last-child{border-right:0}
+#travelDocModal .otwdoc-ticket-id small{font-size:7px;letter-spacing:.08em;color:#7e90a4;font-weight:850}
+#travelDocModal .otwdoc-ticket-id strong{margin-top:6px;font-size:13px}
+#travelDocModal .otwdoc-ticket-id .priority strong{font-size:17px;color:#0b5cc1}
+#travelDocModal .otwdoc-qr-cell{align-items:center;text-align:center;padding:8px!important;background:#f8fbfe}
+#travelDocModal .otwdoc-qr{width:58px;height:58px;padding:4px;background:#fff;border:1px solid #dce5ee;border-radius:8px;display:grid;place-items:center}
+#travelDocModal .otwdoc-qr img,#travelDocModal .otwdoc-qr canvas{width:48px!important;height:48px!important}
+#travelDocModal .otwdoc-qr-cell>span{margin-top:4px;font-size:5px;font-weight:900;color:#617991}
+
+#travelDocModal .otwdoc-route-hero{min-height:208px;padding:24px 28px 20px;display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:18px;align-items:center}
+#travelDocModal .otwdoc-airport-main>small{display:block;font-size:8px;letter-spacing:.1em;color:#7c8fa4;font-weight:900}
+#travelDocModal .otwdoc-airport-main>strong{display:block;margin-top:5px;font-size:46px;line-height:1;letter-spacing:-.07em}
+#travelDocModal .otwdoc-airport-main>span{display:block;margin-top:6px;min-height:26px;font-size:10px;line-height:1.3;color:#516a82}
+#travelDocModal .otwdoc-airport-main>b{display:block;margin-top:11px;font-size:14px}
+#travelDocModal .otwdoc-airport-main>em{display:block;margin-top:4px;font-size:8px;font-style:normal;color:#7d90a4}
+#travelDocModal .otwdoc-flight-center{text-align:center}
+#travelDocModal .otwdoc-flight-center>span{display:inline-block;padding:6px 9px;border-radius:999px;background:#edf5ff;color:#1268eb;font-size:8px;font-weight:850}
+#travelDocModal .otwdoc-flight-line{display:flex;align-items:center;margin:16px 0 10px}
+#travelDocModal .otwdoc-flight-line i{height:1px;flex:1;background:#a9c8e8}
+#travelDocModal .otwdoc-flight-line b{width:38px;height:38px;margin:0 8px;border-radius:50%;display:grid;place-items:center;background:#1476ff;color:#fff;font-size:18px}
+#travelDocModal .otwdoc-flight-center>strong{display:block;font-size:13px}
+#travelDocModal .otwdoc-flight-center>small{display:block;margin-top:4px;font-size:8px;color:#71869c}
+
+#travelDocModal .otwdoc-primary-facts{margin:0 22px 13px;display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #dde6ef;border-radius:14px;overflow:hidden;background:#f9fbfd}
+#travelDocModal .otwdoc-primary-facts>div{min-height:68px;padding:13px 11px;border-right:1px solid #e3eaf1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#travelDocModal .otwdoc-primary-facts>div:last-child{border-right:0}
+#travelDocModal .otwdoc-primary-facts small{font-size:6px;color:#8293a6}
+#travelDocModal .otwdoc-primary-facts strong{margin-top:5px;font-size:10px}
+
+#travelDocModal .otwdoc-return-card,#travelDocModal .otwdoc-passenger-section,#travelDocModal .otwdoc-services-section{margin:0 22px 12px;border:1px solid #dde6ef;border-radius:14px;overflow:hidden;background:#fff}
+#travelDocModal .otwdoc-return-card>header,#travelDocModal .otwdoc-passenger-section>header,#travelDocModal .otwdoc-services-section>header{min-height:42px;padding:0 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8eef4;background:#fbfdff}
+#travelDocModal .otwdoc-return-card header small,#travelDocModal .otwdoc-passenger-section header small,#travelDocModal .otwdoc-services-section header small{display:block;font-size:6px;color:#1476ff;font-weight:900;letter-spacing:.09em}
+#travelDocModal .otwdoc-return-card header strong,#travelDocModal .otwdoc-passenger-section header strong,#travelDocModal .otwdoc-services-section header strong{display:block;margin-top:2px;font-size:8px}
+#travelDocModal .otwdoc-return-card>header>span,#travelDocModal .otwdoc-passenger-section>header>span,#travelDocModal .otwdoc-services-section>header>span{font-size:6px;color:#7e91a6}
+#travelDocModal .otwdoc-return-route{min-height:74px;padding:12px 14px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px}
+#travelDocModal .otwdoc-return-route small{display:block;font-size:6px;color:#8293a7}
+#travelDocModal .otwdoc-return-route strong{display:block;margin-top:3px;font-size:18px}
+#travelDocModal .otwdoc-return-route span{display:block;margin-top:3px;font-size:8px;color:#587087}
+#travelDocModal .otwdoc-return-route>b{color:#1476ff;font-size:17px}
+
+#travelDocModal .otwdoc-passenger-list-v8{display:grid}
+#travelDocModal .otwdoc-pax-v8{min-height:61px;padding:11px 13px;display:grid;grid-template-columns:28px 1fr 145px;gap:9px;align-items:center;border-top:1px solid #edf1f5}
+#travelDocModal .otwdoc-pax-v8:first-child{border-top:0}
+#travelDocModal .otwdoc-pax-v8>span{width:27px;height:27px;border-radius:8px;display:grid;place-items:center;background:#edf5ff;color:#1476ff;font-size:7px;font-weight:900}
+#travelDocModal .otwdoc-pax-v8 strong{display:block;font-size:10px}
+#travelDocModal .otwdoc-pax-v8 small{display:block;margin-top:3px;font-size:6.5px;color:#7d8fa4}
+#travelDocModal .otwdoc-pax-v8>b{text-align:right;font-size:9px;color:#0b5cc1}
+
+#travelDocModal .otwdoc-baggage-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:11px 12px 5px}
+#travelDocModal .otwdoc-baggage-summary>div{min-height:52px;padding:8px 9px;border-radius:9px;background:#f6f9fc}
+#travelDocModal .otwdoc-baggage-summary small{display:block;font-size:5.5px;color:#8192a5}
+#travelDocModal .otwdoc-baggage-summary strong{display:block;margin-top:4px;font-size:7.5px}
+#travelDocModal .otwdoc-service-chips-v8{display:flex;flex-wrap:wrap;gap:6px;padding:7px 12px 12px}
+#travelDocModal .otwdoc-service-chip{padding:6px 8px;border-radius:999px;background:#eaf8f2;color:#0b8e63;font-size:6.5px;font-weight:850}
+#travelDocModal .otwdoc-service-chip.none{background:#eef3f7;color:#76889d}
+
+#travelDocModal .otwdoc-issued-strip{margin:0 22px 11px;display:grid;grid-template-columns:repeat(3,1fr);border-radius:12px;overflow:hidden;color:#fff;background:#082f67}
+#travelDocModal .otwdoc-issued-strip>div{min-height:52px;padding:10px 12px;border-right:1px solid rgba(255,255,255,.11)}
+#travelDocModal .otwdoc-issued-strip>div:last-child{border-right:0}
+#travelDocModal .otwdoc-issued-strip small{display:block;font-size:5.5px;color:#9bb6d5}
+#travelDocModal .otwdoc-issued-strip strong{display:block;margin-top:4px;font-size:8.5px}
+
+#travelDocModal .otwdoc-usage-note{margin:0 22px 11px;padding:10px 12px;display:flex;gap:9px;align-items:flex-start;border:1px solid #efd9a4;border-radius:11px;background:#fff8e8;color:#6c5118}
+#travelDocModal .otwdoc-usage-note>span{width:21px;height:21px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;background:#f0a820;color:#fff;font-size:8px;font-weight:900}
+#travelDocModal .otwdoc-usage-note p{margin:1px 0 0;font-size:7px;line-height:1.5}
+#travelDocModal .otwdoc-footer-v8{min-height:56px;padding:11px 22px;display:flex;align-items:center;justify-content:space-between;color:#dcecff;background:#041834}
+#travelDocModal .otwdoc-footer-v8>div{display:flex;align-items:baseline;gap:7px}
+#travelDocModal .otwdoc-footer-v8 strong{font-size:15px}
+#travelDocModal .otwdoc-footer-v8 div span{font-size:6px;color:#95b2d3}
+#travelDocModal .otwdoc-footer-v8>span{font-size:6px;letter-spacing:.11em;color:#85a7cd}
+
+@media(max-width:760px){
+  #travelDocModal.otwdoc-backdrop{padding:0;align-items:stretch}
+  #travelDocModal .otwdoc-v8{width:100%;height:100%;max-height:100vh;border-radius:0}
+  #travelDocModal .otwdoc-modalbar{min-height:58px;padding:10px 13px}
+  #travelDocModal .otwdoc-modalbar h3{font-size:15px}
+  #travelDocModal .otwdoc-scroll{padding:0;overflow:auto;background:#fff}
+  #travelDocModal .otwdoc-airport-ticket{border:0;border-radius:0;box-shadow:none}
+  #travelDocModal .otwdoc-hero{min-height:80px;padding:16px 14px}
+  #travelDocModal .otwdoc-logo-block>strong{font-size:30px}
+  #travelDocModal .otwdoc-logo-block span{font-size:9px}
+  #travelDocModal .otwdoc-logo-block small{font-size:5.5px}
+  #travelDocModal .otwdoc-hero-status{min-width:auto;padding:7px 8px}
+  #travelDocModal .otwdoc-hero-status small{font-size:5px}
+  #travelDocModal .otwdoc-hero-status strong{font-size:8px}
+  #travelDocModal .otwdoc-ticket-id{min-height:76px;grid-template-columns:1fr 1fr 78px}
+  #travelDocModal .otwdoc-ticket-id>div{padding:11px}
+  #travelDocModal .otwdoc-ticket-id>div:nth-child(3){display:none}
+  #travelDocModal .otwdoc-ticket-id small{font-size:5.5px}
+  #travelDocModal .otwdoc-ticket-id strong{font-size:9px}
+  #travelDocModal .otwdoc-ticket-id .priority strong{font-size:13px}
+  #travelDocModal .otwdoc-qr{width:48px;height:48px}
+  #travelDocModal .otwdoc-qr img,#travelDocModal .otwdoc-qr canvas{width:42px!important;height:42px!important}
+  #travelDocModal .otwdoc-route-hero{min-height:180px;padding:20px 12px 16px;grid-template-columns:1fr 82px 1fr;gap:5px}
+  #travelDocModal .otwdoc-airport-main>small{font-size:6px}
+  #travelDocModal .otwdoc-airport-main>strong{font-size:34px}
+  #travelDocModal .otwdoc-airport-main>span{font-size:7px;min-height:23px}
+  #travelDocModal .otwdoc-airport-main>b{font-size:11px;margin-top:8px}
+  #travelDocModal .otwdoc-airport-main>em{font-size:6px}
+  #travelDocModal .otwdoc-flight-center>span{font-size:6px;padding:4px 6px}
+  #travelDocModal .otwdoc-flight-line{margin:12px 0 8px}
+  #travelDocModal .otwdoc-flight-line b{width:30px;height:30px;margin:0 5px;font-size:13px}
+  #travelDocModal .otwdoc-flight-center>strong{font-size:8px}
+  #travelDocModal .otwdoc-flight-center>small{font-size:6px}
+  #travelDocModal .otwdoc-primary-facts{margin:0 9px 9px;grid-template-columns:repeat(2,1fr)}
+  #travelDocModal .otwdoc-primary-facts>div{min-height:55px;padding:9px}
+  #travelDocModal .otwdoc-primary-facts>div:nth-child(2){border-right:0}
+  #travelDocModal .otwdoc-primary-facts small{font-size:5px}
+  #travelDocModal .otwdoc-primary-facts strong{font-size:8px}
+  #travelDocModal .otwdoc-return-card,#travelDocModal .otwdoc-passenger-section,#travelDocModal .otwdoc-services-section,#travelDocModal .otwdoc-issued-strip,#travelDocModal .otwdoc-usage-note{margin-left:9px;margin-right:9px}
+  #travelDocModal .otwdoc-return-route strong{font-size:15px}
+  #travelDocModal .otwdoc-pax-v8{grid-template-columns:26px 1fr}
+  #travelDocModal .otwdoc-pax-v8>b{grid-column:2;text-align:left;margin-top:-4px}
+  #travelDocModal .otwdoc-baggage-summary{grid-template-columns:1fr 1fr}
+  #travelDocModal .otwdoc-baggage-summary>div:nth-child(3){grid-column:1/-1}
+  #travelDocModal .otwdoc-issued-strip>div{padding:8px 7px}
+  #travelDocModal .otwdoc-usage-note p{font-size:6.5px}
+}
+
+@media print{
+  @page{size:A4 portrait;margin:7mm}
+  html,body{background:#fff!important}
+  #travelDocModal .otwdoc-airport-ticket{width:100%!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+  #travelDocModal .otwdoc-hero{min-height:24mm;padding:5mm 7mm}
+  #travelDocModal .otwdoc-logo-block>strong{font-size:28pt}
+  #travelDocModal .otwdoc-ticket-id{min-height:20mm}
+  #travelDocModal .otwdoc-ticket-id strong{font-size:10pt}
+  #travelDocModal .otwdoc-ticket-id .priority strong{font-size:13pt}
+  #travelDocModal .otwdoc-route-hero{min-height:49mm;padding:5mm 7mm}
+  #travelDocModal .otwdoc-airport-main>strong{font-size:31pt}
+  #travelDocModal .otwdoc-airport-main>span{font-size:7.5pt}
+  #travelDocModal .otwdoc-airport-main>b{font-size:10pt}
+  #travelDocModal .otwdoc-primary-facts>div{min-height:15mm}
+  #travelDocModal .otwdoc-return-card,#travelDocModal .otwdoc-passenger-section,#travelDocModal .otwdoc-services-section,#travelDocModal .otwdoc-issued-strip,#travelDocModal .otwdoc-usage-note{break-inside:avoid}
+  #travelDocModal .otwdoc-pax-v8 strong{font-size:8pt}
+  #travelDocModal .otwdoc-pax-v8>b{font-size:7.5pt}
+  #travelDocModal .otwdoc-baggage-summary strong{font-size:6.5pt}
+}
