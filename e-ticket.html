@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061d40">
+  <title>OTW — E-Ticket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./e-ticket.css?v=20260821-v1">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <button id="backBtn" class="icon-btn" type="button" aria-label="Kembali">
+        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div>
+        <span>OTW TRAVEL DOCUMENT</span>
+        <strong>E-Ticket</strong>
+      </div>
+      <button id="shareTopBtn" class="icon-btn" type="button" aria-label="Bagikan">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.1M8.6 13.4l6.8 4.1"/></svg>
+      </button>
+    </header>
+
+    <section id="loadingState" class="state-card">
+      <div class="spinner"></div>
+      <strong>Menyiapkan e-ticket</strong>
+      <span>Mengambil dokumen perjalanan Anda...</span>
+    </section>
+
+    <section id="errorState" class="state-card hidden">
+      <div class="state-icon">!</div>
+      <strong>E-ticket belum dapat dibuka</strong>
+      <span id="errorText">Silakan coba lagi.</span>
+      <button id="retryBtn" type="button">Coba lagi</button>
+    </section>
+
+    <section id="ticketArea" class="hidden">
+      <div class="screen-actions">
+        <span class="issued-chip"><i></i> TIKET TERBIT</span>
+        <span id="screenOrder">OTW-—</span>
+      </div>
+
+      <article id="printTicket" class="ticket">
+        <header class="ticket-head">
+          <div class="brand">
+            <strong>OTW</strong>
+            <div>
+              <span>Official Trip for Work</span>
+              <small>E-TICKET / TRAVEL DOCUMENT</small>
+            </div>
+          </div>
+          <div class="verified">
+            <i>✓</i>
+            <div><small>DOCUMENT STATUS</small><strong>VERIFIED</strong></div>
+          </div>
+        </header>
+
+        <section class="booking-strip">
+          <div>
+            <small>OTW ORDER</small>
+            <strong id="orderCode">—</strong>
+          </div>
+          <div class="important">
+            <small>BOOKING CODE / PNR</small>
+            <strong id="pnr">—</strong>
+          </div>
+          <div class="important">
+            <small>E-TICKET NUMBER</small>
+            <strong id="ticketNumber">—</strong>
+          </div>
+        </section>
+
+        <section class="route-hero">
+          <div class="airport">
+            <small>DEPARTURE</small>
+            <strong id="origin">---</strong>
+            <span id="originName">Bandara asal</span>
+            <b id="departAt">—</b>
+            <em id="originTerminal">Terminal —</em>
+          </div>
+
+          <div class="flight-center">
+            <span id="duration">—</span>
+            <div><i></i><b>✈</b><i></i></div>
+            <strong id="flightMain">—</strong>
+            <small id="flightType">Direct / Non-stop</small>
+          </div>
+
+          <div class="airport right">
+            <small>ARRIVAL</small>
+            <strong id="destination">---</strong>
+            <span id="destinationName">Bandara tujuan</span>
+            <b id="arrivalAt">—</b>
+            <em id="destinationTerminal">Terminal —</em>
+          </div>
+        </section>
+
+        <section class="facts">
+          <div><small>AIRLINE</small><strong id="airline">—</strong></div>
+          <div><small>FLIGHT</small><strong id="flightNumber">—</strong></div>
+          <div><small>CLASS</small><strong id="cabin">Economy</strong></div>
+          <div><small>TRIP</small><strong id="tripType">Sekali jalan</strong></div>
+        </section>
+
+        <section id="returnCard" class="compact-card hidden">
+          <header><span>RETURN FLIGHT</span><strong id="returnFlight">—</strong></header>
+          <div class="return-route">
+            <div><small>FROM</small><strong id="returnOrigin">---</strong><span id="returnDepart">—</span></div>
+            <b>✈</b>
+            <div class="right"><small>TO</small><strong id="returnDestination">---</strong><span id="returnArrival">—</span></div>
+          </div>
+        </section>
+
+        <section class="compact-card">
+          <header><span>PASSENGER</span><strong id="paxCount">1 PAX</strong></header>
+          <div id="passengerList" class="passenger-list"></div>
+        </section>
+
+        <section class="travel-row">
+          <div>
+            <small>CHECKED BAGGAGE</small>
+            <strong id="checkedBaggage">Sesuai ketentuan maskapai</strong>
+          </div>
+          <div>
+            <small>EXTRA BAGGAGE</small>
+            <strong id="extraBaggage">Tidak ada</strong>
+          </div>
+          <div>
+            <small>TRAVEL PROTECTION</small>
+            <strong id="protection">Tidak dipilih</strong>
+          </div>
+        </section>
+
+        <section class="airport-guide">
+          <div>
+            <span class="guide-icon">▣</span>
+            <p><strong>Siapkan dokumen</strong>Gunakan e-ticket resmi maskapai/supplier dan identitas penumpang.</p>
+          </div>
+          <div>
+            <span class="guide-icon">◷</span>
+            <p><strong>Check-in tepat waktu</strong>Ikuti batas waktu check-in dan boarding dari maskapai.</p>
+          </div>
+          <div>
+            <span class="guide-icon">i</span>
+            <p><strong>Waktu setempat</strong>Waktu mengikuti zona waktu lokal masing-masing bandara.</p>
+          </div>
+        </section>
+
+        <section class="issued-strip">
+          <div><small>ISSUED BY</small><strong>OTW Ticketing</strong></div>
+          <div><small>ISSUED AT</small><strong id="issuedAt">—</strong></div>
+          <div><small>STATUS</small><strong>ISSUED</strong></div>
+        </section>
+
+        <footer class="ticket-foot">
+          <div><strong>OTW</strong><span>Official Trip for Work</span></div>
+          <span>SECURE ELECTRONIC TRAVEL DOCUMENT</span>
+        </footer>
+      </article>
+
+      <section class="customer-actions">
+        <button id="printBtn" class="action primary" type="button">
+          <svg viewBox="0 0 24 24"><path d="M7 8V3h10v5M7 17h10v4H7z"/><path d="M5 17H3V9h18v8h-2"/></svg>
+          Unduh / Simpan PDF
+        </button>
+        <button id="shareBtn" class="action secondary" type="button">
+          <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.1M8.6 13.4l6.8 4.1"/></svg>
+          Bagikan
+        </button>
+        <button id="officialBtn" class="action official hidden" type="button">
+          <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/></svg>
+          E-Ticket Resmi Maskapai
+        </button>
+      </section>
+
+      <p class="official-note">
+        OTW Travel Document adalah ringkasan perjalanan. Dokumen resmi maskapai/supplier tetap menjadi dokumen utama untuk check-in dan boarding.
+      </p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
+  <script type="module" src="./e-ticket.js?v=20260821-v1"></script>
+</body>
+</html>
