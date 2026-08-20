@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./detail-pesanan.css?v=20260819-premium-v2-navfix">
+  <link rel="stylesheet" href="./detail-pesanan.css?v=20260821-premium-v3-payment-flow">
 </head>
 <body>
   <main class="app-shell">
@@ -262,24 +262,62 @@
         </article>
       </section>
 
-      <section id="ticketSection" class="section hidden">
-        <div class="section-title">
+      <section id="paymentSection" class="section hidden">
+        <div class="section-title payment-section-title">
           <div>
-            <span class="eyebrow">TIKET</span>
-            <h2>Dokumen perjalanan</h2>
+            <span class="eyebrow">PEMBAYARAN</span>
+            <h2>Penyelesaian pembayaran</h2>
           </div>
+          <span id="paymentDuePill" class="payment-due-pill">14 hari</span>
         </div>
 
-        <article class="ticket-card">
-          <span class="ticket-icon">
-            <svg viewBox="0 0 24 24"><path d="M4 7h16v10H4z"/><path d="M8 7v10M16 7v10"/></svg>
-          </span>
-          <div>
-            <span class="ticket-ready">READY</span>
-            <strong>E-ticket tersedia</strong>
-            <small>Dokumen telah diterbitkan oleh OTW.</small>
+        <article class="payment-card">
+          <div class="payment-card-top">
+            <div>
+              <span class="payment-kicker">TAGIHAN TERSEDIA</span>
+              <strong>Selesaikan pembayaran perjalanan Anda</strong>
+              <small>Invoice telah diterbitkan setelah perjalanan dinyatakan selesai.</small>
+            </div>
+            <span class="payment-status-badge"><i></i> Menunggu pembayaran</span>
           </div>
-          <button id="openTicketBtn" type="button">Buka</button>
+
+          <div class="payment-timer">
+            <div>
+              <small>BATAS PEMBAYARAN</small>
+              <strong id="paymentCountdown">13d 23h</strong>
+              <span id="paymentDeadlineText">—</span>
+            </div>
+            <span class="timer-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v5l3 2"/></svg>
+            </span>
+          </div>
+
+          <div class="payment-summary">
+            <div>
+              <small>TOTAL TAGIHAN</small>
+              <strong id="paymentAmount">Rp0</strong>
+            </div>
+            <div>
+              <small>NOMOR PESANAN</small>
+              <strong id="paymentOrderCode">OTW-—</strong>
+            </div>
+          </div>
+
+          <div class="payment-actions">
+            <button id="payNowBtn" class="payment-btn primary" type="button">
+              <svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="M3 10h18M16 15h2"/></svg>
+              Bayar Sekarang
+            </button>
+            <button id="invoiceBtn" class="payment-btn secondary" type="button">
+              <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5M9 12h6M9 16h6"/></svg>
+              Lihat Invoice
+            </button>
+          </div>
+
+          <div class="payment-note">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
+            <span>Tempo pembayaran adalah <strong>14 hari</strong> sejak pesanan ditandai selesai oleh OTW. Timer berjalan otomatis berdasarkan waktu penyelesaian pesanan.</span>
+          </div>
         </article>
       </section>
 
@@ -338,6 +376,6 @@
 
   <div id="toast" class="toast"></div>
 
-  <script type="module" src="./detail-pesanan.js?v=20260819-premium-v2-navfix"></script>
+  <script type="module" src="./detail-pesanan.js?v=20260821-premium-v3-payment-flow"></script>
 </body>
 </html>

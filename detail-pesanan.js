@@ -47,9 +47,9 @@ const STATUS = {
   },
   COMPLETED:{
     badge:"Selesai",klass:"status-issued",kicker:"PERJALANAN SELESAI",
-    title:"Perjalanan telah selesai.",
-    text:"Pesanan ini telah menyelesaikan seluruh proses OTW.",
-    footer:"Selesai",action:"Kembali ke Pesanan"
+    title:"Perjalanan selesai. Pembayaran tersedia.",
+    text:"Invoice telah diterbitkan. Selesaikan pembayaran dalam tempo 14 hari sejak pesanan ditandai selesai.",
+    footer:"Menunggu pembayaran",action:"Bayar Sekarang"
   },
   CANCELLED:{
     badge:"Dibatalkan",klass:"status-cancelled",kicker:"PESANAN DIBATALKAN",
@@ -61,6 +61,7 @@ const STATUS = {
 
 let user=null;
 let order=null;
+let paymentTimerId=null;
 
 function rupiah(v){
   return new Intl.NumberFormat("id-ID",{
@@ -157,7 +158,8 @@ function renderStatus(){
   $("#footerStatus").textContent=state.footer;
   $("#primaryActionBtn").textContent=state.action;
 
-  $("#ticketSection").classList.toggle("hidden",String(order.status).toUpperCase()!=="ISSUED");
+  const status=String(order.status||"").toUpperCase();
+  $("#paymentSection")?.classList.toggle("hidden",status!=="COMPLETED");
 
   if(order.admin_notes){
     $("#adminNoteSection").classList.remove("hidden");
@@ -356,6 +358,68 @@ function renderPricing(){
   $("#priceEquation").textContent=`${rupiah(flightTotal)} + ${rupiah(baggageTotal+insuranceTotal)}`;
 }
 
+
+function ticketPageUrl(){
+  return `e-ticket.html?id=${encodeURIComponent(order?.order_code||orderCodeFromUrl())}`;
+}
+
+function paymentPageUrl(){
+  return `payment.html?id=${encodeURIComponent(order?.order_code||orderCodeFromUrl())}`;
+}
+
+function invoicePageUrl(){
+  return `invoice.html?id=${encodeURIComponent(order?.order_code||orderCodeFromUrl())}`;
+}
+
+function completedAt(){
+  const p=order?.payload||{};
+  return order?.completed_at
+    || p?.ticketing?.completedAt
+    || p?.completedAt
+    || order?.updated_at
+    || new Date().toISOString();
+}
+
+function formatDeadline(v){
+  const d=new Date(v);
+  if(Number.isNaN(d.getTime()))return"—";
+  return new Intl.DateTimeFormat("id-ID",{
+    day:"numeric",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"
+  }).format(d);
+}
+
+function renderPaymentCountdown(){
+  const section=$("#paymentSection");
+  if(!section || String(order?.status||"").toUpperCase()!=="COMPLETED"){
+    if(paymentTimerId){clearInterval(paymentTimerId);paymentTimerId=null}
+    return;
+  }
+
+  const start=new Date(completedAt());
+  const deadline=new Date(start.getTime()+(14*24*60*60*1000));
+
+  $("#paymentAmount").textContent=$("#grandTotal").textContent||rupiah(order?.grand_total||0);
+  $("#paymentOrderCode").textContent=order?.order_code||"OTW-—";
+  $("#paymentDeadlineText").textContent=`s.d. ${formatDeadline(deadline)}`;
+
+  const tick=()=>{
+    const diff=deadline.getTime()-Date.now();
+    const overdue=diff<=0;
+    const safe=Math.max(0,diff);
+
+    const days=Math.floor(safe/(24*60*60*1000));
+    const hours=Math.floor((safe%(24*60*60*1000))/(60*60*1000));
+
+    $("#paymentCountdown").textContent=overdue?"Tempo berakhir":`${days}d ${String(hours).padStart(2,"0")}h`;
+    $("#paymentDuePill").textContent=overdue?"Jatuh tempo":`${days}d ${String(hours).padStart(2,"0")}h`;
+    section.classList.toggle("payment-overdue",overdue);
+  };
+
+  tick();
+  if(paymentTimerId)clearInterval(paymentTimerId);
+  paymentTimerId=setInterval(tick,60*1000);
+}
+
 function renderHeader(){
   $("#orderCodeTop").textContent=order.order_code;
   $("#orderCodeHero").textContent=order.order_code;
@@ -371,6 +435,7 @@ function renderAll(){
   renderAddons();
   renderSpt();
   renderPricing();
+  renderPaymentCountdown();
 
   $("#loadingState").classList.add("hidden");
   $("#errorState").classList.add("hidden");
@@ -418,17 +483,18 @@ $("#menuSheet")?.addEventListener("click",e=>{if(e.target===$("#menuSheet"))clos
 $("#retryBtn")?.addEventListener("click",()=>location.reload());
 $("#helpBtn")?.addEventListener("click",()=>location.href="help.html");
 $("#helpSheetBtn")?.addEventListener("click",()=>location.href="help.html");
+$("#payNowBtn")?.addEventListener("click",()=>location.href=paymentPageUrl());
+$("#invoiceBtn")?.addEventListener("click",()=>location.href=invoicePageUrl());
 $("#primaryActionBtn")?.addEventListener("click",()=>{
   const status=String(order?.status||"").toUpperCase();
 
   if(status==="ISSUED"){
-    const ticketUrl=order?.ticket_url||order?.payload?.ticketUrl||order?.payload?.ticket_url||null;
-    if(ticketUrl){
-      location.href=ticketUrl;
-      return;
-    }
-    $("#ticketSection")?.scrollIntoView({behavior:"smooth",block:"center"});
-    toast("E-ticket tersedia di bagian tiket.");
+    location.href=ticketPageUrl();
+    return;
+  }
+
+  if(status==="COMPLETED"){
+    location.href=paymentPageUrl();
     return;
   }
 
@@ -437,18 +503,8 @@ $("#primaryActionBtn")?.addEventListener("click",()=>{
     return;
   }
 
-  // Default action for SUBMITTED / PROCESSING / VERIFIED / COMPLETED:
-  // return to the user's order list instead of doing nothing.
   location.href="orders.html";
 });
 
-$("#openTicketBtn")?.addEventListener("click",()=>{
-  const ticketUrl=order?.payload?.ticketUrl||order?.payload?.ticket_url||null;
-  if(ticketUrl){
-    location.href=ticketUrl;
-  }else{
-    toast("E-ticket belum memiliki file yang dapat dibuka.");
-  }
-});
 
 init();
