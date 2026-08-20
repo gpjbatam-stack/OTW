@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./admin-ticketing.css?v=20260821-v8-airport-executive">
+  <link rel="stylesheet" href="./admin-ticketing.css?v=20260821-v9-airport-first">
 </head>
 <body>
 <div class="admin-app">
@@ -288,85 +288,81 @@
     </header>
 
     <div class="otwdoc-scroll">
-      <article id="printableTravelDoc" class="otwdoc-paper otwdoc-airport-ticket">
-        <header class="otwdoc-hero">
-          <div class="otwdoc-logo-block">
-            <strong>OTW</strong>
-            <div><span>Official Trip for Work</span><small>TRAVEL DOCUMENT</small></div>
-          </div>
-          <div class="otwdoc-hero-status"><small>DOCUMENT STATUS</small><strong><i>✓</i> VERIFIED</strong></div>
-        </header>
+      <article id="printableTravelDoc" class="otwdoc-paper otwdoc-v9-ticket">
+  <header class="v9-head">
+    <div class="v9-brand"><strong>OTW</strong><span>Official Trip for Work<small>E-TICKET / TRAVEL DOCUMENT</small></span></div>
+    <div class="v9-verified"><i>✓</i><span><small>DOCUMENT STATUS</small><strong>VERIFIED</strong></span></div>
+  </header>
 
-        <section class="otwdoc-ticket-id">
-          <div><small>OTW ORDER</small><strong id="docOrderCode">—</strong></div>
-          <div class="priority"><small>BOOKING REFERENCE / PNR</small><strong id="docPnr">—</strong></div>
-          <div class="priority"><small>E-TICKET NUMBER</small><strong id="docTicketNumber">—</strong></div>
-          <div class="otwdoc-qr-cell"><div id="docQr" class="otwdoc-qr"></div><span>SCAN TO VERIFY</span></div>
-        </section>
+  <section class="v9-booking">
+    <div><small>OTW ORDER</small><strong id="docOrderCode">—</strong></div>
+    <div class="v9-pnr"><small>BOOKING CODE / PNR</small><strong id="docPnr">—</strong></div>
+    <div class="v9-qr"><div id="docQr" class="otwdoc-qr"></div><span>SCAN TO VERIFY</span></div>
+    <span id="docTicketNumber" class="hidden">—</span>
+  </section>
 
-        <section class="otwdoc-route-hero">
-          <div class="otwdoc-airport-main">
-            <small>DEPARTURE</small><strong id="docOrigin">---</strong><span id="docOriginName">Airport asal</span>
-            <b id="docDepart">—</b><em id="docOriginTerminal">Terminal —</em>
-          </div>
-          <div class="otwdoc-flight-center">
-            <span id="docDuration">—</span>
-            <div class="otwdoc-flight-line"><i></i><b>✈</b><i></i></div>
-            <strong id="docFlight">—</strong><small id="docFlightType">Direct / Non-stop</small>
-          </div>
-          <div class="otwdoc-airport-main right">
-            <small>ARRIVAL</small><strong id="docDestination">---</strong><span id="docDestinationName">Airport tujuan</span>
-            <b id="docArrival">—</b><em id="docDestinationTerminal">Terminal —</em>
-          </div>
-        </section>
+  <section class="v9-route">
+    <div class="v9-airport">
+      <small>DEPARTURE</small><strong id="docOrigin">---</strong><span id="docOriginName">Airport asal</span>
+      <b id="docDepart">—</b><em id="docOriginTerminal">Terminal —</em>
+    </div>
+    <div class="v9-flight">
+      <span id="docDuration">—</span><div><i></i><b>✈</b><i></i></div>
+      <strong id="docFlight">—</strong><small id="docFlightType">Direct / Non-stop</small>
+    </div>
+    <div class="v9-airport right">
+      <small>ARRIVAL</small><strong id="docDestination">---</strong><span id="docDestinationName">Airport tujuan</span>
+      <b id="docArrival">—</b><em id="docDestinationTerminal">Terminal —</em>
+    </div>
+  </section>
 
-        <section class="otwdoc-primary-facts">
-          <div><small>AIRLINE</small><strong id="docAirlineFact">—</strong></div>
-          <div><small>FLIGHT</small><strong id="docFlightFact">—</strong></div>
-          <div><small>CLASS</small><strong id="docCabin">Economy</strong></div>
-          <div><small>BOOKING CLASS</small><strong id="docFareClass">—</strong></div>
-        </section>
+  <section class="v9-flight-meta">
+    <div><small>AIRLINE</small><strong id="docAirlineFact">—</strong></div>
+    <div><small>FLIGHT</small><strong id="docFlightFact">—</strong></div>
+    <div><small>CLASS</small><strong id="docCabin">Economy</strong></div>
+    <div><small>BOOKING CLASS</small><strong id="docFareClass">—</strong></div>
+  </section>
 
-        <section id="docReturnSection" class="otwdoc-return-card hidden">
-          <header><div><small>RETURN FLIGHT</small><strong id="docReturnFlight">—</strong></div><span id="docTripType">Pulang-pergi</span></header>
-          <div class="otwdoc-return-route">
-            <div><small>FROM</small><strong id="docReturnOrigin">---</strong><span id="docReturnDepart">—</span></div>
-            <b>✈</b>
-            <div class="right"><small>TO</small><strong id="docReturnDestination">---</strong><span id="docReturnArrival">—</span></div>
-          </div>
-        </section>
+  <section id="docReturnSection" class="v9-return hidden">
+    <div class="v9-section-title"><span><small>RETURN FLIGHT</small><strong id="docReturnFlight">—</strong></span><em id="docTripType">Pulang-pergi</em></div>
+    <div class="v9-return-line">
+      <div><small>FROM</small><strong id="docReturnOrigin">---</strong><span id="docReturnDepart">—</span></div>
+      <b>✈</b>
+      <div class="right"><small>TO</small><strong id="docReturnDestination">---</strong><span id="docReturnArrival">—</span></div>
+    </div>
+  </section>
 
-        <section class="otwdoc-passenger-section">
-          <header><div><small>PASSENGER</small><strong id="docPassengerCount">1 PAX</strong></div><span>Passenger & e-ticket</span></header>
-          <div id="docPassengerList" class="otwdoc-passenger-list-v8"></div>
-        </section>
+  <section class="v9-passengers">
+    <div class="v9-section-title"><span><small>PASSENGER</small><strong id="docPassengerCount">1 PAX</strong></span><em>Passenger & e-ticket</em></div>
+    <div id="docPassengerList" class="v9-pax-list"></div>
+  </section>
 
-        <section class="otwdoc-services-section">
-          <header><div><small>BAGGAGE & SERVICES</small><strong>TRAVEL SERVICES</strong></div><span>Ringkas sesuai booking</span></header>
-          <div class="otwdoc-baggage-summary">
-            <div><small>CABIN</small><strong id="docCabinBaggage">Sesuai ketentuan maskapai</strong></div>
-            <div><small>CHECKED</small><strong id="docCheckedBaggage">—</strong></div>
-            <div id="docExtraBaggageRow"><small>EXTRA</small><strong id="docExtraBaggage">Tidak ada</strong></div>
-          </div>
-          <div id="docServiceList" class="otwdoc-service-chips-v8"></div>
-        </section>
+  <section class="v9-travel-info">
+    <div class="v9-bag">
+      <span class="v9-info-icon">▣</span>
+      <div><small>BAGGAGE</small><strong id="docCheckedBaggage">—</strong><em id="docCabinBaggage">Sesuai ketentuan maskapai</em></div>
+      <div id="docExtraBaggageRow" class="v9-extra"><small>EXTRA</small><strong id="docExtraBaggage">Tidak ada</strong></div>
+    </div>
+    <div class="v9-services">
+      <span class="v9-info-icon">✓</span>
+      <div><small>TRAVEL SERVICES</small><div id="docServiceList" class="v9-service-list"></div></div>
+    </div>
+  </section>
 
-        <section class="otwdoc-issued-strip">
-          <div><small>ISSUED BY</small><strong>OTW Ticketing</strong></div>
-          <div><small>ISSUED AT</small><strong id="docIssuedAt">—</strong></div>
-          <div><small>STATUS</small><strong id="docStatus">ISSUED</strong></div>
-        </section>
+  <section class="v9-airport-guide">
+    <div><b>▣</b><span><strong>Siapkan dokumen</strong><small>Tunjukkan e-ticket resmi maskapai/supplier dan identitas penumpang saat diperlukan.</small></span></div>
+    <div><b>◷</b><span><strong>Check-in tepat waktu</strong><small>Ikuti batas waktu check-in dan boarding yang ditetapkan maskapai.</small></span></div>
+    <div><b>i</b><span><strong>Waktu setempat</strong><small>Seluruh waktu penerbangan mengikuti waktu lokal bandara terkait.</small></span></div>
+  </section>
 
-        <section class="otwdoc-usage-note">
-          <span>i</span>
-          <p><strong>Untuk check-in/boarding:</strong> gunakan e-ticket resmi maskapai/supplier dan identitas penumpang. Dokumen OTW ini adalah ringkasan perjalanan dan referensi booking.</p>
-        </section>
+  <section class="v9-issued">
+    <span><small>ISSUED BY</small><strong>OTW Ticketing</strong></span>
+    <span><small>ISSUED AT</small><strong id="docIssuedAt">—</strong></span>
+    <span><small>STATUS</small><strong id="docStatus">ISSUED</strong></span>
+  </section>
 
-        <footer class="otwdoc-footer-v8">
-          <div><strong>OTW</strong><span>Official Trip for Work</span></div>
-          <span>SECURE ELECTRONIC TRAVEL DOCUMENT</span>
-        </footer>
-      </article>
+  <footer class="v9-foot"><div><strong>OTW</strong><span>Official Trip for Work</span></div><small>SECURE ELECTRONIC TRAVEL DOCUMENT</small></footer>
+</article>
     </div>
 
     <footer class="otwdoc-actions">
@@ -378,6 +374,6 @@
 
 <div id="toast" class="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
-<script type="module" src="./admin-ticketing.js?v=20260821-v8-airport-executive"></script>
+<script type="module" src="./admin-ticketing.js?v=20260821-v9-airport-first"></script>
 </body>
 </html>
