@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071A2D">
+  <title>Pengaturan — LetsGo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./settings.css?v=20260824-letsgo">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-orb orb-a"></div>
+      <div class="hero-orb orb-b"></div>
+
+      <header class="topbar">
+        <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
+          <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="top-copy">
+          <span>AKUN LETSGO</span>
+          <h1>Pengaturan</h1>
+        </div>
+        <button class="icon-btn" id="homeBtn" type="button" aria-label="Ke Home">
+          <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+        </button>
+      </header>
+
+      <div class="hero-copy">
+        <span class="hero-kicker">PREFERENSI AKUN</span>
+        <h2>Atur LetsGo<br><em>sesuai kebutuhan.</em></h2>
+        <p>Kelola notifikasi, preferensi perjalanan, tampilan, serta keamanan akun Anda.</p>
+      </div>
+
+      <div class="account-chip">
+        <span class="chip-avatar" id="avatarInitial">LG</span>
+        <div>
+          <small>Akun aktif</small>
+          <strong id="accountName">Pengguna LetsGo</strong>
+          <span id="accountEmail">Memuat email...</span>
+        </div>
+        <button id="profileBtn" type="button">Profil</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">NOTIFIKASI</span>
+        <h2>Informasi perjalanan</h2>
+      </div>
+
+      <article class="settings-card">
+        <div class="setting-row">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 19h4"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Update pesanan</strong>
+            <small>Status pengajuan, tiket, dan pembayaran.</small>
+          </div>
+          <label class="switch">
+            <input id="orderUpdatesToggle" type="checkbox" checked>
+            <span></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Pengingat perjalanan</strong>
+            <small>Pengingat sebelum jadwal keberangkatan.</small>
+          </div>
+          <label class="switch">
+            <input id="tripReminderToggle" type="checkbox" checked>
+            <span></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M9 7V4h6v3M4 12h16"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Info layanan</strong>
+            <small>Informasi fitur dan layanan terbaru LetsGo.</small>
+          </div>
+          <label class="switch">
+            <input id="serviceInfoToggle" type="checkbox">
+            <span></span>
+          </label>
+        </div>
+      </article>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">PERJALANAN</span>
+        <h2>Preferensi default</h2>
+      </div>
+
+      <article class="settings-card">
+        <button class="setting-row action-row" id="cabinBtn" type="button">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 18h16M7 18V8h10v10"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Kelas penerbangan</strong>
+            <small>Kelas default saat membuka pencarian.</small>
+          </div>
+          <span class="setting-value" id="cabinValue">Ekonomi</span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
+        <button class="setting-row action-row" id="airportBtn" type="button">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="3"/><path d="M12 22s7-6 7-12a7 7 0 1 0-14 0c0 6 7 12 7 12Z"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Bandara utama</strong>
+            <small>Bandara keberangkatan yang paling sering digunakan.</small>
+          </div>
+          <span class="setting-value" id="airportValue">BTH</span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </article>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">AKUN & PRIVASI</span>
+        <h2>Keamanan dan data</h2>
+      </div>
+
+      <article class="settings-card">
+        <button class="setting-row action-row" id="securityBtn" type="button">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Password & keamanan</strong>
+            <small>Reset password dan kelola akses akun.</small>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
+        <button class="setting-row action-row" id="documentsBtn" type="button">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Dokumen perjalanan</strong>
+            <small>Lihat SPT dan dokumen yang tersimpan.</small>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
+        <button class="setting-row action-row" id="privacyBtn" type="button">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Privasi</strong>
+            <small>Informasi penggunaan dan perlindungan data.</small>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </article>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">APLIKASI</span>
+        <h2>Informasi LetsGo</h2>
+      </div>
+
+      <article class="settings-card">
+        <button class="setting-row action-row" id="helpBtn" type="button">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.7 2c-1 .6-1.5 1.1-1.5 2M12 17h.01"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Pusat Bantuan</strong>
+            <small>Panduan penggunaan dan pertanyaan umum.</small>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+
+        <button class="setting-row action-row" id="aboutBtn" type="button">
+          <span class="setting-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
+          </span>
+          <div class="setting-copy">
+            <strong>Tentang LetsGo</strong>
+            <small>Informasi aplikasi dan identitas LetsGo.</small>
+          </div>
+          <span class="setting-value">v1.0</span>
+          <svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </article>
+    </section>
+
+    <section class="save-card" id="saveCard">
+      <span class="save-icon">
+        <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
+      </span>
+      <div>
+        <strong>Preferensi tersimpan otomatis</strong>
+        <small>Perubahan pada pengaturan akan digunakan pada kunjungan berikutnya.</small>
+      </div>
+    </section>
+
+    <div class="bottom-space"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="home.html">
+      <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="orders.html">
+      <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span>Pesanan</span>
+    </a>
+    <a href="settings.html" class="active">
+      <svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20h-3a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7 15a1.7 1.7 0 0 0-1.55-1.03H5.3v-3h.15A1.7 1.7 0 0 0 7 9.94a1.7 1.7 0 0 0-.34-1.88L6.6 8l2.12-2.12.06.06A1.7 1.7 0 0 0 10.66 6a1.7 1.7 0 0 0 1.03-1.55V4.3h3v.15A1.7 1.7 0 0 0 15.72 6a1.7 1.7 0 0 0 1.88-.34l.06-.06L19.78 8l-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1.03h.15v3h-.15A1.7 1.7 0 0 0 19.4 15Z"/></svg>
+      <span>Pengaturan</span>
+    </a>
+    <a href="profile.html">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+      <span>Akun</span>
+    </a>
+  </nav>
+
+  <div id="choiceModal" class="modal-backdrop hidden">
+    <section class="modal">
+      <button id="closeModalBtn" class="modal-close" type="button">×</button>
+      <span class="modal-kicker" id="modalKicker">PREFERENSI</span>
+      <h3 id="modalTitle">Pilih opsi</h3>
+      <div id="modalOptions" class="modal-options"></div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="./settings.js?v=20260824-letsgo"></script>
+</body>
+</html>

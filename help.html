@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071A2D">
+  <title>Pusat Bantuan — LetsGo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./help.css?v=20260824-letsgo">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-orb orb-a"></div>
+      <div class="hero-orb orb-b"></div>
+
+      <header class="topbar">
+        <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
+          <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+
+        <div class="top-copy">
+          <span>PUSAT BANTUAN</span>
+          <h1>LetsGo Care</h1>
+        </div>
+
+        <button class="icon-btn" id="homeBtn" type="button" aria-label="Ke Home">
+          <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+        </button>
+      </header>
+
+      <div class="hero-copy">
+        <span class="hero-kicker">BANTUAN CEPAT</span>
+        <h2>Ada yang bisa<br><em>kami bantu?</em></h2>
+        <p>Temukan jawaban tentang pemesanan, pembayaran, dokumen, dan perjalanan Anda.</p>
+
+        <label class="search-box" for="helpSearch">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input id="helpSearch" type="search" autocomplete="off" placeholder="Cari bantuan...">
+          <button id="clearSearchBtn" class="clear-search hidden" type="button" aria-label="Hapus pencarian">×</button>
+        </label>
+      </div>
+    </section>
+
+    <section class="quick-grid" aria-label="Akses cepat">
+      <button class="quick-card" id="ordersBtn" type="button">
+        <span class="quick-icon">
+          <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        </span>
+        <span><strong>Pesanan</strong><small>Lihat status perjalanan</small></span>
+        <b>›</b>
+      </button>
+
+      <button class="quick-card" id="documentsBtn" type="button">
+        <span class="quick-icon">
+          <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+        </span>
+        <span><strong>Dokumen</strong><small>SPT & dokumen perjalanan</small></span>
+        <b>›</b>
+      </button>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">TOPIK POPULER</span>
+          <h2>Bantuan perjalanan</h2>
+        </div>
+      </div>
+
+      <div class="topic-grid">
+        <button class="topic-card" type="button" data-topic="booking">
+          <span class="topic-icon">
+            <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
+          </span>
+          <strong>Pemesanan</strong>
+          <small>Cari, pilih, dan ajukan penerbangan.</small>
+        </button>
+
+        <button class="topic-card" type="button" data-topic="payment">
+          <span class="topic-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18M7 15h3"/></svg>
+          </span>
+          <strong>Pembayaran</strong>
+          <small>Tagihan, status, dan metode pembayaran.</small>
+        </button>
+
+        <button class="topic-card" type="button" data-topic="document">
+          <span class="topic-icon">
+            <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>
+          </span>
+          <strong>Dokumen</strong>
+          <small>SPT, e-ticket, dan dokumen perjalanan.</small>
+        </button>
+
+        <button class="topic-card" type="button" data-topic="account">
+          <span class="topic-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+          </span>
+          <strong>Akun</strong>
+          <small>Login, profil, dan keamanan akun.</small>
+        </button>
+      </div>
+    </section>
+
+    <section class="section" id="faqSection">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">FAQ</span>
+          <h2>Pertanyaan umum</h2>
+        </div>
+        <span class="result-count" id="resultCount">8 jawaban</span>
+      </div>
+
+      <div class="faq-list" id="faqList">
+        <article class="faq-item" data-topic="booking" data-keywords="cara pesan penerbangan cari tiket booking ajukan">
+          <button class="faq-question" type="button" aria-expanded="false">
+            <span>Bagaimana cara memesan penerbangan?</span>
+            <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Pilih rute, tanggal, jumlah penumpang, dan kelas di Home. Setelah memilih penerbangan, periksa detail perjalanan, pilih layanan tambahan bila diperlukan, isi data penumpang, lalu konfirmasi pada halaman Review.</p>
+          </div>
+        </article>
+
+        <article class="faq-item" data-topic="booking" data-keywords="bagasi tambahan asuransi layanan tambahan">
+          <button class="faq-question" type="button" aria-expanded="false">
+            <span>Di mana memilih bagasi atau asuransi?</span>
+            <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Layanan tambahan dipilih langsung pada halaman Detail Penerbangan sebelum Anda melanjutkan ke pengisian data penumpang.</p>
+          </div>
+        </article>
+
+        <article class="faq-item" data-topic="payment" data-keywords="biaya layanan 150000 seratus lima puluh ribu pembayaran pribadi">
+          <button class="faq-question" type="button" aria-expanded="false">
+            <span>Apa itu biaya layanan LetsGo?</span>
+            <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Biaya layanan LetsGo sebesar Rp150.000 per booking ditampilkan terpisah dari harga tiket dan dibayarkan pribadi oleh pemesan.</p>
+          </div>
+        </article>
+
+        <article class="faq-item" data-topic="payment" data-keywords="status pembayaran berhasil gagal pending">
+          <button class="faq-question" type="button" aria-expanded="false">
+            <span>Bagaimana melihat status pembayaran?</span>
+            <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Status pembayaran dan perjalanan dapat dilihat melalui menu Pesanan. Informasi terbaru akan muncul pada detail pesanan terkait.</p>
+          </div>
+        </article>
+
+        <article class="faq-item" data-topic="document" data-keywords="spt upload dokumen surat perintah tugas">
+          <button class="faq-question" type="button" aria-expanded="false">
+            <span>Kapan SPT harus diunggah?</span>
+            <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>SPT diunggah saat mengisi Data Penumpang. Pastikan dokumen terbaca jelas dan sesuai dengan perjalanan yang diajukan.</p>
+          </div>
+        </article>
+
+        <article class="faq-item" data-topic="document" data-keywords="e-ticket eticket tiket elektronik buka tiket">
+          <button class="faq-question" type="button" aria-expanded="false">
+            <span>Di mana saya mendapatkan e-ticket?</span>
+            <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Setelah pesanan diproses dan tiket tersedia, akses e-ticket akan muncul pada halaman Detail Pesanan.</p>
+          </div>
+        </article>
+
+        <article class="faq-item" data-topic="account" data-keywords="login masuk akun daftar register">
+          <button class="faq-question" type="button" aria-expanded="false">
+            <span>Apakah Home bisa dibuka tanpa login?</span>
+            <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Ya. Home dapat dibuka tanpa login. Login diperlukan saat Anda mengakses fungsi personal seperti pesanan, dokumen, profil, atau melanjutkan proses yang membutuhkan akun.</p>
+          </div>
+        </article>
+
+        <article class="faq-item" data-topic="account" data-keywords="lupa password reset kata sandi">
+          <button class="faq-question" type="button" aria-expanded="false">
+            <span>Saya lupa password. Apa yang harus dilakukan?</span>
+            <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Buka halaman Login lalu pilih “Lupa password?”. Ikuti instruksi pemulihan yang dikirim ke email akun Anda.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="empty-search hidden" id="emptySearch">
+        <span>
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        </span>
+        <strong>Jawaban belum ditemukan</strong>
+        <p>Coba gunakan kata kunci lain atau lihat seluruh kategori bantuan.</p>
+        <button id="resetSearchBtn" type="button">Tampilkan semua</button>
+      </div>
+    </section>
+
+    <section class="support-card">
+      <div class="support-icon">
+        <svg viewBox="0 0 24 24"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M4 13v5h4v-6H4m16 1v5h-4v-6h4M16 18c0 2-2 3-4 3"/></svg>
+      </div>
+      <div>
+        <span>MASIH BUTUH BANTUAN?</span>
+        <strong>Kami siap membantu.</strong>
+        <p>Buka akun Anda untuk melihat informasi perjalanan dan pesanan yang lebih spesifik.</p>
+      </div>
+      <button id="accountBtn" type="button">Buka Akun</button>
+    </section>
+
+    <div class="bottom-space"></div>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Navigasi bantuan">
+    <a href="home.html">
+      <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="orders.html">
+      <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span>Pesanan</span>
+    </a>
+    <a href="help.html" class="active">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.7 2c-1 .6-1.5 1.1-1.5 2M12 17h.01"/></svg>
+      <span>Bantuan</span>
+    </a>
+    <a href="profile.html">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+      <span>Akun</span>
+    </a>
+  </nav>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="./help.js?v=20260824-letsgo"></script>
+</body>
+</html>

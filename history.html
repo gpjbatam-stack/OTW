@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071A2D">
+  <title>Riwayat Perjalanan — LetsGo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./history.css?v=20260824-letsgo">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-orb orb-a"></div>
+      <div class="hero-orb orb-b"></div>
+
+      <header class="topbar">
+        <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
+          <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="top-copy">
+          <span>PERJALANAN</span>
+          <h1>Riwayat</h1>
+        </div>
+        <button class="icon-btn" id="refreshBtn" type="button" aria-label="Muat ulang">
+          <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0 2 5"/><path d="M20 4v7h-7"/></svg>
+        </button>
+      </header>
+
+      <div class="hero-copy">
+        <span class="hero-kicker">LETSGO HISTORY</span>
+        <h2>Semua perjalanan,<br><em>tersimpan rapi.</em></h2>
+        <p>Lihat kembali perjalanan yang telah selesai, dibatalkan, atau sudah diterbitkan tiketnya.</p>
+      </div>
+
+      <div class="history-summary">
+        <div>
+          <small>Total riwayat</small>
+          <strong id="totalHistory">0</strong>
+        </div>
+        <div>
+          <small>Selesai</small>
+          <strong id="totalCompleted">0</strong>
+        </div>
+        <div>
+          <small>Dibatalkan</small>
+          <strong id="totalCancelled">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="filter-section">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="historySearch" type="search" autocomplete="off" placeholder="Cari kode, rute, atau maskapai">
+        <button id="clearSearchBtn" class="clear-btn hidden" type="button">×</button>
+      </div>
+
+      <div class="filter-tabs" role="tablist" aria-label="Filter riwayat">
+        <button class="filter-btn active" type="button" data-filter="all">Semua</button>
+        <button class="filter-btn" type="button" data-filter="completed">Selesai</button>
+        <button class="filter-btn" type="button" data-filter="cancelled">Dibatalkan</button>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">AKTIVITAS</span>
+          <h2>Riwayat perjalanan</h2>
+        </div>
+        <span class="result-pill" id="resultCount">0 perjalanan</span>
+      </div>
+
+      <div id="loadingState" class="state-card">
+        <span class="loader"></span>
+        <div>
+          <strong>Memuat riwayat...</strong>
+          <small>Mengambil data perjalanan Anda.</small>
+        </div>
+      </div>
+
+      <div id="historyList" class="history-list hidden"></div>
+
+      <div id="emptyState" class="empty-state hidden">
+        <span class="empty-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </span>
+        <strong>Belum ada riwayat perjalanan</strong>
+        <p>Perjalanan yang sudah selesai atau dibatalkan akan tampil di halaman ini.</p>
+        <button id="exploreBtn" type="button">Cari Penerbangan</button>
+      </div>
+
+      <div id="searchEmptyState" class="empty-state hidden">
+        <span class="empty-icon">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        </span>
+        <strong>Riwayat tidak ditemukan</strong>
+        <p>Coba gunakan kata kunci atau filter yang berbeda.</p>
+        <button id="resetFilterBtn" type="button">Tampilkan semua</button>
+      </div>
+    </section>
+
+    <section class="help-card">
+      <span class="help-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.7 2c-1 .6-1.5 1.1-1.5 2M12 17h.01"/></svg>
+      </span>
+      <div>
+        <span>BUTUH BANTUAN?</span>
+        <strong>Ada masalah dengan perjalanan sebelumnya?</strong>
+        <small>Pusat Bantuan LetsGo siap membantu.</small>
+      </div>
+      <button id="helpBtn" type="button">›</button>
+    </section>
+
+    <div class="bottom-space"></div>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Navigasi utama">
+    <a href="home.html">
+      <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="orders.html">
+      <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span>Pesanan</span>
+    </a>
+    <a href="history.html" class="active">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <span>Riwayat</span>
+    </a>
+    <a href="profile.html">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+      <span>Akun</span>
+    </a>
+  </nav>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="./history.js?v=20260824-letsgo"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071A2D">
+  <title>Dokumen Perjalanan — LetsGo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./documents.css?v=20260824-letsgo">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-orb orb-a"></div>
+      <div class="hero-orb orb-b"></div>
+
+      <header class="topbar">
+        <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
+          <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="top-copy">
+          <span>DOKUMEN LETSGO</span>
+          <h1>Dokumen Perjalanan</h1>
+        </div>
+        <button class="icon-btn" id="refreshBtn" type="button" aria-label="Muat ulang">
+          <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0 2 5"/><path d="M20 4v7h-7"/></svg>
+        </button>
+      </header>
+
+      <div class="hero-copy">
+        <span class="hero-kicker">DOCUMENT CENTER</span>
+        <h2>Semua dokumen,<br><em>dalam satu tempat.</em></h2>
+        <p>Akses SPT, e-ticket, invoice, dan dokumen perjalanan Anda dengan lebih cepat.</p>
+      </div>
+
+      <div class="hero-stats">
+        <div><small>Total dokumen</small><strong id="totalDocuments">0</strong></div>
+        <div><small>SPT</small><strong id="totalSpt">0</strong></div>
+        <div><small>Lainnya</small><strong id="totalOther">0</strong></div>
+      </div>
+    </section>
+
+    <section class="quick-grid">
+      <button class="quick-card" type="button" data-filter="SPT">
+        <span class="quick-icon">
+          <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+        </span>
+        <span><strong>SPT</strong><small>Surat Perintah Tugas</small></span>
+        <b>›</b>
+      </button>
+
+      <button class="quick-card" id="ordersBtn" type="button">
+        <span class="quick-icon">
+          <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        </span>
+        <span><strong>Pesanan</strong><small>Lihat dokumen per perjalanan</small></span>
+        <b>›</b>
+      </button>
+    </section>
+
+    <section class="filter-section">
+      <label class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="documentSearch" type="search" autocomplete="off" placeholder="Cari nama dokumen...">
+        <button id="clearSearchBtn" class="clear-btn hidden" type="button">×</button>
+      </label>
+
+      <div class="filter-tabs">
+        <button class="filter-btn active" type="button" data-filter="all">Semua</button>
+        <button class="filter-btn" type="button" data-filter="SPT">SPT</button>
+        <button class="filter-btn" type="button" data-filter="TICKET">E-ticket</button>
+        <button class="filter-btn" type="button" data-filter="INVOICE">Invoice</button>
+      </div>
+    </section>
+
+    <section class="content-section">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">ARSIP</span>
+          <h2>Dokumen Anda</h2>
+        </div>
+        <span class="result-pill" id="resultCount">0 dokumen</span>
+      </div>
+
+      <div id="loadingState" class="state-card">
+        <span class="loader"></span>
+        <div>
+          <strong>Memuat dokumen...</strong>
+          <small>Mengambil arsip perjalanan Anda.</small>
+        </div>
+      </div>
+
+      <div id="documentList" class="document-list hidden"></div>
+
+      <div id="emptyState" class="empty-state hidden">
+        <span class="empty-icon">
+          <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>
+        </span>
+        <strong>Belum ada dokumen</strong>
+        <p>Dokumen yang Anda unggah atau diterbitkan untuk perjalanan akan muncul di sini.</p>
+        <button id="homeBtn" type="button">Kembali ke Home</button>
+      </div>
+
+      <div id="searchEmptyState" class="empty-state hidden">
+        <span class="empty-icon">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        </span>
+        <strong>Dokumen tidak ditemukan</strong>
+        <p>Coba gunakan kata kunci atau filter yang berbeda.</p>
+        <button id="resetFilterBtn" type="button">Tampilkan semua</button>
+      </div>
+    </section>
+
+    <section class="security-card">
+      <span class="security-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </span>
+      <div>
+        <span>PRIVASI</span>
+        <strong>Dokumen perjalanan dilindungi.</strong>
+        <small>Hanya akun Anda yang dapat mengakses arsip dokumen pribadi.</small>
+      </div>
+    </section>
+
+    <div class="bottom-space"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="home.html">
+      <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="orders.html">
+      <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      <span>Pesanan</span>
+    </a>
+    <a href="documents.html" class="active">
+      <svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></svg>
+      <span>Dokumen</span>
+    </a>
+    <a href="profile.html">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+      <span>Akun</span>
+    </a>
+  </nav>
+
+  <div id="toast" class="toast"></div>
+  <script type="module" src="./documents.js?v=20260824-letsgo"></script>
+</body>
+</html>

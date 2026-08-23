@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071A2D">
+  <title>Edit Profil — LetsGo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./profile-edit.css?v=20260824-letsgo">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-orb orb-a"></div>
+      <div class="hero-orb orb-b"></div>
+
+      <header class="topbar">
+        <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
+          <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="top-copy">
+          <span>AKUN LETSGO</span>
+          <h1>Edit Profil</h1>
+        </div>
+        <button class="icon-btn" id="homeBtn" type="button" aria-label="Ke Home">
+          <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+        </button>
+      </header>
+
+      <div class="profile-head">
+        <div class="avatar-wrap">
+          <div class="avatar" id="avatar">
+            <span id="avatarInitial">U</span>
+            <img id="avatarImg" class="hidden" alt="Foto profil">
+          </div>
+          <label class="camera-btn" for="avatarFile" aria-label="Ubah foto profil">
+            <svg viewBox="0 0 24 24"><path d="M4 8h4l1.5-2h5L16 8h4v11H4z"/><circle cx="12" cy="13" r="3"/></svg>
+          </label>
+          <input id="avatarFile" class="file-input" type="file" accept="image/jpeg,image/png,image/webp">
+        </div>
+
+        <div class="profile-copy">
+          <span class="verified"><i></i> Akun aktif</span>
+          <h2 id="heroName">Pengguna LetsGo</h2>
+          <p id="heroEmail">Memuat email...</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="notice-card">
+      <span class="notice-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </span>
+      <div>
+        <strong>Informasi akun Anda</strong>
+        <p>Pastikan nama dan nomor HP sesuai data yang digunakan untuk kebutuhan perjalanan.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">DATA PRIBADI</span>
+        <h2>Informasi utama</h2>
+      </div>
+
+      <form id="profileForm" class="form-card" novalidate>
+        <div id="notice" class="form-notice"></div>
+
+        <label class="field-group">
+          <span>Nama lengkap</span>
+          <div class="field">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            </span>
+            <input id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Nama lengkap">
+          </div>
+          <small class="field-error" id="fullNameError"></small>
+        </label>
+
+        <label class="field-group">
+          <span>Nomor HP</span>
+          <div class="field">
+            <span class="field-prefix">+62</span>
+            <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="81234567890">
+          </div>
+          <small class="field-error" id="phoneError"></small>
+        </label>
+
+        <label class="field-group">
+          <span>Email</span>
+          <div class="field readonly">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="m3 7 9 6 9-6"/></svg>
+            </span>
+            <input id="email" name="email" type="email" readonly>
+            <span class="locked-pill">Tetap</span>
+          </div>
+          <small class="field-hint">Email login tidak diubah dari halaman ini.</small>
+        </label>
+
+        <button id="saveBtn" class="primary-btn" type="submit">
+          <span>Simpan perubahan</span>
+          <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
+        </button>
+      </form>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">FOTO PROFIL</span>
+        <h2>Pengaturan foto</h2>
+      </div>
+
+      <article class="photo-card">
+        <div>
+          <strong>Foto profil LetsGo</strong>
+          <p>Format JPG, PNG, atau WEBP dengan ukuran maksimal 5 MB.</p>
+        </div>
+        <button id="changePhotoBtn" type="button">Pilih Foto</button>
+      </article>
+      <div id="uploadProgress" class="upload-progress hidden">
+        <div class="progress-track"><i id="progressBar"></i></div>
+        <span id="progressText">Mengunggah foto...</span>
+      </div>
+    </section>
+
+    <section class="account-card">
+      <span class="account-icon">
+        <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      </span>
+      <div>
+        <span>KEAMANAN</span>
+        <strong>Kelola password & keamanan akun</strong>
+        <small>Gunakan halaman Keamanan untuk memperbarui akses akun.</small>
+      </div>
+      <button id="securityBtn" type="button">›</button>
+    </section>
+
+    <div class="bottom-space"></div>
+  </main>
+
+  <div class="save-bar">
+    <div class="save-inner">
+      <div>
+        <small>Profil LetsGo</small>
+        <strong id="saveState">Belum ada perubahan</strong>
+      </div>
+      <button id="saveBottomBtn" type="button">Simpan</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="./profile-edit.js?v=20260824-letsgo"></script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071A2D">
+  <title>Keamanan Akun — LetsGo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./security.css?v=20260824-letsgo">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div class="hero-orb orb-a"></div>
+      <div class="hero-orb orb-b"></div>
+
+      <header class="topbar">
+        <button class="icon-btn" id="backBtn" type="button" aria-label="Kembali">
+          <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="top-copy">
+          <span>AKUN LETSGO</span>
+          <h1>Keamanan</h1>
+        </div>
+        <button class="icon-btn" id="homeBtn" type="button" aria-label="Ke Home">
+          <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+        </button>
+      </header>
+
+      <div class="hero-copy">
+        <span class="hero-kicker">SECURE ACCESS</span>
+        <h2>Jaga akun tetap<br><em>aman.</em></h2>
+        <p>Perbarui password akun LetsGo Anda dengan proses yang cepat dan aman.</p>
+      </div>
+
+      <div class="account-chip">
+        <span class="chip-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+        </span>
+        <div>
+          <small>Akun aktif</small>
+          <strong id="accountEmail">Memuat email...</strong>
+        </div>
+        <span class="secure-status"><i></i> Aman</span>
+      </div>
+    </section>
+
+    <section class="security-note">
+      <span class="note-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+      </span>
+      <div>
+        <strong>Gunakan password yang kuat</strong>
+        <p>Gunakan minimal 8 karakter dan kombinasikan huruf besar, huruf kecil, angka, serta simbol.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">RESET PASSWORD</span>
+        <h2>Buat password baru</h2>
+      </div>
+
+      <form id="passwordForm" class="form-card" novalidate>
+        <div id="notice" class="form-notice"></div>
+
+        <div class="field-group">
+          <label for="newPassword">Password baru</label>
+          <div class="field">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </span>
+            <input id="newPassword" type="password" autocomplete="new-password" placeholder="Minimal 8 karakter">
+            <button class="password-toggle" id="toggleNewPassword" type="button">Lihat</button>
+          </div>
+          <small class="field-error" id="newPasswordError"></small>
+        </div>
+
+        <div class="strength-wrap">
+          <div class="strength-track">
+            <i id="strengthBar"></i>
+          </div>
+          <span id="strengthText">Kekuatan password</span>
+        </div>
+
+        <div class="field-group">
+          <label for="confirmPassword">Konfirmasi password baru</label>
+          <div class="field">
+            <span class="field-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Ulangi password baru">
+            <button class="password-toggle" id="toggleConfirmPassword" type="button">Lihat</button>
+          </div>
+          <small class="field-error" id="confirmPasswordError"></small>
+        </div>
+
+        <div class="rules-card">
+          <div class="rule" id="ruleLength"><span>✓</span><small>Minimal 8 karakter</small></div>
+          <div class="rule" id="ruleUpper"><span>✓</span><small>Ada huruf besar</small></div>
+          <div class="rule" id="ruleNumber"><span>✓</span><small>Ada angka</small></div>
+          <div class="rule" id="ruleMatch"><span>✓</span><small>Password sama</small></div>
+        </div>
+
+        <button id="updatePasswordBtn" class="primary-btn" type="submit">
+          <span>Perbarui password</span>
+          <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
+        </button>
+      </form>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <span class="eyebrow">ALTERNATIF</span>
+        <h2>Kirim link reset ke email</h2>
+      </div>
+
+      <article class="email-reset-card">
+        <span class="email-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="m3 7 9 6 9-6"/></svg>
+        </span>
+        <div>
+          <strong>Reset melalui email</strong>
+          <p>Kirim tautan pemulihan password ke email akun LetsGo Anda.</p>
+        </div>
+        <button id="sendResetEmailBtn" type="button">Kirim</button>
+      </article>
+    </section>
+
+    <section class="privacy-card">
+      <span class="privacy-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/></svg>
+      </span>
+      <div>
+        <span>KEAMANAN AKUN</span>
+        <strong>LetsGo tidak pernah meminta password Anda melalui chat.</strong>
+        <small>Jangan membagikan password atau tautan reset kepada siapa pun.</small>
+      </div>
+    </section>
+
+    <div class="bottom-space"></div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="home.html">
+      <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="profile.html">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+      <span>Akun</span>
+    </a>
+    <a href="security.html" class="active">
+      <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      <span>Keamanan</span>
+    </a>
+    <a href="help.html">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.7 2c-1 .6-1.5 1.1-1.5 2M12 17h.01"/></svg>
+      <span>Bantuan</span>
+    </a>
+  </nav>
+
+  <div id="successModal" class="modal-backdrop hidden">
+    <section class="modal">
+      <span class="modal-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m8.5 12 2.3 2.3 4.8-5"/></svg>
+      </span>
+      <span class="eyebrow">BERHASIL</span>
+      <h3>Password diperbarui.</h3>
+      <p>Password baru sudah aktif untuk akun LetsGo Anda.</p>
+      <button id="modalProfileBtn" class="modal-primary" type="button">Kembali ke Profil</button>
+      <button id="closeModalBtn" class="modal-secondary" type="button">Tetap di halaman ini</button>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="./security.js?v=20260824-letsgo"></script>
+</body>
+</html>
