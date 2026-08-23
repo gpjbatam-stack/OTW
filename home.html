@@ -46,9 +46,9 @@
           <button class="icon-btn" id="notificationBtn" type="button" aria-label="Buka notifikasi" aria-expanded="false" aria-controls="notificationTray">
             <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
           </button>
-          <div class="avatar-btn avatar-display" aria-label="Identitas pengguna">
-            <span id="avatar">LG</span>
-          </div>
+          <button class="auth-entry-btn guest" id="authEntryBtn" type="button" aria-label="Masuk atau buka akun">
+            <span id="authEntryLabel">Masuk</span>
+          </button>
         </div>
       </header>
 
@@ -193,6 +193,22 @@
             <h3>Perjalanan saya</h3>
           </div>
         </div>
+
+
+        <article class="guest-account-card" id="guestAccountCard">
+          <div class="guest-account-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+          </div>
+          <div class="guest-account-copy">
+            <span>AKUN LETSGO</span>
+            <strong>Simpan perjalanan Anda.</strong>
+            <small>Masuk untuk melihat pesanan, dokumen, dan perjalanan aktif.</small>
+          </div>
+          <div class="guest-account-actions">
+            <button id="guestLoginBtn" type="button">Masuk</button>
+            <button id="guestRegisterBtn" type="button" class="secondary">Daftar</button>
+          </div>
+        </article>
 
         <article class="empty-state-card">
           <div class="empty-visual">

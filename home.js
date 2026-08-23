@@ -46,7 +46,9 @@ window.addEventListener("pageshow", () => {
 
 /* Profile / guest identity */
 const greeting = $("#greeting");
-const avatar = $("#avatar");
+const authEntryBtn = $("#authEntryBtn");
+const authEntryLabel = $("#authEntryLabel");
+const guestAccountCard = $("#guestAccountCard");
 
 if (activeSession) {
   try {
@@ -56,25 +58,33 @@ if (activeSession) {
       activeSession.user?.user_metadata?.full_name ||
       "Pengguna";
     const firstName = fullName.trim().split(/\s+/)[0];
+    const initials = fullName
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map(part => part[0])
+      .join("")
+      .toUpperCase() || "LG";
 
     if (greeting) greeting.textContent = `Halo, ${firstName}`;
-    if (avatar) {
-      avatar.textContent = fullName
-        .trim()
-        .split(/\s+/)
-        .slice(0, 2)
-        .map(part => part[0])
-        .join("")
-        .toUpperCase() || "LG";
-    }
+    if (authEntryLabel) authEntryLabel.textContent = initials;
+    authEntryBtn?.classList.remove("guest");
+    authEntryBtn?.classList.add("signed-in");
+    guestAccountCard?.classList.add("hidden");
   } catch (error) {
     console.error("[LetsGo] Gagal memuat profil:", error);
     if (greeting) greeting.textContent = "Halo";
-    if (avatar) avatar.textContent = "LG";
+    if (authEntryLabel) authEntryLabel.textContent = "LG";
+    authEntryBtn?.classList.remove("guest");
+    authEntryBtn?.classList.add("signed-in");
+    guestAccountCard?.classList.add("hidden");
   }
 } else {
   if (greeting) greeting.textContent = "Halo";
-  if (avatar) avatar.textContent = "LG";
+  if (authEntryLabel) authEntryLabel.textContent = "Masuk";
+  authEntryBtn?.classList.add("guest");
+  authEntryBtn?.classList.remove("signed-in");
+  guestAccountCard?.classList.remove("hidden");
 }
 
 /* Booking state */
@@ -492,6 +502,14 @@ function navigateProtected(url) {
   const next = encodeURIComponent(url);
   return navigate(`login.html?next=${next}`);
 }
+
+
+on("#authEntryBtn", "click", () => {
+  if (activeSession) return navigate("profile.html");
+  return navigate("login.html?next=home.html");
+});
+on("#guestLoginBtn", "click", () => navigate("login.html?next=home.html"));
+on("#guestRegisterBtn", "click", () => navigate("register.html?next=home.html"));
 
 /* =========================================================
    PRIMARY NAVIGATION

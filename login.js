@@ -18,23 +18,29 @@ const emailInput = $("#email");
 
 let loginMode = "user";
 
+function getSafeNext() {
+  const next = new URLSearchParams(window.location.search).get("next") || "home.html";
+  if (/^[a-zA-Z0-9._-]+(?:\?[a-zA-Z0-9%&=._-]*)?$/.test(next) && !next.includes("://")) return next;
+  return "home.html";
+}
+
 const COPY = {
   user: {
     eyebrow: "SECURE MEMBER ACCESS",
     title: "Selamat datang kembali.",
-    lead: "Masuk untuk melanjutkan perjalanan dinas Anda.",
+    lead: "Masuk untuk melanjutkan perjalanan Anda.",
     emailPlaceholder: "nama@instansi.go.id",
-    submit: "Masuk ke OTW",
+    submit: "Masuk ke LetsGo",
     rememberTitle: "Tetap masuk",
     rememberText: "Simpan sesi di perangkat ini.",
     securityTitle: "Akses aman",
-    securityText: "Sesi Anda dilindungi oleh autentikasi OTW."
+    securityText: "Sesi Anda dilindungi oleh autentikasi LetsGo."
   },
   admin: {
     eyebrow: "AUTHORIZED ADMIN ACCESS",
     title: "Masuk ke Control Center.",
-    lead: "Khusus administrator OTW yang telah terotorisasi.",
-    emailPlaceholder: "admin@otw.com",
+    lead: "Khusus administrator LetsGo yang telah terotorisasi.",
+    emailPlaceholder: "admin@letsgo.co.id",
     submit: "Masuk sebagai Admin",
     rememberTitle: "Pertahankan sesi admin",
     rememberText: "Gunakan hanya pada perangkat terpercaya.",
@@ -103,9 +109,9 @@ async function routeExistingSession() {
       return;
     }
 
-    window.location.replace("home.html");
+    window.location.replace(getSafeNext());
   } catch (error) {
-    console.warn("[OTW Login] session check:", error);
+    console.warn("[LetsGo Login] session check:", error);
   }
 }
 
@@ -158,7 +164,7 @@ form.addEventListener("submit", async (event) => {
 
       if (!admin) {
         await supabase.auth.signOut();
-        throw new Error("Akun ini tidak memiliki akses administrator OTW.");
+        throw new Error("Akun ini tidak memiliki akses administrator LetsGo.");
       }
 
       sessionStorage.setItem("otw_admin_profile", JSON.stringify({
@@ -173,8 +179,8 @@ form.addEventListener("submit", async (event) => {
       return;
     }
 
-    showNotice("Login berhasil. Menyiapkan OTW...", "success");
-    setTimeout(() => window.location.replace("home.html"), 180);
+    showNotice("Login berhasil. Menyiapkan LetsGo...", "success");
+    setTimeout(() => window.location.replace(getSafeNext()), 180);
 
   } catch (error) {
     const message =

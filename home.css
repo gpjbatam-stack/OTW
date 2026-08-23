@@ -2824,3 +2824,29 @@ button:focus-visible,
     font-size: 16px !important;
   }
 }
+
+
+/* LETSGO PUBLIC HOME — AUTH ENTRY */
+.auth-entry-btn{
+  min-width:58px;height:38px;padding:0 12px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.13);display:grid;place-items:center;
+  background:rgba(255,255,255,.08);color:#fff;font-size:8.5px;font-weight:800;
+  backdrop-filter:blur(12px);box-shadow:0 7px 18px rgba(0,0,0,.08)
+}
+.auth-entry-btn.guest{background:linear-gradient(145deg,#079FD1,#08BDEB);box-shadow:0 8px 18px rgba(8,189,235,.19)}
+.auth-entry-btn.signed-in{width:38px;min-width:38px;padding:0;border-radius:12px;background:linear-gradient(145deg,#079FD1,#078FC6);font-size:10px}
+.auth-entry-btn:active{transform:scale(.95)}
+.guest-account-card{
+  margin-bottom:10px;padding:12px;border:1px solid #DDECF2;border-radius:18px;
+  background:linear-gradient(145deg,#FFFFFF,#F2FBFE);display:grid;
+  grid-template-columns:36px 1fr;gap:9px;box-shadow:0 8px 20px rgba(7,42,63,.055)
+}
+.guest-account-card.hidden{display:none}
+.guest-account-icon{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:#079FCB;background:#E8F9FE}
+.guest-account-icon svg{width:16px;height:16px}
+.guest-account-copy>span{display:block;font-size:6.5px;font-weight:800;letter-spacing:.12em;color:#8295A3}
+.guest-account-copy strong{display:block;margin-top:3px;font-size:10px;color:#102B43}
+.guest-account-copy small{display:block;margin-top:3px;font-size:7.5px;line-height:1.45;color:#7A8D9A}
+.guest-account-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.guest-account-actions button{height:36px;border:0;border-radius:11px;background:#079FCB;color:#fff;font-size:8px;font-weight:800}
+.guest-account-actions button.secondary{background:#EFF9FC;color:#087A9C;border:1px solid #CBEAF2}

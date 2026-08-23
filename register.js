@@ -2,7 +2,12 @@ import { signUp } from "./auth-service.js";
 import { redirectIfAuthenticated } from "./guard.js";
 import { supabase } from "./supabase.js";
 
-await redirectIfAuthenticated({ redirect: "home.html" });
+const nextParam = new URLSearchParams(window.location.search).get("next") || "home.html";
+const safeNext = (/^[a-zA-Z0-9._-]+(?:\?[a-zA-Z0-9%&=._-]*)?$/.test(nextParam) && !nextParam.includes("://"))
+  ? nextParam
+  : "home.html";
+
+await redirectIfAuthenticated({ redirect: safeNext });
 
 const form = document.querySelector("#registerForm");
 const notice = document.querySelector("#notice");
@@ -118,8 +123,8 @@ form.addEventListener("submit", async (event) => {
     btn.textContent = "Mengunggah KTP...";
     await uploadKtp(result.user.id, ktpFile);
 
-    showNotice("Akun berhasil dibuat.", "success");
-    setTimeout(() => window.location.replace("home.html"), 350);
+    showNotice("Akun LetsGo berhasil dibuat.", "success");
+    setTimeout(() => window.location.replace(safeNext), 350);
   } catch (error) {
     const msg =
       error?.message?.toLowerCase().includes("already registered")
