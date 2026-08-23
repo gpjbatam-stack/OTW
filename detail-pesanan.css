@@ -143,3 +143,16 @@ button{font:inherit;cursor:pointer}svg{fill:none;stroke:currentColor;stroke-widt
   .payment-status-badge{margin-top:8px}
   .payment-actions{grid-template-columns:1fr}
 }
+
+
+/* =========================================================
+   LETSGO MOBILE INPUT AUTO-ZOOM FIX
+   Prevent iPhone / Safari auto zoom when form controls focus
+   ========================================================= */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}

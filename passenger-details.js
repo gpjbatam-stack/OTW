@@ -11,6 +11,7 @@
 
   let sb = null;
   let selectedFlight = readJSON("otw_selected_flight");
+  let flightPricing = readJSON("otw_flight_pricing") || selectedFlight?.otwPricing || null;
   let search = readJSON("otw_search") || selectedFlight?.searchSnapshot || {};
   let passengerModels = [];
   let sptFile = null;
@@ -512,6 +513,7 @@
         },
         passengers:passengerModels,
         flightOfferId:sessionStorage.getItem("otw_selected_offer_id")||selectedFlight?.offerId||"",
+        pricing:flightPricing,
         spt:{
           documentId:uploadedSptRecord.id,
           fileName:uploadedSptRecord.file_name,
@@ -524,7 +526,11 @@
       };
 
       sessionStorage.setItem("otw_passenger_details",JSON.stringify(data));
-      location.href="flight-review.html";
+      if(flightPricing){
+        sessionStorage.setItem("otw_flight_pricing",JSON.stringify(flightPricing));
+      }
+      sessionStorage.removeItem("otw_flight_addons");
+      location.href="flight-addons.html";
     }finally{
       isSubmitting=false;
       btn.disabled=false;
@@ -573,7 +579,7 @@
       restoreSpt();
       bindEvents();
 
-      console.info("[OTW] Passenger Details V5 ready");
+      console.info("[OTW] Passenger Details V7 Add-ons Flow ready");
     }catch(err){
       console.error("[OTW] init Passenger Details:",err);
       toast(err?.message||"Halaman gagal dimuat.");
