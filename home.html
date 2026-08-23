@@ -3,207 +3,286 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b1220">
-  <title>Home — OTW</title>
+  <meta name="theme-color" content="#0B1F3A">
+  <title>Home — LetsGo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./home.css">
+  <noscript>
+    <style>
+      .hero-shell,.booking-overlap,.content-shell,.bottom-nav{opacity:1!important;transform:none!important}
+    </style>
+  </noscript>
 </head>
 <body>
-<div class="app-shell">
-  <header class="topbar">
-    <button class="identity" id="profileBtn" type="button">
-      <span class="brand-mark">OTW</span>
-      <span class="identity-copy">
-        <small>OFFICIAL TRIP FOR WORK</small>
-        <strong id="greeting">Halo</strong>
-      </span>
-    </button>
-    <button class="icon-btn" id="notificationBtn" type="button" aria-label="Notifikasi">
-      <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
-      <span class="notification-dot"></span>
-    </button>
-    <button class="avatar" id="profileAvatarBtn" type="button" aria-label="Profil"><span id="avatar">OT</span></button>
-  </header>
+  <script>
+    document.documentElement.classList.add("visual-ready");
+  </script>
+  <div class="app-shell">
+    <section class="hero-shell">
+      <div class="hero-orb hero-orb-a"></div>
+      <div class="hero-orb hero-orb-b"></div>
+      <div class="hero-motion" aria-hidden="true">
+        <span class="motion-ring motion-ring-a"></span>
+        <span class="motion-ring motion-ring-b"></span>
+        <span class="motion-line motion-line-a"></span>
+        <span class="motion-line motion-line-b"></span>
+        <span class="motion-dot motion-dot-a"></span>
+        <span class="motion-dot motion-dot-b"></span>
+        <span class="motion-dot motion-dot-c"></span>
+      </div>
 
-  <main class="main">
-    <section class="executive-hero">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <img class="brand-logo" src="./letsgo-logo-horizontal.png" alt="LetsGo by mudamas">
+          <div class="welcome-copy">
+            <span class="brand-kicker">Perjalanan, dalam Genggaman.</span>
+            <h1 id="greeting">Halo</h1>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="icon-btn" id="notificationBtn" type="button" aria-label="Buka notifikasi" aria-expanded="false" aria-controls="notificationTray">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+          </button>
+          <div class="avatar-btn avatar-display" aria-label="Identitas pengguna">
+            <span id="avatar">LG</span>
+          </div>
+        </div>
+      </header>
+
       <div class="hero-copy">
-        <span class="hero-kicker"><i></i> BUSINESS TRAVEL PLATFORM</span>
-        <h1>Kelola Perjalanan.<br><em>Perjalanan beres.</em></h1>
-        <p>Semua kebutuhan perjalanan dinas, rapi dalam satu tempat.</p>
+        <span class="hero-eyebrow">LETSGO TRAVEL</span>
+        <h2>Satu aplikasi, <span>semua perjalanan.</span></h2>
+        <p>Cari tiket, kelola pesanan, dan pantau perjalanan dengan lebih praktis.</p>
       </div>
-      <div class="hero-monogram">OTW</div>
-      <div class="hero-glow"></div>
+
     </section>
 
-    <section class="search-console">
-      <div class="console-top">
-        <div>
-          <small>RENCANA PERJALANAN</small>
-          <h2>Mau pergi ke mana?</h2>
-        </div>
-        <span class="duty-badge">
-          <svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 2.7 8.3 7 10 4.3-1.7 7-5.5 7-10V6l-7-3Z"/><path d="m9.5 12 1.7 1.7 3.5-4"/></svg>
-          Perjalanan Dinas
-        </span>
-      </div>
-
-      <div class="travel-tabs">
-        <button class="travel-tab active" type="button" data-tab="flight">
-          <span class="tab-symbol"><svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/><path d="m11 14 4-4"/></svg></span>
-          <span>Penerbangan</span>
-        </button>
-        <button class="travel-tab" type="button" data-tab="train">
-          <span class="tab-symbol"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="4"/><path d="M8 21l2-3m6 3-2-3M8 8h8M8 13h.01M16 13h.01"/></svg></span>
-          <span>Kereta</span>
-        </button>
-        <button class="travel-tab" type="button" data-tab="hotel">
-          <span class="tab-symbol"><svg viewBox="0 0 24 24"><path d="M4 20V5m16 15V9a2 2 0 0 0-2-2h-6v13M4 14h16M7 9h2"/></svg></span>
-          <span>Hotel</span>
-        </button>
-      </div>
-
-      <div id="flightPanel" class="booking-panel active">
-        <div class="trip-type-row">
-          <button class="trip-type active" type="button" data-trip="oneway">Sekali jalan</button>
-          <button class="trip-type" type="button" data-trip="roundtrip">Pulang-pergi</button>
+    <div class="booking-overlap">
+      <section class="booking-card">
+        <div class="booking-head">
+          <div>
+            <span class="tiny-label">Rencana perjalanan</span>
+            <strong>Cari kebutuhan perjalanan</strong>
+          </div>
+          <span class="verified-badge">
+            <svg viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 2.7 8.3 7 10 4.3-1.7 7-5.5 7-10V6l-7-3Z"/><path d="m9.5 12 1.7 1.7 3.5-4"/></svg>
+            LetsGo
+          </span>
         </div>
 
-        <div class="route-board">
-          <button class="airport airport-button" id="originBtn" type="button">
-            <span class="field-label">DARI</span>
-            <span class="airport-code" id="originCode">BTH</span>
-            <span class="airport-city" id="originCity">Batam</span>
+        <div class="travel-tabs" role="tablist">
+          <button class="travel-tab active" id="flightTabBtn" type="button" aria-current="true">
+            <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/><path d="m11 14 4-4"/></svg></span>
+            Penerbangan
           </button>
-          <div class="route-rail">
-            <span></span>
-            <button id="swapRouteBtn" class="swap-btn" type="button" aria-label="Tukar rute">
-              <svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3m3 13H7l3 3"/></svg>
+          <button class="travel-tab" id="trainSearchBtn" type="button">
+            <span class="tab-icon"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="15" rx="4"/><path d="M8 21l2-3m6 3-2-3M8 8h8M8 13h.01M16 13h.01"/></svg></span>
+            Kereta
+          </button>
+          <button class="travel-tab" id="hotelSearchBtn" type="button">
+            <span class="tab-icon"><svg viewBox="0 0 24 24"><path d="M4 20V5m16 15V9a2 2 0 0 0-2-2h-6v13M4 14h16M7 9h2"/></svg></span>
+            Hotel
+          </button>
+        </div>
+
+        <div id="flightPanel" class="booking-panel active">
+          <div class="trip-type-row">
+            <button class="trip-type active" data-trip="oneway">Sekali jalan</button>
+            <button class="trip-type" data-trip="roundtrip">Pulang-pergi</button>
+          </div>
+
+          <div class="route-card">
+            <button class="airport airport-left airport-button" id="originBtn" type="button">
+              <span class="airport-label">Dari</span>
+              <span class="airport-code" id="originCode">BTH</span>
+              <span class="airport-city" id="originCity">Batam</span>
             </button>
-            <span></span>
-            <small id="tripTypeLabel">Sekali jalan</small>
+
+            <div class="route-center">
+              <div class="route-track">
+                <span class="route-dot"></span>
+                <span class="route-line"></span>
+                <button class="plane-chip swap-btn" id="swapRouteBtn" type="button" aria-label="Tukar rute">
+                  <svg viewBox="0 0 24 24"><path d="M7 7h11l-3-3m3 13H7l3 3"/></svg>
+                </button>
+                <span class="route-line"></span>
+                <span class="route-dot hollow"></span>
+              </div>
+              <small id="tripTypeLabel">Sekali jalan</small>
+            </div>
+
+            <button class="airport airport-right airport-button" id="destinationBtn" type="button">
+              <span class="airport-label">Ke</span>
+              <span class="airport-code muted-code" id="destinationCode">—</span>
+              <span class="airport-city" id="destinationCity">Pilih tujuan</span>
+            </button>
           </div>
-          <button class="airport airport-button destination" id="destinationBtn" type="button">
-            <span class="field-label">KE</span>
-            <span class="airport-code muted-code" id="destinationCode">—</span>
-            <span class="airport-city" id="destinationCity">Pilih tujuan</span>
-          </button>
-        </div>
 
-        <div class="detail-grid">
-          <div class="date-field-wrap detail-control" id="departDateWrap">
-            <span class="control-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg></span>
-            <span class="control-copy"><small>Berangkat</small><strong id="departDateText">Pilih tanggal</strong></span>
-            <span class="chevron">›</span>
-            <input id="departDateInput" class="date-overlay-input" type="date" aria-label="Tanggal berangkat">
+          <div class="booking-meta">
+            <div class="date-field-wrap" id="departDateWrap">
+              <div class="meta-card date-display">
+                <span class="meta-icon">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
+                </span>
+                <span class="meta-copy">
+                  <small>Berangkat</small>
+                  <strong id="departDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
+                </span>
+              </div>
+              <input id="departDateInput" class="date-overlay-input" type="date" aria-label="Tanggal berangkat">
+            </div>
+
+            <div class="date-field-wrap" id="returnDateWrap" hidden>
+              <div class="meta-card date-display">
+                <span class="meta-icon return">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg>
+                </span>
+                <span class="meta-copy">
+                  <small>Pulang</small>
+                  <strong id="returnDateText">Pilih tanggal</strong><span class="field-chevron">⌄</span>
+                </span>
+              </div>
+              <input id="returnDateInput" class="date-overlay-input" type="date" aria-label="Tanggal pulang">
+            </div>
+
+            <button class="meta-card" id="passengerBtn" type="button">
+              <span class="meta-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6 20c.8-4 2.8-6 6-6s5.2 2 6 6"/></svg>
+              </span>
+              <span class="meta-copy">
+                <small>Penumpang</small>
+                <strong id="passengerText">1 Dewasa</strong><span class="field-chevron">⌄</span>
+              </span>
+            </button>
+
+            <button class="meta-card" id="cabinBtn" type="button">
+              <span class="meta-icon">
+                <svg viewBox="0 0 24 24"><path d="M7 4v16M17 4v16M7 9h10M7 15h10"/></svg>
+              </span>
+              <span class="meta-copy">
+                <small>Kelas</small>
+                <strong id="cabinText">Ekonomi</strong><span class="field-chevron">⌄</span>
+              </span>
+            </button>
           </div>
-          <div class="date-field-wrap detail-control" id="returnDateWrap" hidden>
-            <span class="control-icon warm"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg></span>
-            <span class="control-copy"><small>Pulang</small><strong id="returnDateText">Pilih tanggal</strong></span>
-            <span class="chevron">›</span>
-            <input id="returnDateInput" class="date-overlay-input" type="date" aria-label="Tanggal pulang">
-          </div>
-          <button class="detail-control" id="passengerBtn" type="button">
-            <span class="control-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6 20c.8-4 2.8-6 6-6s5.2 2 6 6"/></svg></span>
-            <span class="control-copy"><small>Penumpang</small><strong id="passengerText">1 Dewasa</strong></span>
-            <span class="chevron">›</span>
-          </button>
-          <button class="detail-control" id="cabinBtn" type="button">
-            <span class="control-icon"><svg viewBox="0 0 24 24"><path d="M7 4v16M17 4v16M7 9h10M7 15h10"/></svg></span>
-            <span class="control-copy"><small>Kelas</small><strong id="cabinText">Ekonomi</strong></span>
-            <span class="chevron">›</span>
-          </button>
-        </div>
 
-        <button class="primary-cta" id="searchFlightBtn" type="button">
-          <span class="cta-plane"><svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg></span>
-          <span class="cta-copy"><small>CARI JADWAL</small><strong>Cari Penerbangan</strong></span>
-          <span class="cta-arrow">→</span>
-        </button>
-        <div class="trust-line"><span></span> Harga & jadwal real-time <b>•</b> Data perjalanan terenkripsi</div>
-      </div>
-
-      <div id="trainPanel" class="booking-panel service-panel">
-        <div class="service-fields">
-          <button class="service-field" id="trainOriginBtn" type="button"><span class="field-kicker">DARI STASIUN</span><strong id="trainOriginText">Pilih asal</strong><span>›</span></button>
-          <button class="service-field" id="trainDestinationBtn" type="button"><span class="field-kicker">KE STASIUN</span><strong id="trainDestinationText">Pilih tujuan</strong><span>›</span></button>
-        </div>
-        <div class="detail-grid">
-          <div class="date-field-wrap detail-control"><span class="control-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg></span><span class="control-copy"><small>Berangkat</small><strong id="trainDateText">Pilih tanggal</strong></span><input id="trainDateInput" class="date-overlay-input" type="date"></div>
-          <button class="detail-control" id="trainPassengerBtn" type="button"><span class="control-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6 20c.8-4 2.8-6 6-6s5.2 2 6 6"/></svg></span><span class="control-copy"><small>Penumpang</small><strong id="trainPassengerText">1 Dewasa</strong></span></button>
-        </div>
-        <button class="primary-cta" id="searchTrainBtn" type="button"><span class="cta-copy"><small>CARI JADWAL</small><strong>Cari Kereta</strong></span><span class="cta-arrow">→</span></button>
-      </div>
-
-      <div id="hotelPanel" class="booking-panel service-panel">
-        <button class="service-field service-field-wide" id="hotelCityBtn" type="button"><span class="field-kicker">KOTA / AREA</span><strong id="hotelCityText">Pilih tujuan menginap</strong><span>›</span></button>
-        <div class="detail-grid">
-          <div class="date-field-wrap detail-control"><span class="control-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg></span><span class="control-copy"><small>Check-in</small><strong id="hotelCheckinText">Pilih tanggal</strong></span><input id="hotelCheckinInput" class="date-overlay-input" type="date"></div>
-          <div class="date-field-wrap detail-control"><span class="control-icon warm"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4m8-4v4M3 10h18"/></svg></span><span class="control-copy"><small>Check-out</small><strong id="hotelCheckoutText">Pilih tanggal</strong></span><input id="hotelCheckoutInput" class="date-overlay-input" type="date"></div>
-        </div>
-        <button class="primary-cta" id="searchHotelBtn" type="button"><span class="cta-copy"><small>CARI AKOMODASI</small><strong>Cari Hotel</strong></span><span class="cta-arrow">→</span></button>
-      </div>
-    </section>
-
-    <section class="command-strip">
-      <button class="metric-card" id="activeOrdersCard" type="button">
-        <span class="metric-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h10v2M8 12h8"/></svg></span>
-        <span><small>PESANAN AKTIF</small><strong>0</strong><em>Lihat perjalanan</em></span><b>→</b>
-      </button>
-      <button class="metric-card" id="invoiceStatusCard" type="button">
-        <span class="metric-icon invoice"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5z"/><path d="M8 7h8m-8 4h8m-8 4h4"/></svg></span>
-        <span><small>INVOICE</small><strong>0</strong><em>Dokumen transaksi</em></span><b>→</b>
-      </button>
-    </section>
-
-    <section class="quick-section">
-      <div class="section-heading">
-        <div><small>COMMAND CENTER</small><h2>Kelola perjalanan</h2></div>
-        <button id="servicesBtn" type="button">Semua layanan <span>→</span></button>
-      </div>
-      <div class="quick-grid">
-        <button class="quick-card primary" id="requestQuickBtn" type="button">
-          <span class="quick-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4M9 12h6m-6 4h5"/></svg></span>
-          <span><small>BUAT BARU</small><strong>Pengajuan</strong><em>Ajukan perjalanan dinas</em></span><b>↗</b>
-        </button>
-        <button class="quick-card" id="ordersQuickBtn" type="button">
-          <span class="quick-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h10v2M8 12h8"/></svg></span>
-          <span><small>PERJALANAN</small><strong>Pesanan</strong><em>Pantau status tiket</em></span><b>→</b>
-        </button>
-        <button class="quick-card" id="invoiceQuickBtn" type="button">
-          <span class="quick-icon"><svg viewBox="0 0 24 24"><path d="M5 3h14v18H5z"/><path d="M8 7h8m-8 4h8m-8 4h4"/></svg></span>
-          <span><small>DOKUMEN</small><strong>Invoice</strong><em>Lihat transaksi</em></span><b>→</b>
-        </button>
-      </div>
-    </section>
-
-    <section class="activity-section">
-      <div class="section-heading compact"><div><small>AKTIVITAS</small><h2>Perjalanan saya</h2></div><button id="historyBtn" type="button">Riwayat <span>→</span></button></div>
-      <div class="empty-journey">
-        <span class="journey-visual"><svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg></span>
-        <span><strong>Belum ada perjalanan aktif</strong><p>Perjalanan berikutnya akan tampil otomatis setelah tiket dipesan.</p></span>
-      </div>
-    </section>
-
-    <button class="help-banner" id="helpBtn" type="button">
-      <span class="help-symbol">?</span>
-      <span><small>BUTUH BANTUAN?</small><strong>Pusat Bantuan OTW</strong></span>
-      <span class="help-arrow">→</span>
-    </button>
-  </main>
-
-  <nav class="bottom-nav" aria-label="Navigasi utama">
-    <button class="nav-item active" id="homeNav" type="button"><svg viewBox="0 0 24 24"><path d="m4 10 8-6 8 6v10H4z"/><path d="M9 20v-6h6v6"/></svg><span>Home</span></button>
-    <button class="nav-item" id="ordersNav" type="button"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h10v2M8 12h8"/></svg><span>Pesanan</span></button>
-    <button class="nav-main" id="requestNav" type="button"><span><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><small>Ajukan</small></button>
-    <button class="nav-item" id="notificationsNav" type="button"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span>Notifikasi</span></button>
-    <button class="nav-item" id="profileNav" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M6 20c.8-4 2.8-6 6-6s5.2 2 6 6"/></svg><span>Akun</span></button>
-  </nav>
+          <div class="booking-assurance">
+  <div><span class="assurance-dot"></span><span>Harga & jadwal real-time</span></div>
+  <span class="assurance-sep"></span>
+  <div><span>Terintegrasi</span></div>
 </div>
 
+          <button class="primary-cta" id="searchFlightBtn" type="button">
+            <span>Cari Penerbangan</span>
+            <span class="cta-arrow">
+              <svg viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+            </span>
+          </button>
+        </div>
+      </section>
+    </div>
 
+    <main class="content-shell">
+      <section class="journey-section">
+        <div class="section-title-row">
+          <div>
+            <span class="section-eyebrow">Aktivitas</span>
+            <h3>Perjalanan saya</h3>
+          </div>
+        </div>
+
+        <article class="empty-state-card">
+          <div class="empty-visual">
+            <div class="ticket-layer ticket-back"></div>
+            <div class="ticket-layer ticket-front"></div>
+            <div class="flight-orb">
+              <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
+            </div>
+          </div>
+          <div class="empty-copy">
+            <strong>Belum ada perjalanan aktif</strong>
+            <p>Ketika tiket sudah dipesan, detail keberangkatan akan tampil otomatis di sini.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="insight-card">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8"/></svg>
+        </div>
+        <div>
+          <span>Butuh bantuan?</span>
+          <strong>Pusat Bantuan LetsGo</strong>
+        </div>
+        <button id="helpBtn" type="button" aria-label="Buka pusat bantuan">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+        </button>
+      </section>
+
+      <div class="bottom-spacer"></div>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navigasi utama">
+      <button class="nav-item active" id="homeNav" type="button" aria-current="page">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3z"/></svg>
+        </span>
+        <span>Home</span>
+      </button>
+
+      <button class="nav-item" id="ordersNav" type="button">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M7 7V5h10v2M8 12h8"/></svg>
+        </span>
+        <span>Pesanan</span>
+      </button>
+
+      <button class="nav-item center-nav" id="applyNav" type="button">
+        <span class="center-plus">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+        <span>Ajukan</span>
+      </button>
+
+      <button class="nav-item" id="documentsNav" type="button">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4M9 12h6m-6 4h5"/></svg>
+        </span>
+        <span>Dokumen</span>
+      </button>
+
+      <button class="nav-item" id="profileNav" type="button">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"/><path d="M5 21c.8-5 3.1-7 7-7s6.2 2 7 7"/></svg>
+        </span>
+        <span>Akun</span>
+      </button>
+    </nav>
+  </div>
+
+
+  <aside class="notification-tray" id="notificationTray" aria-hidden="true" aria-label="Notifikasi">
+    <div class="notification-tray-head">
+      <div>
+        <span class="tray-eyebrow">Pusat aktivitas</span>
+        <strong>Notifikasi</strong>
+      </div>
+      <button class="tray-close" id="notificationCloseBtn" type="button" aria-label="Tutup notifikasi">
+        <svg viewBox="0 0 24 24"><path d="m7 7 10 10M17 7 7 17"/></svg>
+      </button>
+    </div>
+
+    <div class="notification-empty">
+      <span class="notification-empty-icon">
+        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+      </span>
+      <strong>Belum ada notifikasi baru</strong>
+      <p>Informasi pesanan dan perjalanan terbaru akan muncul di sini.</p>
+    </div>
+  </aside>
 
   <div class="sheet-backdrop" id="sheetBackdrop"></div>
 
@@ -277,20 +356,6 @@
     </div>
   </section>
 
-  
-<section class="bottom-sheet" id="selectionSheet" aria-hidden="true">
-  <div class="sheet-handle"></div>
-  <div class="sheet-head">
-    <div>
-      <span class="sheet-kicker" id="selectionKicker">PILIH</span>
-      <h3 id="selectionTitle">Pilih lokasi</h3>
-    </div>
-    <button class="sheet-close" data-close-sheet type="button" aria-label="Tutup">×</button>
-  </div>
-  <input class="airport-search" id="selectionSearch" type="search" placeholder="Cari..." autocomplete="off">
-  <div class="airport-list" id="selectionList"></div>
-</section>
-
-<script type="module" src="./home.js"></script>
+  <script type="module" src="./home.js"></script>
 </body>
 </html>
