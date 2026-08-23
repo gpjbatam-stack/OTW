@@ -21,6 +21,18 @@ export function requireSplashFirst({ splash = "index.html" } = {}) {
   return true;
 }
 
+
+export async function getOptionalSession({ splash = "index.html" } = {}) {
+  if (!requireSplashFirst({ splash })) return null;
+
+  try {
+    return await getSession();
+  } catch (error) {
+    console.error("[LetsGo] Optional session:", error);
+    return null;
+  }
+}
+
 export async function requireAuth({ redirect = "login.html", splash = "index.html" } = {}) {
   if (!requireSplashFirst({ splash })) return null;
 

@@ -1,4 +1,4 @@
-import { requireAuth } from "./guard.js";
+import { getOptionalSession } from "./guard.js";
 import { getMyProfile } from "./profile-service.js";
 
 /* =========================================================
@@ -19,12 +19,8 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/* Auth first. If auth fails, fail safely back to login. */
-const activeSession = await requireAuth({ redirect: "login.html", splash: "index.html" });
-if (!activeSession) {
-  // Navigation is already being handled by the global splash/auth guard.
-  await new Promise(() => {});
-}
+/* Home is public. Session is optional and only personalizes the experience. */
+const activeSession = await getOptionalSession({ splash: "index.html" });
 
 /* Visual ready state never controls visibility; it only enhances motion. */
 requestAnimationFrame(() => document.body.classList.add("home-ready"));
@@ -48,28 +44,37 @@ window.addEventListener("pageshow", () => {
   pageTransition?.classList.remove("show");
 });
 
-/* Profile */
+/* Profile / guest identity */
 const greeting = $("#greeting");
 const avatar = $("#avatar");
 
-try {
-  const profile = await getMyProfile();
-  const fullName = profile?.full_name || "Pengguna";
-  const firstName = fullName.trim().split(/\s+/)[0];
+if (activeSession) {
+  try {
+    const profile = await getMyProfile();
+    const fullName =
+      profile?.full_name ||
+      activeSession.user?.user_metadata?.full_name ||
+      "Pengguna";
+    const firstName = fullName.trim().split(/\s+/)[0];
 
-  if (greeting) greeting.textContent = `Halo, ${firstName}`;
-
-  if (avatar) {
-    avatar.textContent = fullName
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map(part => part[0])
-      .join("")
-      .toUpperCase() || "LG";
+    if (greeting) greeting.textContent = `Halo, ${firstName}`;
+    if (avatar) {
+      avatar.textContent = fullName
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(part => part[0])
+        .join("")
+        .toUpperCase() || "LG";
+    }
+  } catch (error) {
+    console.error("[LetsGo] Gagal memuat profil:", error);
+    if (greeting) greeting.textContent = "Halo";
+    if (avatar) avatar.textContent = "LG";
   }
-} catch (error) {
-  console.error("[LetsGo] Gagal memuat profil:", error);
+} else {
+  if (greeting) greeting.textContent = "Halo";
+  if (avatar) avatar.textContent = "LG";
 }
 
 /* Booking state */
@@ -480,6 +485,14 @@ on("#searchFlightBtn", "click", async () => {
   await navigate(`search-flight.html?${params.toString()}`);
 });
 
+
+function navigateProtected(url) {
+  if (activeSession) return navigate(url);
+
+  const next = encodeURIComponent(url);
+  return navigate(`login.html?next=${next}`);
+}
+
 /* =========================================================
    PRIMARY NAVIGATION
    One button = one function.
@@ -490,10 +503,10 @@ on("#homeNav", "click", () => {
   window.scrollTo({ top:0, behavior:"smooth" });
 });
 
-on("#ordersNav", "click", () => navigate("orders.html"));
-on("#applyNav", "click", () => navigate("pengajuan.html"));
-on("#documentsNav", "click", () => navigate("documents.html"));
-on("#profileNav", "click", () => navigate("profile.html"));
+on("#ordersNav", "click", () => navigateProtected("orders.html"));
+on("#applyNav", "click", () => navigateProtected("pengajuan.html"));
+on("#documentsNav", "click", () => navigateProtected("documents.html"));
+on("#profileNav", "click", () => activeSession ? navigate("profile.html") : navigate("login.html?next=profile.html"));
 on("#helpBtn", "click", () => navigate("help.html"));
 
 /* =========================================================
