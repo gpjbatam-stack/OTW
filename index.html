@@ -3,22 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0D1B2A">
-  <meta name="color-scheme" content="dark">
-  <meta name="description" content="Perjalanan, dalam Genggaman.">
+  <meta name="theme-color" content="#F7F4EF">
+  <meta name="color-scheme" content="light">
   <title>LetsGo</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
       --navy:#0D1B2A;
       --orange:#FF6A00;
+      --paper:#F7F4EF;
+      --paper-2:#FBFAF8;
       --white:#FFFFFF;
-      --muted:rgba(255,255,255,.62);
-      --line:rgba(255,255,255,.08);
     }
 
     *{box-sizing:border-box}
@@ -27,204 +22,370 @@
       margin:0;
       width:100%;
       min-height:100%;
-      font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:var(--navy);
+      background:var(--paper);
     }
 
     body{
       min-height:100vh;
+      min-height:100svh;
       overflow:hidden;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       text-rendering:optimizeLegibility;
     }
 
     .splash{
+      position:relative;
       min-height:100vh;
       min-height:100svh;
-      position:relative;
       display:grid;
       place-items:center;
-      padding:
-        max(28px,env(safe-area-inset-top))
-        max(24px,env(safe-area-inset-right))
-        max(28px,env(safe-area-inset-bottom))
-        max(24px,env(safe-area-inset-left));
-      background:var(--navy);
+      overflow:hidden;
+      background:
+        linear-gradient(180deg,var(--paper-2) 0%,var(--paper) 100%);
       isolation:isolate;
     }
 
-    .splash::before{
-      content:"";
+    /* Premium moving ambient shapes */
+    .ambient{
       position:absolute;
       inset:0;
-      z-index:-2;
+      overflow:hidden;
+      z-index:-3;
       pointer-events:none;
-      background-image:
-        linear-gradient(var(--line) 1px,transparent 1px),
-        linear-gradient(90deg,var(--line) 1px,transparent 1px);
-      background-size:46px 46px;
-      opacity:.16;
-      -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.55),transparent 76%);
-      mask-image:linear-gradient(to bottom,rgba(0,0,0,.55),transparent 76%);
     }
 
-    .splash::after{
-      content:"";
+    .orb{
       position:absolute;
-      width:360px;
-      height:360px;
-      top:-245px;
-      right:-235px;
-      border:56px solid var(--orange);
       border-radius:50%;
-      opacity:.075;
-      z-index:-1;
-      pointer-events:none;
+      opacity:.9;
+      will-change:transform;
     }
 
-    .accent{
+    .orb.one{
+      width:280px;
+      height:280px;
+      top:-155px;
+      right:-120px;
+      border:48px solid rgba(13,27,42,.055);
+      animation:driftA 8s ease-in-out infinite alternate;
+    }
+
+    .orb.two{
+      width:180px;
+      height:180px;
+      left:-105px;
+      bottom:8%;
+      border:34px solid rgba(255,106,0,.065);
+      animation:driftB 7s ease-in-out infinite alternate;
+    }
+
+    .orb.three{
+      width:58px;
+      height:58px;
+      right:10%;
+      bottom:16%;
+      background:rgba(255,106,0,.055);
+      animation:floatDot 5.5s ease-in-out infinite;
+    }
+
+    /* Ultra subtle technical grid */
+    .grid{
       position:absolute;
-      width:190px;
-      height:13px;
-      left:-95px;
-      bottom:14%;
-      border-radius:999px;
-      background:var(--orange);
-      transform:rotate(-38deg);
-      opacity:.10;
+      inset:0;
+      z-index:-4;
+      opacity:.36;
+      background-image:
+        linear-gradient(rgba(13,27,42,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(13,27,42,.025) 1px,transparent 1px);
+      background-size:32px 32px;
+      -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 18%,#000 78%,transparent 100%);
+      mask-image:linear-gradient(to bottom,transparent 0%,#000 18%,#000 78%,transparent 100%);
+    }
+
+    /* Animated journey route behind logo */
+    .route{
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:min(116vw,520px);
+      transform:translate(-50%,-48%);
       z-index:-1;
+      opacity:.84;
       pointer-events:none;
     }
 
-    .center{
+    .route svg{
       width:100%;
-      max-width:430px;
+      height:auto;
+      display:block;
+      overflow:visible;
+    }
+
+    .route-base{
+      fill:none;
+      stroke:rgba(13,27,42,.055);
+      stroke-width:1.5;
+      stroke-linecap:round;
+      stroke-dasharray:3 8;
+    }
+
+    .route-live{
+      fill:none;
+      stroke:var(--orange);
+      stroke-width:2;
+      stroke-linecap:round;
+      stroke-dasharray:44 340;
+      animation:routeFlow 4.6s linear infinite;
+      opacity:.75;
+    }
+
+    .route-node{
+      fill:var(--orange);
+      transform-origin:center;
+      animation:nodePulse 2.2s ease-in-out infinite;
+    }
+
+    .brand-stage{
+      width:100%;
+      padding:
+        max(18px,env(safe-area-inset-top))
+        18px
+        max(18px,env(safe-area-inset-bottom));
       display:flex;
       flex-direction:column;
       align-items:center;
-      text-align:center;
-      animation:brandIn .72s cubic-bezier(.2,.8,.2,1) both;
+      justify-content:center;
+      transform:translateY(-2.8vh);
+      animation:stageIn .78s cubic-bezier(.2,.82,.2,1) both;
+      position:relative;
+    }
+
+    .logo-shell{
+      position:relative;
+      width:min(92vw,410px);
+      display:grid;
+      place-items:center;
+      padding:18px 10px;
+    }
+
+    .logo-shell::before{
+      content:"";
+      position:absolute;
+      width:74%;
+      aspect-ratio:1/1;
+      border-radius:50%;
+      background:rgba(255,255,255,.72);
+      box-shadow:
+        0 26px 70px rgba(13,27,42,.055),
+        inset 0 0 0 1px rgba(255,255,255,.8);
+      filter:blur(.1px);
+      z-index:-1;
+      animation:breathe 4.4s ease-in-out infinite;
     }
 
     .logo{
       display:block;
-      width:min(76vw,330px);
+      width:100%;
       height:auto;
-      max-height:240px;
+      max-height:315px;
       object-fit:contain;
       object-position:center;
-      filter:drop-shadow(0 20px 34px rgba(0,0,0,.18));
       user-select:none;
       -webkit-user-drag:none;
-    }
-
-    .status{
-      margin-top:34px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:13px;
-    }
-
-    .status-text{
-      margin:0;
-      color:var(--muted);
-      font-size:10.5px;
-      line-height:1.4;
-      font-weight:600;
-      letter-spacing:.085em;
-      text-transform:uppercase;
+      filter:drop-shadow(0 16px 22px rgba(13,27,42,.09));
+      animation:logoFloat 4.2s ease-in-out infinite;
     }
 
     .loader{
+      margin-top:16px;
+      width:76px;
+      height:4px;
       position:relative;
-      width:74px;
-      height:3px;
       overflow:hidden;
       border-radius:999px;
-      background:rgba(255,255,255,.12);
+      background:rgba(13,27,42,.075);
+      box-shadow:inset 0 0 0 1px rgba(13,27,42,.025);
     }
 
     .loader::after{
       content:"";
       position:absolute;
       top:0;
-      bottom:0;
-      left:0;
-      width:29px;
+      left:-34px;
+      width:34px;
+      height:100%;
       border-radius:inherit;
       background:var(--orange);
-      animation:loading 1.05s cubic-bezier(.65,0,.35,1) infinite;
+      animation:loader 1.18s cubic-bezier(.65,0,.35,1) infinite;
     }
 
-    .is-leaving .center{
-      animation:brandOut .24s ease both;
+    .corner-mark{
+      position:absolute;
+      right:22px;
+      bottom:calc(20px + env(safe-area-inset-bottom));
+      width:28px;
+      height:3px;
+      border-radius:999px;
+      background:var(--orange);
+      opacity:.62;
     }
 
-    @keyframes brandIn{
-      from{opacity:0;transform:translateY(12px) scale(.985)}
-      to{opacity:1;transform:none}
+    .corner-mark::after{
+      content:"";
+      position:absolute;
+      right:0;
+      top:-8px;
+      width:10px;
+      height:3px;
+      border-radius:999px;
+      background:var(--navy);
+      opacity:.52;
     }
 
-    @keyframes brandOut{
-      to{opacity:0;transform:translateY(-5px) scale(.992)}
+    .is-leaving .brand-stage{
+      animation:stageOut .26s ease both;
     }
 
-    @keyframes loading{
-      0%{transform:translateX(-38px)}
-      52%{transform:translateX(41px)}
-      100%{transform:translateX(85px)}
+    @keyframes stageIn{
+      from{opacity:0;transform:translateY(calc(-2.8vh + 15px)) scale(.975)}
+      to{opacity:1;transform:translateY(-2.8vh) scale(1)}
     }
 
+    @keyframes stageOut{
+      to{opacity:0;transform:translateY(calc(-2.8vh - 8px)) scale(.99)}
+    }
+
+    @keyframes logoFloat{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-5px)}
+    }
+
+    @keyframes breathe{
+      0%,100%{transform:scale(.98);opacity:.74}
+      50%{transform:scale(1.035);opacity:.98}
+    }
+
+    @keyframes loader{
+      0%{transform:translateX(0)}
+      58%{transform:translateX(76px)}
+      100%{transform:translateX(114px)}
+    }
+
+    @keyframes routeFlow{
+      from{stroke-dashoffset:0}
+      to{stroke-dashoffset:-387}
+    }
+
+    @keyframes nodePulse{
+      0%,100%{opacity:.42;transform:scale(.78)}
+      50%{opacity:.92;transform:scale(1.12)}
+    }
+
+    @keyframes driftA{
+      from{transform:translate3d(0,0,0) rotate(0)}
+      to{transform:translate3d(-12px,16px,0) rotate(8deg)}
+    }
+
+    @keyframes driftB{
+      from{transform:translate3d(0,0,0)}
+      to{transform:translate3d(18px,-10px,0)}
+    }
+
+    @keyframes floatDot{
+      0%,100%{transform:translateY(0) scale(1)}
+      50%{transform:translateY(-14px) scale(.92)}
+    }
+
+    /* Mobile-first tuning */
     @media (max-width:480px){
-      .logo{
-        width:min(82vw,300px);
+      .logo-shell{
+        width:min(95vw,405px);
+        padding:16px 4px;
       }
 
-      .status{
-        margin-top:28px;
+      .logo{
+        max-height:300px;
       }
+
+      .route{
+        width:122vw;
+        top:49%;
+      }
+
+      .loader{margin-top:12px}
     }
 
-    @media (max-height:620px){
-      .logo{
-        width:min(66vw,265px);
-        max-height:190px;
-      }
+    /* Small phones */
+    @media (max-width:360px){
+      .logo-shell{width:98vw}
+      .logo{max-height:268px}
+      .loader{margin-top:8px}
+    }
 
-      .status{
-        margin-top:20px;
-      }
+    /* Short screens / landscape */
+    @media (max-height:620px){
+      .brand-stage{transform:translateY(-1vh)}
+      .logo-shell{width:min(76vw,325px)}
+      .logo{max-height:215px}
+      .route{width:min(92vw,440px)}
+      .loader{margin-top:6px}
+    }
+
+    /* Desktop is only a preview of the mobile identity */
+    @media (min-width:768px){
+      .logo-shell{width:410px}
+      .route{width:520px}
     }
 
     @media (prefers-reduced-motion:reduce){
-      .center,
-      .is-leaving .center,
-      .loader::after{
-        animation:none;
+      .brand-stage,
+      .is-leaving .brand-stage,
+      .logo,
+      .logo-shell::before,
+      .loader::after,
+      .route-live,
+      .route-node,
+      .orb{
+        animation:none !important;
       }
     }
   </style>
 </head>
 
 <body>
-  <main class="splash" aria-label="Splash screen">
-    <span class="accent" aria-hidden="true"></span>
+  <main class="splash" aria-label="LetsGo">
+    <div class="grid" aria-hidden="true"></div>
 
-    <section class="center" aria-live="polite">
-      <img
-        class="logo"
-        src="./letsgo-logo.png"
-        alt="LetsGo"
-        decoding="async"
-        fetchpriority="high"
-      >
+    <div class="ambient" aria-hidden="true">
+      <span class="orb one"></span>
+      <span class="orb two"></span>
+      <span class="orb three"></span>
+    </div>
 
-      <div class="status" aria-label="Memuat aplikasi">
-        <p class="status-text">Menyiapkan perjalanan Anda</p>
-        <div class="loader" aria-hidden="true"></div>
+    <div class="route" aria-hidden="true">
+      <svg viewBox="0 0 520 300" role="presentation">
+        <path class="route-base" d="M20 220 C105 270, 150 85, 255 142 S390 250, 500 78"/>
+        <path class="route-live" d="M20 220 C105 270, 150 85, 255 142 S390 250, 500 78"/>
+        <circle class="route-node" cx="500" cy="78" r="4.5"/>
+      </svg>
+    </div>
+
+    <section class="brand-stage">
+      <div class="logo-shell">
+        <img
+          class="logo"
+          src="./letsgo-logo.png"
+          alt="LetsGo by Mudamas — Perjalanan, dalam Genggaman."
+          decoding="sync"
+          fetchpriority="high"
+        >
       </div>
+
+      <div class="loader" aria-hidden="true"></div>
     </section>
+
+    <span class="corner-mark" aria-hidden="true"></span>
   </main>
 
   <script type="module" src="./splash.js"></script>

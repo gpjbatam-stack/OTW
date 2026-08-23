@@ -1,41 +1,35 @@
 import { getSession } from "./auth-service.js";
 
-const MIN_SPLASH_MS = 1200;
-const EXIT_ANIMATION_MS = 220;
+const MIN_SPLASH_MS = 1650;
+const EXIT_MS = 260;
 const startedAt = performance.now();
 
-function wait(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function keepSplashVisible() {
+  const remaining = MIN_SPLASH_MS - (performance.now() - startedAt);
+  if (remaining > 0) await wait(remaining);
 }
 
-async function waitForMinimumSplash() {
-  const elapsed = performance.now() - startedAt;
-
-  if (elapsed < MIN_SPLASH_MS) {
-    await wait(MIN_SPLASH_MS - elapsed);
-  }
-}
-
-async function leaveSplash(destination) {
+async function navigateTo(url) {
   document.body.classList.add("is-leaving");
-  await wait(EXIT_ANIMATION_MS);
-  window.location.replace(destination);
+  await wait(EXIT_MS);
+  window.location.replace(url);
 }
 
-async function route() {
+async function boot() {
   try {
     const [session] = await Promise.all([
       getSession(),
-      waitForMinimumSplash(),
+      keepSplashVisible()
     ]);
 
-    await leaveSplash(session ? "home.html" : "login.html");
+    await navigateTo(session ? "home.html" : "login.html");
   } catch (error) {
-    console.error("[LetsGo] Splash routing error:", error);
-
-    await waitForMinimumSplash();
-    await leaveSplash("login.html");
+    console.error("[LetsGo] Splash initialization failed:", error);
+    await keepSplashVisible();
+    await navigateTo("login.html");
   }
 }
 
-route();
+boot();
