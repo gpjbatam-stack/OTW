@@ -2553,3 +2553,262 @@ body{
 .visual-ready .bottom-nav{
   opacity:1;
 }
+
+/* =========================================================
+   LETSGO HOME — CYAN BLUE PREMIUM PALETTE OVERRIDE
+   Replaces the previous orange/warm visual accents.
+   ========================================================= */
+:root{
+  --lg-navy:#071A2D;
+  --lg-navy-2:#0A2943;
+  --lg-orange:#08BDEB;
+  --lg-orange-soft:#E8F9FE;
+  --lg-paper:#F4F9FC;
+  --lg-white:#FFFFFF;
+  --lg-ink:#0B2034;
+  --lg-muted:#718493;
+  --lg-line:#DFEBF1;
+
+  --cyan-primary:#08BDEB;
+  --cyan-bright:#20D3F3;
+  --cyan-deep:#078FC6;
+  --cyan-soft:#E8F9FE;
+  --cyan-soft-2:#F1FBFE;
+}
+
+html,body{
+  background:#EAF2F7;
+}
+
+.app-shell{
+  background:var(--lg-paper);
+}
+
+.hero-shell{
+  background:
+    radial-gradient(circle at 86% 2%,rgba(32,211,243,.10),transparent 30%),
+    linear-gradient(160deg,#061827 0%,#08243B 58%,#09304D 100%);
+}
+
+.hero-orb-a{
+  border-color:rgba(8,189,235,.14);
+}
+.motion-ring-b{
+  border-color:rgba(32,211,243,.22);
+}
+.motion-line,
+.motion-dot{
+  background:var(--cyan-primary);
+}
+.motion-dot{
+  box-shadow:0 0 0 5px rgba(8,189,235,.07);
+}
+
+.avatar-btn{
+  background:linear-gradient(145deg,var(--cyan-primary),var(--cyan-deep));
+  box-shadow:0 7px 18px rgba(8,189,235,.22);
+}
+
+.alert-dot{
+  background:var(--cyan-bright);
+  box-shadow:0 0 0 3px var(--lg-navy);
+}
+
+.hero-eyebrow{
+  color:#7DE7FA;
+}
+.hero-copy h2 span{
+  color:#4EDCF4;
+}
+
+.verified-badge{
+  color:#08799D;
+  background:#E9F9FD;
+  border-color:rgba(8,189,235,.12);
+}
+
+.trip-type.active{
+  color:#078FB8;
+  background:#EAF9FD;
+  border-color:#BCECF7;
+}
+
+.route-dot,
+.assurance-dot{
+  background:var(--cyan-primary);
+}
+.assurance-dot{
+  box-shadow:0 0 0 3px rgba(8,189,235,.09);
+}
+
+.plane-chip{
+  color:#079FCB;
+  background:#ECFAFD;
+  border-color:#C9EEF6;
+  box-shadow:0 4px 10px rgba(8,189,235,.09);
+}
+
+.meta-icon.return{
+  color:#079FCB;
+  background:#EAF9FD;
+}
+
+.primary-cta{
+  background:linear-gradient(135deg,#079FD1 0%,#08BDEB 52%,#20D3F3 100%);
+  box-shadow:
+    0 12px 25px rgba(8,189,235,.23),
+    inset 0 1px 0 rgba(255,255,255,.28);
+}
+.primary-cta:hover{
+  box-shadow:
+    0 15px 30px rgba(8,189,235,.27),
+    inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+.flight-orb{
+  background:linear-gradient(145deg,#079FD1,#19CBEF);
+  box-shadow:0 9px 18px rgba(8,189,235,.22);
+}
+
+.insight-icon{
+  color:#40D6F2;
+  background:rgba(8,189,235,.11);
+}
+
+.nav-item.active{
+  color:#079FCB;
+}
+.nav-item.active .nav-icon{
+  background:#E8F9FE;
+}
+
+.notification-empty-icon{
+  color:#079FCB;
+  background:#E8F9FE;
+  box-shadow:inset 0 0 0 1px rgba(8,189,235,.10);
+}
+
+.airport-option .code{
+  color:#078FB8;
+  background:#E8F9FE;
+}
+
+.cabin-option.active{
+  color:#087B9E;
+  border-color:#BFEAF5;
+  background:#EFFBFD;
+}
+
+.sheet-confirm{
+  background:linear-gradient(135deg,#079FD1,#08BDEB);
+  box-shadow:0 11px 23px rgba(8,189,235,.22);
+}
+
+.date-field-wrap:focus-within .meta-card{
+  border-color:#A8E5F3;
+  box-shadow:0 0 0 3px rgba(8,189,235,.09);
+}
+
+.airport-option:hover{
+  border-color:#BFE7F1;
+  background:#F3FCFE;
+}
+
+@media(min-width:700px){
+  body{
+    background:
+      radial-gradient(circle at 50% 8%,rgba(8,189,235,.055),transparent 28%),
+      #EAF2F7;
+  }
+}
+
+/* =========================================================
+   FUNCTIONAL FEEDBACK & TRANSITIONS
+   ========================================================= */
+button{
+  -webkit-tap-highlight-color:transparent;
+}
+
+button:focus-visible,
+.airport-option:focus-visible,
+.cabin-option:focus-visible{
+  outline:2px solid rgba(8,189,235,.48);
+  outline-offset:2px;
+}
+
+.booking-focus{
+  animation:bookingFocus .65s cubic-bezier(.2,.8,.2,1);
+}
+
+.swap-animate{
+  animation:swapRotate .34s cubic-bezier(.2,.8,.2,1);
+}
+
+.airport-empty{
+  min-height:84px;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:20px;
+  color:#8293A0;
+  font-size:10px;
+}
+
+.page-transition{
+  position:fixed;
+  z-index:150;
+  inset:0;
+  display:grid;
+  place-items:center;
+  background:rgba(7,26,45,.94);
+  backdrop-filter:blur(8px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .16s ease;
+}
+
+.page-transition.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.page-transition-mark{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:3px solid rgba(255,255,255,.18);
+  border-top-color:#20D3F3;
+  animation:transitionSpin .72s linear infinite;
+}
+
+.is-navigating .app-shell{
+  transform:scale(.994);
+  filter:saturate(.96);
+  transition:transform .17s ease,filter .17s ease;
+}
+
+@keyframes bookingFocus{
+  0%{transform:scale(1)}
+  45%{transform:scale(.992);box-shadow:0 22px 52px rgba(8,189,235,.15)}
+  100%{transform:scale(1)}
+}
+
+@keyframes swapRotate{
+  from{transform:rotate(0) scale(1)}
+  to{transform:rotate(180deg) scale(1)}
+}
+
+@keyframes transitionSpin{
+  to{transform:rotate(360deg)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .booking-focus,
+  .swap-animate,
+  .page-transition-mark{
+    animation:none!important;
+  }
+  .page-transition{
+    transition:none;
+  }
+}

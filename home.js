@@ -1,42 +1,78 @@
 import { requireAuth } from "./guard.js";
 import { getMyProfile } from "./profile-service.js";
 
-await requireAuth({ redirect: "login.html" });
+/* =========================================================
+   LETSGO HOME — FUNCTIONAL CONTROLLER
+   Every visible button has an explicit behavior.
+   ========================================================= */
 
-const greeting = document.querySelector("#greeting");
-const avatar = document.querySelector("#avatar");
+const $ = (selector, scope = document) => scope.querySelector(selector);
+const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+
+function on(selector, event, handler, scope = document) {
+  const el = $(selector, scope);
+  if (el) el.addEventListener(event, handler);
+  return el;
+}
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/* Auth first. If auth fails, fail safely back to login. */
+try {
+  await requireAuth({ redirect: "login.html" });
+} catch (error) {
+  console.error("[LetsGo] Auth guard failed:", error);
+  window.location.replace("login.html");
+  throw error;
+}
+
+/* Visual ready state never controls visibility; it only enhances motion. */
+requestAnimationFrame(() => document.body.classList.add("home-ready"));
+
+/* Premium page transition for actual navigation. */
+const pageTransition = $("#pageTransition");
+let navigating = false;
+
+async function navigate(url) {
+  if (!url || navigating) return;
+  navigating = true;
+  document.body.classList.add("is-navigating");
+  pageTransition?.classList.add("show");
+  await wait(170);
+  window.location.href = url;
+}
+
+window.addEventListener("pageshow", () => {
+  navigating = false;
+  document.body.classList.remove("is-navigating");
+  pageTransition?.classList.remove("show");
+});
+
+/* Profile */
+const greeting = $("#greeting");
+const avatar = $("#avatar");
 
 try {
   const profile = await getMyProfile();
   const fullName = profile?.full_name || "Pengguna";
   const firstName = fullName.trim().split(/\s+/)[0];
 
-  greeting.textContent = `Halo, ${firstName}`;
+  if (greeting) greeting.textContent = `Halo, ${firstName}`;
 
-  avatar.textContent = fullName
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map(part => part[0])
-    .join("")
-    .toUpperCase() || "OT";
+  if (avatar) {
+    avatar.textContent = fullName
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map(part => part[0])
+      .join("")
+      .toUpperCase() || "LG";
+  }
 } catch (error) {
   console.error("[LetsGo] Gagal memuat profil:", error);
 }
-
-/* Primary travel actions
-   Flight is handled on Home. Train/Hotel always navigate directly. */
-document.querySelector("#flightTabBtn")?.addEventListener("click", () => {
-  document.querySelector(".booking-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
-});
-
-document.querySelector("#trainSearchBtn")?.addEventListener("click", () => {
-  window.location.href = "search-train.html";
-});
-
-document.querySelector("#hotelSearchBtn")?.addEventListener("click", () => {
-  window.location.href = "search-hotel.html";
-});
 
 /* Booking state */
 const state = {
@@ -74,15 +110,36 @@ const airports = [
   { code:"LOP", city:"Lombok", name:"Zainuddin Abdul Madjid International Airport" },
 ];
 
-/* Generic sheet helpers */
-const backdrop = document.querySelector("#sheetBackdrop");
-const sheets = document.querySelectorAll(".bottom-sheet");
+/* =========================================================
+   OVERLAYS: notification tray + bottom sheets are mutually exclusive
+   ========================================================= */
+const backdrop = $("#sheetBackdrop");
+const sheets = $$(".bottom-sheet");
+const notificationBtn = $("#notificationBtn");
+const notificationTray = $("#notificationTray");
+const notificationCloseBtn = $("#notificationCloseBtn");
+
+function setNotificationTray(open) {
+  if (!notificationTray || !notificationBtn) return;
+  if (open) closeSheets();
+
+  notificationTray.classList.toggle("show", open);
+  notificationTray.setAttribute("aria-hidden", String(!open));
+  notificationBtn.setAttribute("aria-expanded", String(open));
+}
 
 function openSheet(sheet) {
-  sheets.forEach(s => s.classList.remove("show"));
+  if (!sheet) return;
+  setNotificationTray(false);
+
+  sheets.forEach(s => {
+    s.classList.remove("show");
+    s.setAttribute("aria-hidden", "true");
+  });
+
   sheet.classList.add("show");
   sheet.setAttribute("aria-hidden", "false");
-  backdrop.classList.add("show");
+  backdrop?.classList.add("show");
   document.body.style.overflow = "hidden";
 }
 
@@ -91,38 +148,87 @@ function closeSheets() {
     s.classList.remove("show");
     s.setAttribute("aria-hidden", "true");
   });
-  backdrop.classList.remove("show");
+  backdrop?.classList.remove("show");
   document.body.style.overflow = "";
 }
 
-backdrop.addEventListener("click", closeSheets);
-document.querySelectorAll("[data-close-sheet]").forEach(btn => btn.addEventListener("click", closeSheets));
+backdrop?.addEventListener("click", closeSheets);
+$$("[data-close-sheet]").forEach(btn => btn.addEventListener("click", closeSheets));
 
-/* Trip type */
-const tripTypeBtns = document.querySelectorAll(".trip-type");
-const returnDateWrap = document.querySelector("#returnDateWrap");
-const tripTypeLabel = document.querySelector("#tripTypeLabel");
+notificationBtn?.addEventListener("click", event => {
+  event.stopPropagation();
+  setNotificationTray(!notificationTray?.classList.contains("show"));
+});
+notificationCloseBtn?.addEventListener("click", () => setNotificationTray(false));
+
+document.addEventListener("click", event => {
+  if (!notificationTray?.classList.contains("show")) return;
+  if (notificationTray.contains(event.target) || notificationBtn?.contains(event.target)) return;
+  setNotificationTray(false);
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape") return;
+  setNotificationTray(false);
+  closeSheets();
+});
+
+/* =========================================================
+   TRAVEL PRODUCT BUTTONS
+   ========================================================= */
+on("#flightTabBtn", "click", () => {
+  const card = $(".booking-card");
+  card?.classList.remove("booking-focus");
+  requestAnimationFrame(() => {
+    card?.classList.add("booking-focus");
+    card?.scrollIntoView({ behavior:"smooth", block:"center" });
+  });
+  setTimeout(() => card?.classList.remove("booking-focus"), 700);
+});
+
+on("#trainSearchBtn", "click", () => navigate("search-train.html"));
+on("#hotelSearchBtn", "click", () => navigate("search-hotel.html"));
+
+/* =========================================================
+   TRIP TYPE
+   ========================================================= */
+const tripTypeBtns = $$(".trip-type");
+const returnDateWrap = $("#returnDateWrap");
+const tripTypeLabel = $("#tripTypeLabel");
 
 tripTypeBtns.forEach(btn => {
   btn.addEventListener("click", () => {
     tripTypeBtns.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
+
     state.tripType = btn.dataset.trip;
-    const round = state.tripType === "roundtrip";
-    returnDateWrap.hidden = !round;
-    tripTypeLabel.textContent = round ? "Pulang-pergi" : "Sekali jalan";
-    if (!round) state.returnDate = "";
+    const isRoundTrip = state.tripType === "roundtrip";
+
+    if (returnDateWrap) returnDateWrap.hidden = !isRoundTrip;
+    if (tripTypeLabel) tripTypeLabel.textContent = isRoundTrip ? "Pulang-pergi" : "Sekali jalan";
+
+    if (!isRoundTrip) {
+      state.returnDate = "";
+      const returnInput = $("#returnDateInput");
+      const returnText = $("#returnDateText");
+      if (returnInput) returnInput.value = "";
+      if (returnText) returnText.textContent = "Pilih tanggal";
+    }
   });
 });
 
-/* Airport selector */
+/* =========================================================
+   AIRPORT SELECTOR
+   ========================================================= */
 let airportTarget = "destination";
-const airportSheet = document.querySelector("#airportSheet");
-const airportList = document.querySelector("#airportList");
-const airportSearch = document.querySelector("#airportSearch");
-const airportSheetTitle = document.querySelector("#airportSheetTitle");
+const airportSheet = $("#airportSheet");
+const airportList = $("#airportList");
+const airportSearch = $("#airportSearch");
+const airportSheetTitle = $("#airportSheetTitle");
 
 function renderAirports(query = "") {
+  if (!airportList) return;
+
   const q = query.trim().toLowerCase();
   const list = airports.filter(a =>
     !q ||
@@ -131,26 +237,26 @@ function renderAirports(query = "") {
     a.name.toLowerCase().includes(q)
   );
 
-  airportList.innerHTML = list.map(a => `
-    <button class="airport-option" type="button" data-code="${a.code}">
-      <span class="code">${a.code}</span>
-      <span class="airport-main">
-        <strong>${a.city}</strong>
-        <small>${a.name}</small>
-      </span>
-      <span class="select-mark">›</span>
-    </button>
-  `).join("");
+  airportList.innerHTML = list.length
+    ? list.map(a => `
+      <button class="airport-option" type="button" data-code="${a.code}">
+        <span class="code">${a.code}</span>
+        <span class="airport-main">
+          <strong>${a.city}</strong>
+          <small>${a.name}</small>
+        </span>
+        <span class="select-mark">›</span>
+      </button>
+    `).join("")
+    : `<div class="airport-empty">Bandara tidak ditemukan.</div>`;
 
-  airportList.querySelectorAll(".airport-option").forEach(btn => {
+  $$(".airport-option", airportList).forEach(btn => {
     btn.addEventListener("click", () => {
       const airport = airports.find(a => a.code === btn.dataset.code);
       if (!airport) return;
 
       if (airportTarget === "origin") {
-        if (state.destination?.code === airport.code) {
-          state.destination = state.origin;
-        }
+        if (state.destination?.code === airport.code) state.destination = state.origin;
         state.origin = airport;
       } else {
         if (state.origin.code === airport.code) return;
@@ -165,234 +271,239 @@ function renderAirports(query = "") {
 
 function openAirportSelector(target) {
   airportTarget = target;
-  airportSheetTitle.textContent = target === "origin" ? "Bandara keberangkatan" : "Bandara tujuan";
-  airportSearch.value = "";
+  if (airportSheetTitle) {
+    airportSheetTitle.textContent = target === "origin"
+      ? "Bandara keberangkatan"
+      : "Bandara tujuan";
+  }
+
+  if (airportSearch) airportSearch.value = "";
   renderAirports();
   openSheet(airportSheet);
-  setTimeout(() => airportSearch.focus(), 200);
+  setTimeout(() => airportSearch?.focus(), 220);
 }
 
-document.querySelector("#originBtn").addEventListener("click", () => openAirportSelector("origin"));
-document.querySelector("#destinationBtn").addEventListener("click", () => openAirportSelector("destination"));
-airportSearch.addEventListener("input", e => renderAirports(e.target.value));
+on("#originBtn", "click", () => openAirportSelector("origin"));
+on("#destinationBtn", "click", () => openAirportSelector("destination"));
+airportSearch?.addEventListener("input", event => renderAirports(event.target.value));
 
 function syncRouteUI() {
-  document.querySelector("#originCode").textContent = state.origin.code;
-  document.querySelector("#originCity").textContent = state.origin.city;
+  const originCode = $("#originCode");
+  const originCity = $("#originCity");
+  const destinationCode = $("#destinationCode");
+  const destinationCity = $("#destinationCity");
 
-  document.querySelector("#destinationCode").textContent = state.destination?.code || "—";
-  document.querySelector("#destinationCity").textContent = state.destination?.city || "Pilih tujuan";
-  document.querySelector("#destinationCode").classList.toggle("muted-code", !state.destination);
+  if (originCode) originCode.textContent = state.origin.code;
+  if (originCity) originCity.textContent = state.origin.city;
+
+  if (destinationCode) {
+    destinationCode.textContent = state.destination?.code || "—";
+    destinationCode.classList.toggle("muted-code", !state.destination);
+  }
+  if (destinationCity) destinationCity.textContent = state.destination?.city || "Pilih tujuan";
 }
 
-document.querySelector("#swapRouteBtn").addEventListener("click", () => {
-  if (!state.destination) return;
-  const temp = state.origin;
-  state.origin = state.destination;
-  state.destination = temp;
+on("#swapRouteBtn", "click", () => {
+  if (!state.destination) {
+    openAirportSelector("destination");
+    return;
+  }
+
+  [state.origin, state.destination] = [state.destination, state.origin];
   syncRouteUI();
+
+  const swap = $("#swapRouteBtn");
+  swap?.classList.add("swap-animate");
+  setTimeout(() => swap?.classList.remove("swap-animate"), 360);
 });
 
-/* Date picker */
-const departInput = document.querySelector("#departDateInput");
-const returnInput = document.querySelector("#returnDateInput");
+/* =========================================================
+   DATE PICKERS
+   ========================================================= */
+const departInput = $("#departDateInput");
+const returnInput = $("#returnDateInput");
+
 const today = new Date();
-const yyyy = today.getFullYear();
-const mm = String(today.getMonth()+1).padStart(2,"0");
-const dd = String(today.getDate()).padStart(2,"0");
-const todayStr = `${yyyy}-${mm}-${dd}`;
-departInput.min = todayStr;
-returnInput.min = todayStr;
+const todayStr = [
+  today.getFullYear(),
+  String(today.getMonth() + 1).padStart(2,"0"),
+  String(today.getDate()).padStart(2,"0")
+].join("-");
+
+if (departInput) departInput.min = todayStr;
+if (returnInput) returnInput.min = todayStr;
 
 function formatDate(value) {
   if (!value) return "Pilih tanggal";
-  const d = new Date(value + "T00:00:00");
+  const date = new Date(`${value}T00:00:00`);
   return new Intl.DateTimeFormat("id-ID", {
-    day:"numeric", month:"short", year:"numeric"
-  }).format(d);
+    day:"numeric",
+    month:"short",
+    year:"numeric"
+  }).format(date);
 }
 
 function openNativeDate(input) {
-  if (typeof input.showPicker === "function") {
-    input.showPicker();
-  } else {
+  if (!input) return;
+  try {
+    if (typeof input.showPicker === "function") input.showPicker();
+    else input.click();
+  } catch {
+    input.focus();
     input.click();
   }
 }
 
-departInput.addEventListener("change", () => {
+departInput?.addEventListener("change", () => {
   state.departDate = departInput.value;
-  document.querySelector("#departDateText").textContent = formatDate(state.departDate);
-  returnInput.min = state.departDate || todayStr;
+  const text = $("#departDateText");
+  if (text) text.textContent = formatDate(state.departDate);
+
+  if (returnInput) returnInput.min = state.departDate || todayStr;
+
   if (state.returnDate && state.returnDate < state.departDate) {
     state.returnDate = "";
-    returnInput.value = "";
-    document.querySelector("#returnDateText").textContent = "Pilih tanggal";
+    if (returnInput) returnInput.value = "";
+    const returnText = $("#returnDateText");
+    if (returnText) returnText.textContent = "Pilih tanggal";
   }
 });
 
-returnInput.addEventListener("change", () => {
+returnInput?.addEventListener("change", () => {
   state.returnDate = returnInput.value;
-  document.querySelector("#returnDateText").textContent = formatDate(state.returnDate);
+  const text = $("#returnDateText");
+  if (text) text.textContent = formatDate(state.returnDate);
 });
 
-/* Passenger selector */
-const passengerSheet = document.querySelector("#passengerSheet");
+/* =========================================================
+   PASSENGERS
+   ========================================================= */
+const passengerSheet = $("#passengerSheet");
 const counts = {
-  adult: document.querySelector("#adultCount"),
-  child: document.querySelector("#childCount"),
-  infant: document.querySelector("#infantCount"),
+  adult: $("#adultCount"),
+  child: $("#childCount"),
+  infant: $("#infantCount"),
 };
 
-document.querySelector("#passengerBtn").addEventListener("click", () => {
-  counts.adult.textContent = state.adult;
-  counts.child.textContent = state.child;
-  counts.infant.textContent = state.infant;
+on("#passengerBtn", "click", () => {
+  if (counts.adult) counts.adult.textContent = state.adult;
+  if (counts.child) counts.child.textContent = state.child;
+  if (counts.infant) counts.infant.textContent = state.infant;
   openSheet(passengerSheet);
 });
 
-document.querySelectorAll("[data-counter]").forEach(btn => {
+$$("[data-counter]").forEach(btn => {
   btn.addEventListener("click", () => {
     const type = btn.dataset.counter;
     const step = Number(btn.dataset.step);
-    let next = Number(counts[type].textContent) + step;
+    const counter = counts[type];
+    if (!counter) return;
+
+    let next = Number(counter.textContent) + step;
 
     if (type === "adult") next = Math.max(1, Math.min(9, next));
     else next = Math.max(0, Math.min(8, next));
 
     if (type === "infant") {
-      next = Math.min(next, Number(counts.adult.textContent));
+      next = Math.min(next, Number(counts.adult?.textContent || 1));
     }
 
-    counts[type].textContent = next;
+    counter.textContent = next;
   });
 });
 
-document.querySelector("#confirmPassengerBtn").addEventListener("click", () => {
-  state.adult = Number(counts.adult.textContent);
-  state.child = Number(counts.child.textContent);
-  state.infant = Number(counts.infant.textContent);
+on("#confirmPassengerBtn", "click", () => {
+  state.adult = Number(counts.adult?.textContent || 1);
+  state.child = Number(counts.child?.textContent || 0);
+  state.infant = Number(counts.infant?.textContent || 0);
 
   const parts = [`${state.adult} Dewasa`];
   if (state.child) parts.push(`${state.child} Anak`);
   if (state.infant) parts.push(`${state.infant} Bayi`);
-  document.querySelector("#passengerText").textContent = parts.join(", ");
+
+  const passengerText = $("#passengerText");
+  if (passengerText) passengerText.textContent = parts.join(", ");
+
   closeSheets();
 });
 
-/* Cabin selector */
-const cabinSheet = document.querySelector("#cabinSheet");
-document.querySelector("#cabinBtn").addEventListener("click", () => openSheet(cabinSheet));
+/* =========================================================
+   CABIN
+   ========================================================= */
+const cabinSheet = $("#cabinSheet");
 
-document.querySelectorAll(".cabin-option").forEach(btn => {
+on("#cabinBtn", "click", () => openSheet(cabinSheet));
+
+$$(".cabin-option").forEach(btn => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".cabin-option").forEach(b => b.classList.remove("active"));
+    $$(".cabin-option").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    state.cabin = btn.dataset.cabin;
-    document.querySelector("#cabinText").textContent = state.cabin;
+    state.cabin = btn.dataset.cabin || "Ekonomi";
+
+    const cabinText = $("#cabinText");
+    if (cabinText) cabinText.textContent = state.cabin;
+
     closeSheets();
   });
 });
 
-/* Search validation */
-document.querySelector("#searchFlightBtn").addEventListener("click", () => {
-  const searchState = window.__LETSGO_SEARCH_STATE__;
-  if (!searchState) return;
-
-  if (!searchState.destination) {
-    document.querySelector("#destinationBtn")?.click();
+/* =========================================================
+   SEARCH
+   ========================================================= */
+on("#searchFlightBtn", "click", async () => {
+  if (!state.destination) {
+    openAirportSelector("destination");
     return;
   }
-  if (!searchState.departDate) {
+
+  if (!state.departDate) {
     openNativeDate(departInput);
     return;
   }
-  if (searchState.tripType === "roundtrip" && !searchState.returnDate) {
+
+  if (state.tripType === "roundtrip" && !state.returnDate) {
     openNativeDate(returnInput);
     return;
   }
 
   const params = new URLSearchParams({
-    origin: searchState.origin.code,
-    destination: searchState.destination.code,
-    depart: searchState.departDate,
-    trip: searchState.tripType,
-    adults: searchState.adult,
-    children: searchState.child,
-    infants: searchState.infant,
-    cabin: searchState.cabin,
+    origin: state.origin.code,
+    destination: state.destination.code,
+    depart: state.departDate,
+    trip: state.tripType,
+    adults: String(state.adult),
+    children: String(state.child),
+    infants: String(state.infant),
+    cabin: state.cabin,
   });
-  if (searchState.returnDate) params.set("return", searchState.returnDate);
 
-  window.location.href = `search-flight.html?${params.toString()}`;
+  if (state.returnDate) params.set("return", state.returnDate);
+
+  await navigate(`search-flight.html?${params.toString()}`);
 });
 
-
-/* Notification tray — stays on Home, no redirect. */
-const notificationBtn = document.querySelector("#notificationBtn");
-const notificationTray = document.querySelector("#notificationTray");
-const notificationCloseBtn = document.querySelector("#notificationCloseBtn");
-
-function setNotificationTray(open) {
-  notificationTray.classList.toggle("show", open);
-  notificationTray.setAttribute("aria-hidden", String(!open));
-  notificationBtn.setAttribute("aria-expanded", String(open));
-}
-
-notificationBtn.addEventListener("click", (event) => {
-  event.stopPropagation();
-  setNotificationTray(!notificationTray.classList.contains("show"));
-});
-
-notificationCloseBtn.addEventListener("click", () => setNotificationTray(false));
-
-document.addEventListener("click", (event) => {
-  if (!notificationTray.classList.contains("show")) return;
-  if (notificationTray.contains(event.target) || notificationBtn.contains(event.target)) return;
+/* =========================================================
+   PRIMARY NAVIGATION
+   One button = one function.
+   ========================================================= */
+on("#homeNav", "click", () => {
   setNotificationTray(false);
+  closeSheets();
+  window.scrollTo({ top:0, behavior:"smooth" });
 });
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") setNotificationTray(false);
-});
+on("#ordersNav", "click", () => navigate("orders.html"));
+on("#applyNav", "click", () => navigate("pengajuan.html"));
+on("#documentsNav", "click", () => navigate("documents.html"));
+on("#profileNav", "click", () => navigate("profile.html"));
+on("#helpBtn", "click", () => navigate("help.html"));
 
-/* Unique primary navigation — no duplicate action elsewhere on Home. */
-document.querySelector("#ordersNav").addEventListener("click", () => {
-  window.location.href = "order.html";
-});
-
-document.querySelector("#applyNav").addEventListener("click", () => {
-  window.location.href = "pengajuan.html";
-});
-
-document.querySelector("#documentsNav").addEventListener("click", () => {
-  window.location.href = "documents.html";
-});
-
-document.querySelector("#profileNav").addEventListener("click", () => {
-  window.location.href = "profile.html";
-});
-
-document.querySelector("#helpBtn").addEventListener("click", () => {
-  window.location.href = "help.html";
-});
-
-document.querySelector("#homeNav")?.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-/* Premium micro-interactions */
-const pressables = document.querySelectorAll(
-  "button, .airport-option, .meta-card, .cabin-option"
-);
-
-pressables.forEach((el) => {
+/* =========================================================
+   MICRO INTERACTIONS
+   ========================================================= */
+$$("button, .airport-option, .meta-card, .cabin-option").forEach(el => {
   el.addEventListener("pointerdown", () => el.classList.add("is-pressed"));
-  ["pointerup","pointercancel","pointerleave"].forEach((name) => {
-    el.addEventListener(name, () => el.classList.remove("is-pressed"));
+  ["pointerup","pointercancel","pointerleave"].forEach(eventName => {
+    el.addEventListener(eventName, () => el.classList.remove("is-pressed"));
   });
-});
-
-requestAnimationFrame(() => {
-  document.body.classList.add("home-ready");
 });
