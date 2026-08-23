@@ -4,8 +4,8 @@
   --ink:#071a39;
   --muted:#75859d;
   --line:#e4ebf4;
-  --blue:#1476ff;
-  --blue2:#2e98ff;
+  --blue:#079FCB;
+  --blue2:#20D3F3;
   --navy:#071a39;
   --green:#16bf7c;
   --red:#e6535e;
@@ -47,7 +47,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .progress-ring{width:43px;height:43px;position:relative}
 .progress-ring svg{position:absolute;inset:0;width:43px;height:43px;transform:rotate(-90deg)}
 .progress-ring circle{fill:none;stroke:#e0e8f2;stroke-width:3}
-.progress-ring .progress{stroke:#1476ff;stroke-dasharray:100.53;stroke-dashoffset:50.26}
+.progress-ring .progress{stroke:#079FCB;stroke-dasharray:100.53;stroke-dashoffset:50.26}
 .progress-ring span{position:absolute;inset:0;display:grid;place-items:center;font-size:7px;font-weight:800;color:#34628d}
 
 .flight-mini-card{
@@ -74,7 +74,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
   margin-top:11px;border:1px solid #dce9f8;border-radius:17px;background:#f6faff;padding:11px 12px;
   display:flex;gap:9px;align-items:flex-start
 }
-.notice-icon{width:31px;height:31px;flex:0 0 auto;border-radius:10px;background:#e7f2ff;color:#1476ff;display:grid;place-items:center}
+.notice-icon{width:31px;height:31px;flex:0 0 auto;border-radius:10px;background:#e7f2ff;color:#079FCB;display:grid;place-items:center}
 .notice-icon svg{width:16px}
 .notice-card strong{font-size:9px;display:block}.notice-card p{font-size:7.3px;line-height:1.5;color:#74869e;margin:3px 0 0}
 
@@ -97,7 +97,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
   height:45px;border:1px solid #dfe7f0;border-radius:13px;background:#fbfdff;display:flex;align-items:center;
   transition:.18s
 }
-.field:focus-within{border-color:#9cc6fb;background:#fff;box-shadow:0 0 0 3px rgba(20,118,255,.07)}
+.field:focus-within{border-color:#9cc6fb;background:#fff;box-shadow:0 0 0 3px rgba(8,189,235,.07)}
 .field-icon{width:36px;display:grid;place-items:center;color:#6280a0;flex:0 0 auto}.field-icon svg{width:15px}
 .field-prefix{padding-left:12px;font-size:9px;font-weight:700;color:#4f6b8a}
 .field input{width:100%;height:100%;border:0;background:transparent;padding:0 11px;font-size:9px;color:var(--ink)}
@@ -109,7 +109,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .checkbox-row input{position:absolute;opacity:0;pointer-events:none}
 .checkmark{width:20px;height:20px;border:1px solid #cfdae7;border-radius:7px;background:#fff;display:grid;place-items:center;flex:0 0 auto;transition:.15s}
 .checkmark svg{width:12px;color:#fff;opacity:0}
-.checkbox-row input:checked+.checkmark{background:#1476ff;border-color:#1476ff;box-shadow:0 4px 12px rgba(20,118,255,.2)}
+.checkbox-row input:checked+.checkmark{background:#079FCB;border-color:#079FCB;box-shadow:0 4px 12px rgba(8,189,235,.2)}
 .checkbox-row input:checked+.checkmark svg{opacity:1}
 .checkbox-row strong{font-size:8px;display:block}.checkbox-row small{font-size:6.7px;color:#8796a9;display:block;margin-top:2px;line-height:1.4}
 
@@ -123,7 +123,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
   width:100%;min-height:62px;border:0;background:#fff;padding:10px 11px;display:grid;
   grid-template-columns:36px 1fr auto 18px;gap:8px;align-items:center;text-align:left
 }
-.passenger-index{width:34px;height:34px;border-radius:11px;background:#edf5ff;color:#1476ff;display:grid;place-items:center;font-size:10px;font-weight:850}
+.passenger-index{width:34px;height:34px;border-radius:11px;background:#edf5ff;color:#079FCB;display:grid;place-items:center;font-size:10px;font-weight:850}
 .passenger-card.complete .passenger-index{background:#e8f8f2;color:#0d9664}
 .passenger-title strong{display:block;font-size:9.5px}.passenger-title small{display:block;font-size:7px;color:#8292a7;margin-top:2px}
 .status-badge{font-size:6.3px;font-weight:800;border-radius:999px;padding:5px 7px}
@@ -134,7 +134,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 
 .segmented{display:grid;gap:6px}.title-selector{grid-template-columns:repeat(3,1fr)}.gender-selector{grid-template-columns:1fr 1fr}
 .segmented button{height:38px;border:1px solid #dfe7f0;background:#fff;border-radius:11px;color:#6d7e94;font-size:7.5px;font-weight:750}
-.segmented button.active{border-color:#a9ccfa;background:#edf5ff;color:#1269ec;box-shadow:0 0 0 2px rgba(20,118,255,.045)}
+.segmented button.active{border-color:#a9ccfa;background:#edf5ff;color:#1269ec;box-shadow:0 0 0 2px rgba(8,189,235,.045)}
 .select-field{position:relative;height:45px;border:1px solid #dfe7f0;border-radius:13px;background:#fbfdff}
 .select-field select{width:100%;height:100%;border:0;background:transparent;appearance:none;padding:0 30px 0 11px;font-size:8.5px;color:#1f3958}
 .select-field svg{position:absolute;right:10px;top:14px;width:14px;color:#8898ab;pointer-events:none}
@@ -144,7 +144,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .consent-card{margin-top:18px;padding:12px 14px}.checkbox-row.consent{margin-top:0}
 .trust-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
 .trust-grid article{background:rgba(255,255,255,.75);border:1px solid #e2eaf3;border-radius:15px;padding:9px;display:flex;gap:7px;align-items:center}
-.trust-grid article>span{width:29px;height:29px;border-radius:9px;background:#edf5ff;color:#1476ff;display:grid;place-items:center;flex:0 0 auto}
+.trust-grid article>span{width:29px;height:29px;border-radius:9px;background:#edf5ff;color:#079FCB;display:grid;place-items:center;flex:0 0 auto}
 .trust-grid svg{width:14px}.trust-grid strong{display:block;font-size:7.2px}.trust-grid small{display:block;font-size:5.8px;color:#8b99aa;margin-top:2px}
 
 .sticky-footer{
@@ -161,7 +161,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .continue-btn{
   height:47px;min-width:145px;border:0;border-radius:14px;background:linear-gradient(135deg,#0b67e7,#2b96ff);
   color:#fff;font-size:9px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:8px;
-  box-shadow:0 9px 20px rgba(15,114,244,.24)
+  box-shadow:0 9px 20px rgba(8,189,235,.24)
 }
 .continue-btn svg{width:15px}.continue-btn:disabled{opacity:.46;box-shadow:none}
 .bottom-space{height:6px}
@@ -196,7 +196,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 }
 .upload-zone:hover,.upload-zone.dragging{border-color:#86b9f8;background:#f2f8ff}
 .upload-icon{
-  width:38px;height:38px;border-radius:12px;background:#eaf4ff;color:#1476ff;
+  width:38px;height:38px;border-radius:12px;background:#eaf4ff;color:#079FCB;
   display:grid;place-items:center
 }
 .upload-icon svg{width:18px}
@@ -238,7 +238,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .spt-status.success{border-color:#cbe9dc;background:#effaf5}
 .spt-status.error{border-color:#f0d2d5;background:#fff4f5}
 .spt-status-icon{
-  width:28px;height:28px;border-radius:9px;background:#e8f2ff;color:#1476ff;
+  width:28px;height:28px;border-radius:9px;background:#e8f2ff;color:#079FCB;
   display:grid;place-items:center;flex:0 0 auto
 }
 .spt-status.success .spt-status-icon{background:#16b978;color:#fff}
@@ -248,12 +248,12 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 .spt-status small{display:block;margin-top:2px;font-size:6.3px;color:#7d8ea3}
 .spt-progress{margin-top:8px}
 .spt-progress-track{height:5px;border-radius:99px;background:#e6edf5;overflow:hidden}
-.spt-progress-track i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#1476ff,#23b8ff);transition:width .22s ease}
+.spt-progress-track i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#079FCB,#23b8ff);transition:width .22s ease}
 .spt-progress>span{display:block;margin-top:4px;font-size:6.3px;color:#7c8da1}
 .continue-btn.loading{opacity:.68;pointer-events:none}
 
 
-/* V7 — Add-ons flow + pricing handoff */
+/* LetsGo — pricing handoff */
 .pricing-carry{
   margin-top:10px;
   border:1px solid #dce9f8;
@@ -266,7 +266,7 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 }
 .pricing-carry-icon{
   width:30px;height:30px;border-radius:10px;
-  background:#eaf4ff;color:#1476ff;
+  background:#eaf4ff;color:#079FCB;
   display:grid;place-items:center;flex:0 0 auto
 }
 .pricing-carry-icon svg{width:14px}
@@ -288,3 +288,11 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
 
 /* LetsGo 2026 visual refinement */
 :root{--blue:#1769e0;--green:#12a873} button{transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease}button:active{transform:scale(.985)}
+
+/* LetsGo core-final */
+.flight-mini-card{
+  background:
+    radial-gradient(circle at 88% 5%,rgba(32,211,243,.17),transparent 9rem),
+    linear-gradient(135deg,#061827,#082B48 58%,#079FCB 145%);
+}
+.continue-btn{background:linear-gradient(135deg,#079FCB,#20D3F3)}

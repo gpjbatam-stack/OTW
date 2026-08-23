@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#061a3a">
-  <title>Detail Pesanan — OTW</title>
+  <title>Detail Pesanan — LetsGo</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./detail-pesanan.css?v=20260821-premium-v3-payment-flow">
+  <link rel="stylesheet" href="./detail-pesanan.css?v=20260824-core-final">
 </head>
 <body>
   <main class="app-shell">
@@ -21,7 +21,7 @@
 
       <div class="top-copy">
         <span class="eyebrow">DETAIL PESANAN</span>
-        <h1 id="orderCodeTop">OTW-—</h1>
+        <h1 id="orderCodeTop">LG-—</h1>
         <p id="createdAtTop">Memuat pesanan...</p>
       </div>
 
@@ -34,7 +34,7 @@
       <span class="spinner"></span>
       <div>
         <strong>Memuat detail pesanan...</strong>
-        <small>Mengambil data perjalanan dari OTW.</small>
+        <small>Mengambil data perjalanan dari LetsGo.</small>
       </div>
     </section>
 
@@ -67,13 +67,13 @@
         <div class="hero-copy">
           <span class="hero-kicker" id="statusKicker">PENGAJUAN DITERIMA</span>
           <h2 id="statusTitle">Perjalanan sedang diproses.</h2>
-          <p id="statusText">OTW sedang memeriksa detail perjalanan, dokumen, harga, dan ketersediaan.</p>
+          <p id="statusText">LetsGo sedang memeriksa detail perjalanan, dokumen, harga, dan ketersediaan.</p>
         </div>
 
         <div class="hero-bottom">
           <div>
             <span>Nomor pengajuan</span>
-            <strong id="orderCodeHero">OTW-—</strong>
+            <strong id="orderCodeHero">LG-—</strong>
           </div>
           <button id="copyOrderBtn" type="button">Salin</button>
         </div>
@@ -217,10 +217,13 @@
             <strong id="sptName">SPT perjalanan</strong>
             <small id="sptMeta">Tersimpan aman</small>
           </div>
-          <span class="verified-pill">
-            <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
-            Tersimpan
-          </span>
+          <div class="document-actions">
+            <span class="verified-pill">
+              <svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg>
+              Tersimpan
+            </span>
+            <button id="openSptBtn" class="open-doc-btn" type="button">Buka</button>
+          </div>
         </article>
       </section>
 
@@ -230,13 +233,17 @@
             <span class="eyebrow">RINCIAN BIAYA</span>
             <h2>Total perjalanan</h2>
           </div>
-          <span class="otw-price"><i></i> OTW Price</span>
+          <span class="letsgo-price"><i></i> LetsGo Price</span>
         </div>
 
         <article class="price-card">
           <div class="price-line">
-            <span>Harga penerbangan OTW</span>
-            <strong id="flightTotal">Rp0</strong>
+            <span>Harga tiket</span>
+            <strong id="ticketPrice">Rp0</strong>
+          </div>
+          <div class="price-line muted">
+            <span>Biaya layanan LetsGo</span>
+            <strong id="serviceFee">Rp150.000</strong>
           </div>
           <div class="price-line muted">
             <span>Bagasi tambahan</span>
@@ -257,7 +264,7 @@
 
           <div class="price-note">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
-            <span>Nilai ini merupakan snapshot saat pengajuan dibuat. Perubahan setelah verifikasi OTW akan diinformasikan terlebih dahulu.</span>
+            <span>Nilai ini merupakan snapshot saat pengajuan dibuat. Perubahan setelah verifikasi LetsGo akan diinformasikan terlebih dahulu.</span>
           </div>
         </article>
       </section>
@@ -299,7 +306,7 @@
             </div>
             <div>
               <small>NOMOR PESANAN</small>
-              <strong id="paymentOrderCode">OTW-—</strong>
+              <strong id="paymentOrderCode">LG-—</strong>
             </div>
           </div>
 
@@ -316,7 +323,7 @@
 
           <div class="payment-note">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
-            <span>Tempo pembayaran adalah <strong>14 hari</strong> sejak pesanan ditandai selesai oleh OTW. Timer berjalan otomatis berdasarkan waktu penyelesaian pesanan.</span>
+            <span>Tempo pembayaran adalah <strong>14 hari</strong> sejak pesanan ditandai selesai oleh LetsGo. Timer berjalan otomatis berdasarkan waktu penyelesaian pesanan.</span>
           </div>
         </article>
       </section>
@@ -324,7 +331,7 @@
       <section id="adminNoteSection" class="section hidden">
         <div class="section-title">
           <div>
-            <span class="eyebrow">CATATAN OTW</span>
+            <span class="eyebrow">CATATAN LETSGO</span>
             <h2>Informasi pesanan</h2>
           </div>
         </div>
@@ -376,6 +383,6 @@
 
   <div id="toast" class="toast"></div>
 
-  <script type="module" src="./detail-pesanan.js?v=20260821-premium-v3-payment-flow"></script>
+  <script type="module" src="./detail-pesanan.js?v=20260824-core-final"></script>
 </body>
 </html>
