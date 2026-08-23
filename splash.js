@@ -1,7 +1,7 @@
 import { getSession } from "./auth-service.js";
 
-const MIN_SPLASH_MS = 1650;
-const EXIT_MS = 260;
+const MIN_SPLASH_MS = 3000;
+const EXIT_MS = 280;
 const startedAt = performance.now();
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -19,11 +19,7 @@ async function navigateTo(url) {
 
 async function boot() {
   try {
-    const [session] = await Promise.all([
-      getSession(),
-      keepSplashVisible()
-    ]);
-
+    const [session] = await Promise.all([getSession(), keepSplashVisible()]);
     await navigateTo(session ? "home.html" : "login.html");
   } catch (error) {
     console.error("[LetsGo] Splash initialization failed:", error);

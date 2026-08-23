@@ -12,380 +12,249 @@
       --navy:#0D1B2A;
       --orange:#FF6A00;
       --paper:#F7F4EF;
-      --paper-2:#FBFAF8;
-      --white:#FFFFFF;
+      --paper2:#FCFBF8;
     }
-
     *{box-sizing:border-box}
-
-    html,body{
-      margin:0;
-      width:100%;
-      min-height:100%;
-      background:var(--paper);
-    }
-
+    html,body{margin:0;width:100%;min-height:100%;background:var(--paper)}
     body{
-      min-height:100vh;
-      min-height:100svh;
-      overflow:hidden;
+      min-height:100vh;min-height:100svh;overflow:hidden;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
-      text-rendering:optimizeLegibility;
     }
 
     .splash{
       position:relative;
-      min-height:100vh;
-      min-height:100svh;
-      display:grid;
-      place-items:center;
-      overflow:hidden;
+      min-height:100vh;min-height:100svh;
+      display:grid;place-items:center;
+      overflow:hidden;isolation:isolate;
       background:
-        linear-gradient(180deg,var(--paper-2) 0%,var(--paper) 100%);
-      isolation:isolate;
+        radial-gradient(circle at 50% 46%,rgba(255,255,255,.98) 0 12%,rgba(255,255,255,.68) 31%,transparent 55%),
+        linear-gradient(160deg,#FCFBF8 0%,#F6F2EC 58%,#FAF8F4 100%);
     }
 
-    /* Premium moving ambient shapes */
-    .ambient{
-      position:absolute;
-      inset:0;
-      overflow:hidden;
-      z-index:-3;
-      pointer-events:none;
+    /* fine moving grid */
+    .grid{
+      position:absolute;inset:-60px;z-index:-9;opacity:.38;
+      background-image:
+        linear-gradient(rgba(13,27,42,.027) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(13,27,42,.027) 1px,transparent 1px);
+      background-size:28px 28px;
+      animation:gridDrift 8s linear infinite;
+      -webkit-mask-image:radial-gradient(circle at center,#000 10%,rgba(0,0,0,.8) 45%,transparent 88%);
+      mask-image:radial-gradient(circle at center,#000 10%,rgba(0,0,0,.8) 45%,transparent 88%);
     }
 
-    .orb{
-      position:absolute;
-      border-radius:50%;
-      opacity:.9;
+    /* animated rings */
+    .rings,.particles,.slashes,.arcs{position:absolute;inset:0;pointer-events:none}
+    .rings{z-index:-7}.particles{z-index:-5}.slashes{z-index:-4}.arcs{z-index:-6}
+
+    .ring{
+      position:absolute;border-radius:50%;border-style:solid;
       will-change:transform;
     }
+    .r1{width:360px;height:360px;top:-210px;right:-170px;border-width:54px;border-color:rgba(13,27,42,.055);animation:r1 7s ease-in-out infinite alternate}
+    .r2{width:250px;height:250px;left:-160px;bottom:2%;border-width:40px;border-color:rgba(255,106,0,.085);animation:r2 6s ease-in-out infinite alternate}
+    .r3{width:138px;height:138px;right:6%;bottom:11%;border-width:20px;border-color:rgba(13,27,42,.045);animation:r3 5s ease-in-out infinite}
+    .r4{width:92px;height:92px;left:9%;top:17%;border-width:12px;border-color:rgba(255,106,0,.04);animation:r4 5.8s ease-in-out infinite}
+    .r5{width:56px;height:56px;right:14%;top:29%;border-width:8px;border-color:rgba(13,27,42,.035);animation:r5 4.6s ease-in-out infinite}
 
-    .orb.one{
-      width:280px;
-      height:280px;
-      top:-155px;
-      right:-120px;
-      border:48px solid rgba(13,27,42,.055);
-      animation:driftA 8s ease-in-out infinite alternate;
+    /* center orbital system */
+    .orbit{
+      position:absolute;left:50%;top:50%;
+      border-radius:50%;border:1px solid rgba(13,27,42,.045);
+      transform:translate(-50%,-50%);
     }
-
-    .orb.two{
-      width:180px;
-      height:180px;
-      left:-105px;
-      bottom:8%;
-      border:34px solid rgba(255,106,0,.065);
-      animation:driftB 7s ease-in-out infinite alternate;
+    .o1{width:min(76vw,350px);height:min(76vw,350px);animation:orbitSpin 12s linear infinite}
+    .o2{width:min(91vw,420px);height:min(91vw,420px);border-style:dashed;border-color:rgba(255,106,0,.07);animation:orbitSpinReverse 16s linear infinite}
+    .o3{width:min(108vw,500px);height:min(108vw,500px);border-color:rgba(13,27,42,.028);animation:orbitBreathe 4.8s ease-in-out infinite}
+    .o1::before,.o2::before{
+      content:"";position:absolute;border-radius:50%;background:var(--orange);
+      box-shadow:0 0 0 5px rgba(255,106,0,.055);
     }
+    .o1::before{width:7px;height:7px;left:13%;top:13%}
+    .o2::before{width:5px;height:5px;right:8%;bottom:24%;background:var(--navy);box-shadow:0 0 0 5px rgba(13,27,42,.035)}
 
-    .orb.three{
-      width:58px;
-      height:58px;
-      right:10%;
-      bottom:16%;
-      background:rgba(255,106,0,.055);
-      animation:floatDot 5.5s ease-in-out infinite;
-    }
-
-    /* Ultra subtle technical grid */
-    .grid{
-      position:absolute;
-      inset:0;
-      z-index:-4;
-      opacity:.36;
-      background-image:
-        linear-gradient(rgba(13,27,42,.025) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(13,27,42,.025) 1px,transparent 1px);
-      background-size:32px 32px;
-      -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 18%,#000 78%,transparent 100%);
-      mask-image:linear-gradient(to bottom,transparent 0%,#000 18%,#000 78%,transparent 100%);
-    }
-
-    /* Animated journey route behind logo */
+    /* flowing route curves */
     .route{
-      position:absolute;
-      left:50%;
-      top:50%;
-      width:min(116vw,520px);
-      transform:translate(-50%,-48%);
-      z-index:-1;
-      opacity:.84;
-      pointer-events:none;
+      position:absolute;left:50%;top:50%;width:min(148vw,700px);
+      transform:translate(-50%,-49%);z-index:-3;pointer-events:none;
     }
+    .route svg{display:block;width:100%;height:auto;overflow:visible}
+    .route-base{fill:none;stroke:rgba(13,27,42,.065);stroke-width:1.2;stroke-linecap:round;stroke-dasharray:2 8}
+    .route-a,.route-b,.route-c{fill:none;stroke-linecap:round}
+    .route-a{stroke:var(--orange);stroke-width:2;stroke-dasharray:30 420;animation:flowA 3.4s linear infinite;opacity:.8}
+    .route-b{stroke:var(--navy);stroke-width:1.35;stroke-dasharray:18 470;animation:flowB 4.4s linear infinite;opacity:.28}
+    .route-c{stroke:var(--orange);stroke-width:5;stroke-dasharray:22 440;animation:flowC 3.4s linear infinite;opacity:.08;filter:blur(4px)}
 
-    .route svg{
-      width:100%;
-      height:auto;
-      display:block;
-      overflow:visible;
+    /* particles */
+    .p{
+      position:absolute;border-radius:50%;
+      animation:particleFloat var(--dur) ease-in-out var(--delay) infinite;
     }
+    .p.orange{background:var(--orange)}
+    .p.navy{background:var(--navy)}
+    .p1{width:8px;height:8px;left:12%;top:21%;opacity:.16;--dur:4.2s;--delay:0s}
+    .p2{width:5px;height:5px;left:24%;top:35%;opacity:.13;--dur:5.1s;--delay:.6s}
+    .p3{width:10px;height:10px;right:15%;top:25%;opacity:.10;--dur:5.8s;--delay:.2s}
+    .p4{width:6px;height:6px;right:10%;top:48%;opacity:.16;--dur:4.6s;--delay:1s}
+    .p5{width:7px;height:7px;left:16%;bottom:23%;opacity:.12;--dur:5.4s;--delay:.4s}
+    .p6{width:4px;height:4px;right:27%;bottom:17%;opacity:.22;--dur:4.1s;--delay:.8s}
+    .p7{width:5px;height:5px;left:42%;top:12%;opacity:.12;--dur:6s;--delay:.3s}
+    .p8{width:9px;height:9px;right:37%;bottom:9%;opacity:.07;--dur:5.7s;--delay:1.1s}
+    .p9{width:4px;height:4px;left:7%;top:52%;opacity:.2;--dur:4.7s;--delay:.1s}
+    .p10{width:6px;height:6px;right:7%;bottom:34%;opacity:.11;--dur:5.2s;--delay:.7s}
 
-    .route-base{
-      fill:none;
-      stroke:rgba(13,27,42,.055);
-      stroke-width:1.5;
-      stroke-linecap:round;
-      stroke-dasharray:3 8;
+    /* moving premium strokes */
+    .slash{
+      position:absolute;height:3px;border-radius:999px;
+      transform:rotate(-35deg);
+      animation:slashMove var(--sd) ease-in-out var(--sl) infinite;
     }
+    .s1{width:72px;left:-22px;top:35%;background:rgba(255,106,0,.12);--sd:5.2s;--sl:0s}
+    .s2{width:48px;right:-12px;top:59%;background:rgba(13,27,42,.08);--sd:4.6s;--sl:.8s}
+    .s3{width:36px;left:14%;bottom:9%;background:rgba(13,27,42,.07);--sd:5.8s;--sl:.3s}
+    .s4{width:58px;right:11%;top:12%;background:rgba(255,106,0,.08);--sd:5.1s;--sl:1.1s}
+    .s5{width:28px;left:33%;top:18%;background:rgba(255,106,0,.09);--sd:4.3s;--sl:.5s}
 
-    .route-live{
-      fill:none;
-      stroke:var(--orange);
-      stroke-width:2;
-      stroke-linecap:round;
-      stroke-dasharray:44 340;
-      animation:routeFlow 4.6s linear infinite;
-      opacity:.75;
+    /* sweep arcs */
+    .arc{
+      position:absolute;border-radius:50%;border:2px solid transparent;
+      border-top-color:rgba(255,106,0,.10);
+      border-right-color:rgba(13,27,42,.045);
     }
-
-    .route-node{
-      fill:var(--orange);
-      transform-origin:center;
-      animation:nodePulse 2.2s ease-in-out infinite;
-    }
+    .a1{width:180px;height:180px;left:4%;top:41%;animation:arcSpin 8s linear infinite}
+    .a2{width:128px;height:128px;right:3%;top:36%;animation:arcSpinReverse 7s linear infinite}
+    .a3{width:72px;height:72px;right:24%;bottom:8%;animation:arcSpin 5.5s linear infinite}
 
     .brand-stage{
-      width:100%;
-      padding:
-        max(18px,env(safe-area-inset-top))
-        18px
-        max(18px,env(safe-area-inset-bottom));
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      transform:translateY(-2.8vh);
+      position:relative;width:100%;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:max(16px,env(safe-area-inset-top)) 10px max(16px,env(safe-area-inset-bottom));
+      transform:translateY(-2vh);
       animation:stageIn .78s cubic-bezier(.2,.82,.2,1) both;
-      position:relative;
     }
 
     .logo-shell{
-      position:relative;
-      width:min(92vw,410px);
-      display:grid;
-      place-items:center;
-      padding:18px 10px;
+      position:relative;width:min(98vw,430px);
+      display:grid;place-items:center;padding:10px 0;
     }
-
-    .logo-shell::before{
-      content:"";
-      position:absolute;
-      width:74%;
-      aspect-ratio:1/1;
-      border-radius:50%;
-      background:rgba(255,255,255,.72);
-      box-shadow:
-        0 26px 70px rgba(13,27,42,.055),
-        inset 0 0 0 1px rgba(255,255,255,.8);
-      filter:blur(.1px);
-      z-index:-1;
-      animation:breathe 4.4s ease-in-out infinite;
+    .halo{
+      position:absolute;width:73%;aspect-ratio:1;border-radius:50%;z-index:-2;
+      background:rgba(255,255,255,.76);
+      box-shadow:0 28px 80px rgba(13,27,42,.06),inset 0 0 0 1px rgba(255,255,255,.8);
+      animation:halo 3.8s ease-in-out infinite;
     }
-
     .logo{
-      display:block;
-      width:100%;
-      height:auto;
-      max-height:315px;
-      object-fit:contain;
-      object-position:center;
-      user-select:none;
-      -webkit-user-drag:none;
-      filter:drop-shadow(0 16px 22px rgba(13,27,42,.09));
-      animation:logoFloat 4.2s ease-in-out infinite;
+      display:block;width:100%;height:auto;max-height:315px;
+      object-fit:contain;object-position:center;
+      user-select:none;-webkit-user-drag:none;
+      filter:drop-shadow(0 18px 24px rgba(13,27,42,.10));
+      animation:logoFloat 3.4s ease-in-out infinite;
     }
 
     .loader{
-      margin-top:16px;
-      width:76px;
-      height:4px;
-      position:relative;
-      overflow:hidden;
-      border-radius:999px;
-      background:rgba(13,27,42,.075);
-      box-shadow:inset 0 0 0 1px rgba(13,27,42,.025);
+      margin-top:5px;width:84px;height:4px;position:relative;overflow:hidden;
+      border-radius:999px;background:rgba(13,27,42,.075);
     }
-
     .loader::after{
-      content:"";
-      position:absolute;
-      top:0;
-      left:-34px;
-      width:34px;
-      height:100%;
-      border-radius:inherit;
-      background:var(--orange);
-      animation:loader 1.18s cubic-bezier(.65,0,.35,1) infinite;
+      content:"";position:absolute;top:0;left:-38px;width:38px;height:100%;
+      border-radius:inherit;background:var(--orange);
+      animation:loader 1s cubic-bezier(.65,0,.35,1) infinite;
     }
 
-    .corner-mark{
-      position:absolute;
-      right:22px;
-      bottom:calc(20px + env(safe-area-inset-bottom));
-      width:28px;
-      height:3px;
-      border-radius:999px;
-      background:var(--orange);
-      opacity:.62;
+    .is-leaving .brand-stage{animation:stageOut .27s ease both}
+
+    @keyframes gridDrift{to{transform:translate3d(28px,28px,0)}}
+    @keyframes orbitSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+    @keyframes orbitSpinReverse{to{transform:translate(-50%,-50%) rotate(-360deg)}}
+    @keyframes orbitBreathe{0%,100%{transform:translate(-50%,-50%) scale(.96);opacity:.6}50%{transform:translate(-50%,-50%) scale(1.04);opacity:1}}
+    @keyframes flowA{to{stroke-dashoffset:-450}}
+    @keyframes flowB{to{stroke-dashoffset:488}}
+    @keyframes flowC{to{stroke-dashoffset:-462}}
+    @keyframes particleFloat{0%,100%{transform:translate3d(0,0,0) scale(.8)}50%{transform:translate3d(9px,-18px,0) scale(1.2)}}
+    @keyframes slashMove{0%,100%{transform:translate3d(0,0,0) rotate(-35deg);opacity:.45}50%{transform:translate3d(20px,-13px,0) rotate(-35deg);opacity:1}}
+    @keyframes arcSpin{to{transform:rotate(360deg)}}
+    @keyframes arcSpinReverse{to{transform:rotate(-360deg)}}
+    @keyframes r1{to{transform:translate3d(-20px,20px,0) rotate(10deg)}}
+    @keyframes r2{to{transform:translate3d(24px,-16px,0) scale(1.04)}}
+    @keyframes r3{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-15px) rotate(14deg)}}
+    @keyframes r4{0%,100%{transform:scale(.92)}50%{transform:scale(1.08)}}
+    @keyframes r5{0%,100%{transform:translate(0,0)}50%{transform:translate(-10px,12px)}}
+    @keyframes stageIn{from{opacity:0;transform:translateY(calc(-2vh + 17px)) scale(.974)}to{opacity:1;transform:translateY(-2vh) scale(1)}}
+    @keyframes stageOut{to{opacity:0;transform:translateY(calc(-2vh - 8px)) scale(.99)}}
+    @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    @keyframes halo{0%,100%{transform:scale(.965);opacity:.72}50%{transform:scale(1.045);opacity:1}}
+    @keyframes loader{0%{transform:translateX(0)}58%{transform:translateX(84px)}100%{transform:translateX(124px)}}
+
+    @media(max-width:480px){
+      .logo-shell{width:100vw}
+      .logo{max-height:302px}
+      .route{width:160vw}
+      .o1{width:86vw;height:86vw}
+      .o2{width:105vw;height:105vw}
+      .o3{width:124vw;height:124vw}
     }
-
-    .corner-mark::after{
-      content:"";
-      position:absolute;
-      right:0;
-      top:-8px;
-      width:10px;
-      height:3px;
-      border-radius:999px;
-      background:var(--navy);
-      opacity:.52;
+    @media(max-width:360px){
+      .logo{max-height:272px}
+      .loader{margin-top:0}
     }
-
-    .is-leaving .brand-stage{
-      animation:stageOut .26s ease both;
-    }
-
-    @keyframes stageIn{
-      from{opacity:0;transform:translateY(calc(-2.8vh + 15px)) scale(.975)}
-      to{opacity:1;transform:translateY(-2.8vh) scale(1)}
-    }
-
-    @keyframes stageOut{
-      to{opacity:0;transform:translateY(calc(-2.8vh - 8px)) scale(.99)}
-    }
-
-    @keyframes logoFloat{
-      0%,100%{transform:translateY(0)}
-      50%{transform:translateY(-5px)}
-    }
-
-    @keyframes breathe{
-      0%,100%{transform:scale(.98);opacity:.74}
-      50%{transform:scale(1.035);opacity:.98}
-    }
-
-    @keyframes loader{
-      0%{transform:translateX(0)}
-      58%{transform:translateX(76px)}
-      100%{transform:translateX(114px)}
-    }
-
-    @keyframes routeFlow{
-      from{stroke-dashoffset:0}
-      to{stroke-dashoffset:-387}
-    }
-
-    @keyframes nodePulse{
-      0%,100%{opacity:.42;transform:scale(.78)}
-      50%{opacity:.92;transform:scale(1.12)}
-    }
-
-    @keyframes driftA{
-      from{transform:translate3d(0,0,0) rotate(0)}
-      to{transform:translate3d(-12px,16px,0) rotate(8deg)}
-    }
-
-    @keyframes driftB{
-      from{transform:translate3d(0,0,0)}
-      to{transform:translate3d(18px,-10px,0)}
-    }
-
-    @keyframes floatDot{
-      0%,100%{transform:translateY(0) scale(1)}
-      50%{transform:translateY(-14px) scale(.92)}
-    }
-
-    /* Mobile-first tuning */
-    @media (max-width:480px){
-      .logo-shell{
-        width:min(95vw,405px);
-        padding:16px 4px;
-      }
-
-      .logo{
-        max-height:300px;
-      }
-
-      .route{
-        width:122vw;
-        top:49%;
-      }
-
-      .loader{margin-top:12px}
-    }
-
-    /* Small phones */
-    @media (max-width:360px){
-      .logo-shell{width:98vw}
-      .logo{max-height:268px}
-      .loader{margin-top:8px}
-    }
-
-    /* Short screens / landscape */
-    @media (max-height:620px){
-      .brand-stage{transform:translateY(-1vh)}
-      .logo-shell{width:min(76vw,325px)}
+    @media(max-height:620px){
+      .logo-shell{width:min(80vw,330px)}
       .logo{max-height:215px}
-      .route{width:min(92vw,440px)}
-      .loader{margin-top:6px}
+      .route{width:min(125vw,540px)}
     }
-
-    /* Desktop is only a preview of the mobile identity */
-    @media (min-width:768px){
-      .logo-shell{width:410px}
-      .route{width:520px}
+    @media(min-width:768px){
+      .logo-shell{width:430px}
+      .route{width:700px}
     }
-
-    @media (prefers-reduced-motion:reduce){
-      .brand-stage,
-      .is-leaving .brand-stage,
-      .logo,
-      .logo-shell::before,
-      .loader::after,
-      .route-live,
-      .route-node,
-      .orb{
-        animation:none !important;
-      }
+    @media(prefers-reduced-motion:reduce){
+      .grid,.ring,.orbit,.route-a,.route-b,.route-c,.p,.slash,.arc,
+      .brand-stage,.logo,.halo,.loader::after{animation:none!important}
     }
   </style>
 </head>
-
 <body>
   <main class="splash" aria-label="LetsGo">
     <div class="grid" aria-hidden="true"></div>
 
-    <div class="ambient" aria-hidden="true">
-      <span class="orb one"></span>
-      <span class="orb two"></span>
-      <span class="orb three"></span>
+    <div class="rings" aria-hidden="true">
+      <span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span>
+      <span class="ring r4"></span><span class="ring r5"></span>
+      <span class="orbit o1"></span><span class="orbit o2"></span><span class="orbit o3"></span>
+    </div>
+
+    <div class="arcs" aria-hidden="true">
+      <span class="arc a1"></span><span class="arc a2"></span><span class="arc a3"></span>
+    </div>
+
+    <div class="particles" aria-hidden="true">
+      <span class="p orange p1"></span><span class="p navy p2"></span><span class="p orange p3"></span>
+      <span class="p navy p4"></span><span class="p orange p5"></span><span class="p orange p6"></span>
+      <span class="p navy p7"></span><span class="p orange p8"></span><span class="p navy p9"></span>
+      <span class="p orange p10"></span>
+    </div>
+
+    <div class="slashes" aria-hidden="true">
+      <span class="slash s1"></span><span class="slash s2"></span><span class="slash s3"></span>
+      <span class="slash s4"></span><span class="slash s5"></span>
     </div>
 
     <div class="route" aria-hidden="true">
-      <svg viewBox="0 0 520 300" role="presentation">
-        <path class="route-base" d="M20 220 C105 270, 150 85, 255 142 S390 250, 500 78"/>
-        <path class="route-live" d="M20 220 C105 270, 150 85, 255 142 S390 250, 500 78"/>
-        <circle class="route-node" cx="500" cy="78" r="4.5"/>
+      <svg viewBox="0 0 700 350">
+        <path class="route-base" d="M8 270 C105 330 172 88 312 166 S505 292 692 54"/>
+        <path class="route-c" d="M8 270 C105 330 172 88 312 166 S505 292 692 54"/>
+        <path class="route-a" d="M8 270 C105 330 172 88 312 166 S505 292 692 54"/>
+        <path class="route-b" d="M20 74 C155 18 220 246 363 177 S565 84 686 245"/>
       </svg>
     </div>
 
     <section class="brand-stage">
       <div class="logo-shell">
-        <img
-          class="logo"
-          src="./letsgo-logo.png"
-          alt="LetsGo by Mudamas — Perjalanan, dalam Genggaman."
-          decoding="sync"
-          fetchpriority="high"
-        >
+        <span class="halo" aria-hidden="true"></span>
+        <img class="logo" src="./letsgo-logo.png" alt="LetsGo by Mudamas — Perjalanan, dalam Genggaman." decoding="sync" fetchpriority="high">
       </div>
-
       <div class="loader" aria-hidden="true"></div>
     </section>
-
-    <span class="corner-mark" aria-hidden="true"></span>
   </main>
 
   <script type="module" src="./splash.js"></script>
