@@ -20,12 +20,10 @@ function wait(ms) {
 }
 
 /* Auth first. If auth fails, fail safely back to login. */
-try {
-  await requireAuth({ redirect: "login.html" });
-} catch (error) {
-  console.error("[LetsGo] Auth guard failed:", error);
-  window.location.replace("login.html");
-  throw error;
+const activeSession = await requireAuth({ redirect: "login.html", splash: "index.html" });
+if (!activeSession) {
+  // Navigation is already being handled by the global splash/auth guard.
+  await new Promise(() => {});
 }
 
 /* Visual ready state never controls visibility; it only enhances motion. */
