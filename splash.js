@@ -1,6 +1,6 @@
 import { getSession } from "./auth-service.js";
 
-const MIN_SPLASH_MS = 3000;
+const MIN_SPLASH_MS = 5000;
 const EXIT_MS = 280;
 const startedAt = performance.now();
 
