@@ -1,3 +1,5 @@
+import { supabase } from "./supabase.js";
+
 (() => {
 "use strict";
 
@@ -160,7 +162,7 @@ function renderPassengers(){
     list.appendChild(el);
   });
 
-  $("#paxPriceNote").textContent=`${pax.length} penumpang · harga penerbangan OTW`;
+  $("#paxPriceNote").textContent=`${pax.length} penumpang · harga penerbangan LetsGo`;
 }
 
 function renderSpt(){
@@ -249,14 +251,14 @@ function renderAddons(){
 
 function renderPricing(){
   if(!flightPricing){
-    toast("Pricing OTW tidak ditemukan. Kembali ke detail penerbangan.");
+    toast("Pricing LetsGo tidak ditemukan. Kembali ke detail penerbangan.");
     $("#confirmBtn").disabled=true;
     return;
   }
 
   /*
    * SOURCE OF TRUTH:
-   * flightPricing.totalPrice = total harga penerbangan OTW dari Flight Detail,
+   * flightPricing.totalPrice = total harga penerbangan LetsGo dari Flight Detail,
    * SUDAH termasuk service fee sesuai konfigurasi Admin.
    *
    * Jangan menjumlah ticketPrice + serviceFee secara buta karena snapshot lama
@@ -293,7 +295,7 @@ function renderPricing(){
   $("#priceEquation").textContent =
     `${rupiah(authoritativeFlightTotal)} + ${rupiah(pricing.addonsTotal)} = ${rupiah(pricing.grandTotal)}`;
 
-  console.info("[OTW Review Pricing]",{
+  console.info("[LetsGo Review Pricing]",{
     authoritativeFlightTotal,
     ticketFare,
     serviceFee,
@@ -312,7 +314,7 @@ function openModal(){
   }
 
   if(!flightPricing){
-    toast("Harga OTW belum tersedia.");
+    toast("Harga LetsGo belum tersedia.");
     return;
   }
 
@@ -326,7 +328,23 @@ function closeModal(){
   document.body.style.overflow="";
 }
 
-function finalConfirm(){
+let bookingSubmitting=false;
+
+function generateOrderCode(){
+  const d=new Date();
+  const date=[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("");
+  return `LG-${date}-${Math.floor(1000+Math.random()*9000)}`;
+}
+
+async function finalConfirm(){
+  if(bookingSubmitting) return;
+
+  const btn=$("#finalConfirmBtn");
+  const old=btn.innerHTML;
+  bookingSubmitting=true;
+  btn.disabled=true;
+  btn.innerHTML="<span>Mengirim pengajuan...</span>";
+
   const payload={
     flightOfferId:sessionStorage.getItem("otw_selected_offer_id")||flight?.offerId||"",
     flight,
@@ -341,21 +359,66 @@ function finalConfirm(){
       addonsTotal:pricing.addonsTotal,
       grandTotal:pricing.grandTotal,
       currency:flightPricing?.currency||"IDR",
-      source:flightPricing?.source||"OTW_ADMIN_PRICING",
+      source:flightPricing?.source||"LETSGO_ADMIN_PRICING",
       pricingUpdatedAt:flightPricing?.pricingUpdatedAt||null
     },
-    status:"REVIEW_CONFIRMED",
+    status:"SUBMITTED",
     confirmedAt:new Date().toISOString()
   };
 
-  sessionStorage.setItem("otw_flight_review",JSON.stringify(payload));
+  try{
+    const {data:auth,error:authError}=await supabase.auth.getSession();
+    if(authError) throw authError;
+    const user=auth?.session?.user;
+    if(!user){ location.href="login.html"; return; }
 
-  closeModal();
-  toast("Review perjalanan berhasil dikonfirmasi.");
+    const segs=flight?.segments||[];
+    const first=segs[0]||{};
+    const last=segs[segs.length-1]||first;
+    const spt=passengerData?.spt||{};
+    const orderCode=generateOrderCode();
 
-  setTimeout(()=>{
-    location.href="flight-booking.html";
-  },450);
+    const row={
+      user_id:user.id,
+      order_code:orderCode,
+      status:"SUBMITTED",
+      origin:first.origin||flight?.origin||null,
+      destination:last.destination||flight?.destination||null,
+      airline_code:first.carrier||flight?.airlineCode||null,
+      airline_name:first.carrierName||flight?.airlineName||null,
+      flight_number:first.flightNumber||flight?.flightNumber||null,
+      depart_at:first.departureLocalTime||first.departureTime||flight?.departureTime||null,
+      arrival_at:last.arrivalLocalTime||last.arrivalTime||flight?.arrivalTime||null,
+      passenger_count:(passengerData?.passengers||[]).length||1,
+      flight_total:Number(payload.pricing.flightTotal||0),
+      service_fee:Number(payload.pricing.serviceFee||0),
+      addons_total:Number(payload.pricing.addonsTotal||0),
+      grand_total:Number(payload.pricing.grandTotal||0),
+      currency:payload.pricing.currency||"IDR",
+      spt_path:spt.filePath||spt.file_path||spt.path||null,
+      payload
+    };
+
+    const {data,error}=await supabase.from("flight_orders")
+      .insert(row).select("id,order_code,status").single();
+    if(error) throw error;
+
+    sessionStorage.setItem("letsgo_flight_review",JSON.stringify(payload));
+    sessionStorage.setItem("letsgo_last_order",JSON.stringify({
+      id:data.id,orderCode:data.order_code,status:data.status,createdAt:new Date().toISOString()
+    }));
+
+    closeModal();
+    toast("Pengajuan perjalanan berhasil dikirim.");
+    setTimeout(()=>location.href=`detail-pesanan.html?id=${encodeURIComponent(data.order_code)}`,500);
+  }catch(error){
+    console.error("[LetsGo Booking]",error);
+    toast(error?.message||"Pengajuan belum berhasil dikirim.");
+  }finally{
+    bookingSubmitting=false;
+    btn.disabled=false;
+    btn.innerHTML=old;
+  }
 }
 
 function bind(){
@@ -389,7 +452,7 @@ function init(){
   renderPricing();
   bind();
 
-  console.info("[OTW] Flight Review Premium V2 Add-ons + Admin Pricing ready");
+  console.info("[LetsGo] Flight Review Premium V2 Add-ons + Admin Pricing ready");
 }
 
 document.addEventListener("DOMContentLoaded",init);

@@ -1,57 +1,23 @@
-OTW REBUILD V1 — GITHUB READY
-================================
- 
-STRUKTUR
-Semua file diletakkan langsung di ROOT repository GitHub.
-Tidak ada folder CSS, JS, atau assets pada tahap ini.
+LETSGO — FLOW REVISION 2026-08-24
 
-ALUR APLIKASI
-index.html
-  -> Splash premium
-  -> cek session Supabase
-  -> belum login: login.html
-  -> sudah login tetapi profil belum lengkap: complete-account.html 
-  -> sudah login dan profil lengkap: home.html
+ACTIVE FLOW:
+flight-detail.html -> passenger-details.html -> flight-review.html -> detail-pesanan.html
 
-SUPABASE
-Project URL sudah terpasang.
-Publishable Key sudah terpasang di supabase.js.
+CHANGES:
+1. Bagasi/asuransi dipilih langsung di Flight Detail.
+2. Passenger Details langsung ke Flight Review.
+3. flight-addons.* dihapus dari flow dan tidak disertakan.
+4. flight-booking.* dihapus dari flow dan tidak disertakan.
+5. Konfirmasi pada Flight Review langsung INSERT ke flight_orders lalu menuju Detail Pesanan.
+6. Branding UI dikonversi ke LetsGo.
+7. Storage key lama berawalan otw_ tetap dibaca/dipakai secara internal untuk kompatibilitas dengan halaman lama/upstream. Tidak tampil ke pengguna.
+8. Nomor pengajuan baru menggunakan prefix LG-.
 
-PENTING
-- Secret Key / service_role JANGAN pernah dimasukkan ke frontend.
-- Secret Key yang pernah terekspos sebaiknya di-rotate/revoke dari dashboard Supabase.
-- Flight API secret nanti ditempatkan server-side / Supabase Edge Function / Vault.
+REPLACE FILES:
+- flight-detail.html/css/js
+- passenger-details.html/css/js
+- flight-review.html/css/js
 
-FILE UTAMA
-index.html
-splash.js
-
-login.html
-login.js
-
-register.html
-register.js
-
-complete-account.html
-complete-account.js
-
-home.html
-home.js
-
-auth.css
-supabase.js
-auth-service.js
-profile-service.js
-guard.js
-
-UPLOAD KE GITHUB
-1. Buat / kosongkan repository OTW.
-2. Upload SEMUA file hasil extract ZIP ini langsung ke root repository.
-3. Commit.
-4. Settings -> Pages.
-5. Deploy from branch: main / root.
-6. Buka GitHub Pages URL.
-
-CATATAN
-Home pada paket ini masih halaman fondasi.
-Desain Home OTW final akan dibangun pada tahap selanjutnya.
+DELETE FROM REPOSITORY:
+- flight-addons.html/css/js
+- flight-booking.html/css/js

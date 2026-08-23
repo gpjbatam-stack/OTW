@@ -302,7 +302,7 @@
     $("#sptFileSize").textContent=fileSize(file.size);
     $("#sptFileType").textContent=(file.name.split(".").pop()||"FILE").toUpperCase();
 
-    setSptStatus("", "File dipilih", "Menyiapkan upload ke OTW...");
+    setSptStatus("", "File dipilih", "Menyiapkan upload ke LetsGo...");
     $("#sptError").textContent="";
   }
 
@@ -406,7 +406,7 @@
       return true;
 
     }catch(err){
-      console.error("[OTW] SPT upload:",err);
+      console.error("[LetsGo] SPT upload:",err);
       uploadedSptRecord=null;
       sessionStorage.removeItem("otw_uploaded_spt");
       $("#sptError").textContent=`Upload gagal: ${err?.message||"Terjadi kesalahan."}`;
@@ -429,7 +429,7 @@
         }
       }
     }catch(err){
-      console.warn("[OTW] remove SPT:",err);
+      console.warn("[LetsGo] remove SPT:",err);
     }
 
     sptFile=null;
@@ -529,8 +529,8 @@
       if(flightPricing){
         sessionStorage.setItem("otw_flight_pricing",JSON.stringify(flightPricing));
       }
-      sessionStorage.removeItem("otw_flight_addons");
-      location.href="flight-addons.html";
+      
+      location.href="flight-review.html";
     }finally{
       isSubmitting=false;
       btn.disabled=false;
@@ -579,9 +579,9 @@
       restoreSpt();
       bindEvents();
 
-      console.info("[OTW] Passenger Details V7 Add-ons Flow ready");
+      console.info("[LetsGo] Passenger Details LetsGo Direct Review ready");
     }catch(err){
-      console.error("[OTW] init Passenger Details:",err);
+      console.error("[LetsGo] init Passenger Details:",err);
       toast(err?.message||"Halaman gagal dimuat.");
     }
   }

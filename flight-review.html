@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#061a3a">
-  <title>Review Perjalanan — OTW</title>
+  <title>Review Perjalanan — LetsGo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./flight-review.css?v=20260819-v3-total-fix">
+  <link rel="stylesheet" href="./flight-review.css?v=20260824-letsgo-direct-booking">
 </head>
 <body>
 <main class="app">
@@ -31,7 +31,7 @@
     </div>
     <div>
       <span class="hero-kicker">FINAL CHECK</span>
-      <h2>Satu cek terakhir.<br><em>Setelah ini, OTW.</em></h2>
+      <h2>Satu cek terakhir.<br><em>Setelah ini, LetsGo.</em></h2>
       <p>Periksa penerbangan, penumpang, dokumen, dan rincian biaya sebelum mengajukan pemesanan.</p>
     </div>
   </section>
@@ -132,38 +132,38 @@
   <section class="section">
     <div class="section-title">
       <div><span>RINCIAN BIAYA</span><h2>Harga perjalanan</h2></div>
-      <span class="price-lock"><i></i> OTW Price</span>
+      <span class="price-lock"><i></i> LetsGo Price</span>
     </div>
 
     <article class="price-card">
       <div class="price-main">
         <div>
-          <span>Harga penerbangan OTW</span>
+          <span>Harga penerbangan LetsGo</span>
           <small id="paxPriceNote">Harga penerbangan terpilih</small>
         </div>
         <strong id="ticketPrice">Rp0</strong>
       </div>
 
       <div class="price-breakdown">
-        <div><span>Tarif penerbangan setelah pricing OTW</span><b id="ticketFare">Rp0</b></div>
-        <div class="otw-row"><span>Biaya layanan OTW <i>Transparan</i></span><b id="serviceFee">Rp0</b></div>
+        <div><span>Tarif penerbangan setelah pricing LetsGo</span><b id="ticketFare">Rp0</b></div>
+        <div class="otw-row"><span>Biaya layanan LetsGo <i>Transparan</i></span><b id="serviceFee">Rp0</b></div>
         <div><span>Bagasi tambahan</span><b id="reviewBaggageTotal">Rp0</b></div>
         <div><span>Asuransi perjalanan</span><b id="reviewInsuranceTotal">Rp0</b></div>
       </div>
 
       <div class="total-row">
-        <div><span>Total perjalanan</span><small id="totalNote">Harga penerbangan OTW + add-on</small></div>
+        <div><span>Total perjalanan</span><small id="totalNote">Harga penerbangan LetsGo + add-on</small></div>
         <strong id="grandTotal">Rp0</strong>
       </div>
 
       <div class="price-audit">
         <span>Perhitungan total</span>
-        <b id="priceEquation">Harga penerbangan OTW + add-on</b>
+        <b id="priceEquation">Harga penerbangan LetsGo + add-on</b>
       </div>
 
       <div class="pricing-info">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
-        <p>Harga tiket menggunakan pricing OTW yang tersimpan dari langkah sebelumnya. Add-on mengikuti harga aktif yang dipilih saat pengajuan. Harga dan ketersediaan tetap diperiksa sebelum fulfillment.</p>
+        <p>Harga tiket menggunakan pricing LetsGo yang tersimpan dari langkah sebelumnya. Add-on mengikuti harga aktif yang dipilih saat pengajuan. Harga dan ketersediaan tetap diperiksa sebelum fulfillment.</p>
       </div>
     </article>
   </section>
@@ -213,14 +213,14 @@
     </button>
     <span class="modal-icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></span>
     <span class="modal-kicker">SIAP DIPROSES</span>
-    <h3>Konfirmasi perjalanan ini?</h3>
-    <p>OTW akan melanjutkan ke proses pemesanan. Harga dan ketersediaan akan diperiksa kembali sebelum tiket diterbitkan.</p>
+    <h3>Ajukan perjalanan ini?</h3>
+    <p>LetsGo akan langsung mengirim pengajuan perjalanan. Harga dan ketersediaan akan diperiksa kembali sebelum tiket diterbitkan.</p>
     <div class="modal-summary">
       <span><small>Rute</small><strong id="modalRoute">--- → ---</strong></span>
       <span><small>Total</small><strong id="modalTotal">Rp0</strong></span>
     </div>
     <button class="modal-primary" id="finalConfirmBtn" type="button">
-      <span>Ya, lanjutkan pemesanan</span>
+      <span>Ya, ajukan sekarang</span>
       <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
     </button>
     <button class="modal-secondary" id="cancelModalBtn" type="button">Periksa lagi</button>
@@ -228,6 +228,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<script defer src="./flight-review.js?v=20260819-v3-total-fix"></script>
+<script type="module" src="./flight-review.js?v=20260824-letsgo-direct-booking"></script>
 </body>
 </html>

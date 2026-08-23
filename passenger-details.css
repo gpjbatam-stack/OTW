@@ -285,3 +285,6 @@ svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-l
     font-size: 16px !important;
   }
 }
+
+/* LetsGo 2026 visual refinement */
+:root{--blue:#1769e0;--green:#12a873} button{transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease}button:active{transform:scale(.985)}
