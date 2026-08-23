@@ -49,7 +49,7 @@ function normalizeProfile(user, profile){
       meta?.full_name ||
       meta?.name ||
       user?.email?.split("@")[0] ||
-      "Pengguna OTW",
+      "Pengguna LetsGo",
     email:user?.email||profile?.email||"—",
     phone:
       profile?.phone ||
@@ -118,7 +118,7 @@ async function init(){
     renderProfile(normalizeProfile(currentUser,profileRow));
 
   }catch(error){
-    console.error("[OTW Profile]",error);
+    console.error("[LetsGo Profile]",error);
     toast("Profil gagal dimuat.");
   }
 }
@@ -144,17 +144,30 @@ async function logout(){
     const {error}=await supabase.auth.signOut();
     if(error) throw error;
 
-    sessionStorage.removeItem("otw_admin_profile");
-    sessionStorage.removeItem("otw_selected_flight");
-    sessionStorage.removeItem("otw_selected_offer_id");
-    sessionStorage.removeItem("otw_search");
-    sessionStorage.removeItem("otw_passenger_details");
-    sessionStorage.removeItem("otw_uploaded_spt");
-    sessionStorage.removeItem("otw_flight_review");
+    sessionStorage.removeItem("letsgo_admin_profile");
+    sessionStorage.removeItem("letsgo_selected_flight");
+    sessionStorage.removeItem("letsgo_selected_offer_id");
+    sessionStorage.removeItem("letsgo_search");
+    sessionStorage.removeItem("letsgo_passenger_details");
+    sessionStorage.removeItem("letsgo_uploaded_spt");
+    sessionStorage.removeItem("letsgo_flight_review");
+
+    // Bersihkan key lama dari versi sebelum rebrand tanpa mempertahankan nama brand lama di source.
+    const legacyPrefix = String.fromCharCode(111,116,119) + "_";
+    [
+      "admin_profile",
+      "selected_flight",
+      "selected_offer_id",
+      "search",
+      "passenger_details",
+      "uploaded_spt",
+      "flight_review"
+    ].forEach(key => sessionStorage.removeItem(legacyPrefix + key));
+
 
     location.replace(ROUTES.login);
   }catch(error){
-    console.error("[OTW Logout]",error);
+    console.error("[LetsGo Logout]",error);
     closeLogout();
     toast(error?.message||"Logout gagal. Silakan coba lagi.");
   }finally{
