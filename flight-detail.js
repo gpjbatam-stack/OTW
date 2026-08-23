@@ -30,10 +30,12 @@ async function loadPricing(){
  const {data,error}=await supabase.rpc(PRICING_RPC,{p_supplier_price:supplier});
  if(error){console.error(error);toast("Konfigurasi harga belum dapat dimuat.");return}
  const r=Array.isArray(data)?data[0]:data;if(!r)return;
- pricing={supplierPrice:supplier,ticketPrice:Number(r.ticket_price)||0,serviceFee:Number(r.service_fee)||0,totalPrice:Number(r.total_price)||0,currency:r.currency||"IDR",pricingUpdatedAt:r.pricing_updated_at||null,source:"LETSGO_ADMIN_PRICING"};
+ const serviceFee=Number(r.service_fee)||150000;
+ const ticketPrice=Number(r.ticket_price)||0;
+ pricing={supplierPrice:supplier,ticketPrice,serviceFee,totalPrice:ticketPrice+serviceFee,currency:r.currency||"IDR",pricingUpdatedAt:r.pricing_updated_at||null,source:"LETSGO_ADMIN_PRICING"};
  selected={...selected,displayPrice:pricing.totalPrice,letsgoPricing:pricing};
  sessionStorage.setItem("otw_selected_flight",JSON.stringify(selected));sessionStorage.setItem("otw_flight_pricing",JSON.stringify(pricing));
- $("#flightPrice").textContent=rupiah(pricing.totalPrice);updateTotal();$("#continueBtn").disabled=false;$("#verifyTitle").textContent="Harga & detail siap";$("#verifyText").textContent="Silakan pilih layanan tambahan bila diperlukan.";
+ $("#flightPrice").textContent=rupiah(pricing.ticketPrice);$("#serviceFeePrice").textContent=rupiah(pricing.serviceFee);updateTotal();$("#continueBtn").disabled=false;$("#verifyTitle").textContent="Harga & detail siap";$("#verifyText").textContent="Silakan pilih layanan tambahan bila diperlukan.";
 }
 async function loadAddons(){
  const c=code();if(!c){renderOptions();return}
