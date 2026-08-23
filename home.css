@@ -2812,3 +2812,15 @@ button:focus-visible,
     transition:none;
   }
 }
+
+/* =========================================================
+   MOBILE INPUT AUTO-ZOOM FIX
+   Prevent iPhone / Safari auto zoom when focusing form controls
+   ========================================================= */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}

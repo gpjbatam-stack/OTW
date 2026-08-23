@@ -58,3 +58,15 @@ form{display:grid;gap:13px}.field-group{display:block}.field-group>span,.label-r
   .legal{left:16px;right:16px;bottom:18px}
 }
 @media(max-width:380px){.login-mode{gap:5px}.mode-btn{padding:7px}.mode-icon{width:29px;height:29px}.auth-panel{padding-left:13px;padding-right:13px}}
+
+/* =========================================================
+   MOBILE INPUT AUTO-ZOOM FIX
+   Prevent iPhone / Safari auto zoom when focusing form controls
+   ========================================================= */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
