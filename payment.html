@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#061d40">
-  <title>Pembayaran — OTW</title>
+  <title>Pembayaran — LetsGo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./payment.css?v=20260821-v1-midtrans">
+  <link rel="stylesheet" href="./payment.css?v=20260825-letsgo-payment-v2">
 </head>
 <body>
   <main class="app-shell">
     <header class="topbar">
       <button id="backBtn" class="icon-btn" type="button" aria-label="Kembali"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
-      <div class="top-copy"><span class="eyebrow">PEMBAYARAN</span><h1>Bayar perjalanan</h1><p id="orderCodeTop">OTW-—</p></div>
+      <div class="top-copy"><span class="eyebrow">PEMBAYARAN</span><h1>Bayar perjalanan</h1><p id="orderCodeTop">LG-—</p></div>
       <span class="secure-top"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg></span>
     </header>
 
@@ -24,18 +24,18 @@
     <div id="content" class="hidden">
       <section class="payment-hero">
         <div class="hero-top"><span id="paymentStatusBadge" class="status-pill waiting"><i></i> MENUNGGU PEMBAYARAN</span><span class="secured">🔒 Secured</span></div>
-        <div class="hero-copy"><small>TOTAL TAGIHAN</small><strong id="grandTotal">Rp0</strong><span id="heroSub">Selesaikan pembayaran sebelum batas waktu berakhir.</span></div>
-        <div class="deadline-panel"><div><small>SISA WAKTU PEMBAYARAN</small><strong id="countdown">13d 23h</strong><span id="deadlineText">—</span></div><span class="clock">◷</span></div>
+        <div class="hero-copy"><small>TOTAL TAGIHAN</small><strong id="grandTotal">Rp0</strong><span id="heroSub">Pembayaran perjalanan LetsGo.</span></div>
+        <div class="deadline-panel"><div><small>BATAS PEMBAYARAN</small><strong id="deadlineText">Menunggu konfirmasi tiba di Batam</strong></div><span class="deadline-mark">✓</span></div>
       </section>
 
       <section class="section">
-        <div class="section-title"><div><span class="eyebrow">TAGIHAN</span><h2>Rincian pembayaran</h2></div><span class="mini-pill">14 hari tempo</span></div>
+        <div class="section-title"><div><span class="eyebrow">TAGIHAN</span><h2>Rincian pembayaran</h2></div><span id="deadlineBadge" class="mini-pill">Tempo 10 hari</span></div>
         <article class="bill-card">
           <div class="bill-row"><span>Harga penerbangan</span><strong id="flightTotal">Rp0</strong></div>
           <div id="baggageRow" class="bill-row"><span>Bagasi tambahan</span><strong id="baggageTotal">Rp0</strong></div>
           <div id="insuranceRow" class="bill-row"><span>Perlindungan perjalanan</span><strong id="insuranceTotal">Rp0</strong></div>
           <div id="serviceFeeRow" class="bill-row hidden"><span>Biaya layanan</span><strong id="serviceFee">Rp0</strong></div>
-          <div class="bill-total"><div><small>TOTAL PEMBAYARAN</small><span id="billOrder">OTW-—</span></div><strong id="billGrandTotal">Rp0</strong></div>
+          <div class="bill-total"><div><small>TOTAL PEMBAYARAN</small><span id="billOrder">LG-—</span></div><strong id="billGrandTotal">Rp0</strong></div>
         </article>
       </section>
 
@@ -46,23 +46,13 @@
           <div class="route"><div><strong id="origin">---</strong><span id="departAt">—</span></div><div class="route-center"><i></i><b>✈</b><i></i></div><div class="right"><strong id="destination">---</strong><span id="arrivalAt">—</span></div></div>
         </article>
       </section>
-
-      <section class="section">
-        <div class="section-title"><div><span class="eyebrow">METODE PEMBAYARAN</span><h2>Pembayaran aman</h2></div></div>
-        <article class="midtrans-card">
-          <div class="midtrans-mark"><span class="payment-symbol">▣</span><div><strong>Midtrans</strong><small>Pilih metode pembayaran pada halaman pembayaran Midtrans.</small></div></div>
-          <div class="method-grid"><span>Virtual Account</span><span>QRIS</span><span>GoPay</span><span>Kartu</span></div>
-          <div class="security-note">OTW tidak menyimpan data kartu atau kredensial pembayaran Anda. Proses pembayaran ditangani melalui Midtrans.</div>
-        </article>
-      </section>
-
-      <section id="paidSection" class="paid-card hidden"><span class="paid-icon">✓</span><div><small>PEMBAYARAN BERHASIL</small><strong>Tagihan telah dibayar</strong><span id="paidAt">Status pembayaran telah dikonfirmasi.</span></div></section>
-      <section class="help-card"><div><span>PERLU BANTUAN?</span><strong>Pembayaran bermasalah?</strong><small>Hubungi Pusat Bantuan OTW dan sertakan nomor pesanan Anda.</small></div><button id="helpBtn" type="button">Pusat Bantuan</button></section>
+<section id="paidSection" class="paid-card hidden"><span class="paid-icon">✓</span><div><small>PEMBAYARAN BERHASIL</small><strong>Tagihan telah dibayar</strong><span id="paidAt">Status pembayaran telah dikonfirmasi.</span></div></section>
+      <section class="help-card"><div><span>PERLU BANTUAN?</span><strong>Pembayaran bermasalah?</strong><small>Hubungi Pusat Bantuan LetsGo dan sertakan nomor pesanan Anda.</small></div><button id="helpBtn" type="button">Pusat Bantuan</button></section>
     </div>
   </main>
 
   <footer id="actionBar" class="action-bar hidden"><div class="action-inner"><div><small id="footerLabel">Total pembayaran</small><strong id="footerTotal">Rp0</strong></div><button id="payBtn" type="button">Bayar Sekarang</button></div></footer>
   <div id="toast" class="toast"></div>
-  <script type="module" src="./payment.js?v=20260821-v1-midtrans"></script>
+  <script type="module" src="./payment.js?v=20260825-letsgo-payment-v3-orders-redirect"></script>
 </body>
 </html>
