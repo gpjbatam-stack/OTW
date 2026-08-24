@@ -228,8 +228,11 @@ function renderPaymentDeadline(){
   const deadlineEl=$("#paymentDeadlineText");
   const pill=$("#paymentDuePill");
   const statusBadge=$(".payment-status-badge");
+  const reminderBadge=$("#paymentReminderBadge");
+  const reminderText=$("#paymentReminderText");
 
   if(paid){
+    reminderBadge?.classList.add("hidden");
     deadlineEl.textContent="Pembayaran telah diselesaikan";
     pill.textContent="Lunas";
     if(statusBadge)statusBadge.innerHTML="<i></i> Lunas";
@@ -238,6 +241,7 @@ function renderPaymentDeadline(){
   }
 
   if(!arrived||!deadline){
+    reminderBadge?.classList.add("hidden");
     deadlineEl.textContent="Batas pembayaran aktif setelah kedatangan di Batam dikonfirmasi";
     pill.textContent="Menunggu tiba";
     if(statusBadge)statusBadge.innerHTML="<i></i> Menunggu konfirmasi tiba";
@@ -246,6 +250,11 @@ function renderPaymentDeadline(){
   }
 
   deadlineEl.textContent=`Selesaikan pembayaran sebelum ${formatDeadline(deadline)}`;
+  if(reminderBadge&&reminderText){
+    reminderText.textContent=`Selesaikan sebelum ${formatDeadline(deadline)}`;
+    reminderBadge.classList.remove("hidden");
+    reminderBadge.classList.toggle("is-overdue",overdue);
+  }
   pill.textContent=overdue?"Perlu diselesaikan":"Menunggu pembayaran";
   if(statusBadge)statusBadge.innerHTML=`<i></i> ${overdue?"Perlu diselesaikan":"Menunggu pembayaran"}`;
   section.classList.toggle("payment-overdue",overdue);

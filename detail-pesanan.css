@@ -198,3 +198,9 @@ button{font:inherit;cursor:pointer}svg{fill:none;stroke:currentColor;stroke-widt
   background:linear-gradient(135deg,#4a1018,#8b2833)
 }
 .payment-overdue .deadline-icon{color:#ffb8be}
+
+
+/* LetsGo — compact payment reminder */
+.payment-reminder-badge{margin:0 0 9px;display:flex;align-items:center;justify-content:center;gap:6px;width:max-content;max-width:100%;padding:7px 10px;border:1px solid #ffd39a;border-radius:999px;background:linear-gradient(135deg,#fff7e6,#ffebc9);color:#a85b00;box-shadow:0 6px 16px rgba(211,123,12,.11);font-size:6.5px;font-weight:900;letter-spacing:-.01em}
+.payment-reminder-badge svg{width:11px;flex:0 0 auto;stroke-width:2}
+.payment-reminder-badge.is-overdue{border-color:#f2c7cc;background:#fff0f1;color:#c13f4c}

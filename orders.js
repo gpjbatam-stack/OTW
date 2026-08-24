@@ -22,6 +22,7 @@ const STATUS_CLASS={
 
 let user=null;
 let orders=[];
+let receivablesByOrderId=new Map();
 let activeStatus="ALL";
 let sortMode="NEWEST";
 let query="";
@@ -82,6 +83,21 @@ async function loadOrders(){
 
   orders=data||[];
 
+  // Ambil jatuh tempo pembayaran untuk badge reminder pada kartu pesanan.
+  receivablesByOrderId=new Map();
+  const orderIds=orders.map(x=>x.id).filter(Boolean);
+  if(orderIds.length){
+    const {data:receivables,error:receivableError}=await supabase
+      .from("receivables")
+      .select("flight_order_id,effective_due_date,due_date,status,outstanding_amount")
+      .in("flight_order_id",orderIds);
+    if(receivableError){
+      console.warn("[LetsGo Receivables]",receivableError);
+    }else{
+      (receivables||[]).forEach(r=>receivablesByOrderId.set(r.flight_order_id,r));
+    }
+  }
+
   $("#loadingState").classList.add("hidden");
   updateSummary();
   render();
@@ -131,6 +147,16 @@ function filteredOrders(){
   return rows;
 }
 
+function reminderBadge(order){
+  const r=receivablesByOrderId.get(order.id);
+  if(!r)return"";
+  const deadline=r.effective_due_date||r.due_date;
+  const status=String(r.status||"open").toLowerCase();
+  const paid=status==="paid"||Number(r.outstanding_amount||0)<=0;
+  if(!deadline||paid)return"";
+  return `<span class="payment-reminder"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>Selesaikan sebelum ${dateLabel(deadline)}</span>`;
+}
+
 function render(){
   const rows=filteredOrders();
   const list=$("#orderList");
@@ -168,9 +194,12 @@ function render(){
               <strong>${order.order_code}</strong>
             </div>
 
-            <span class="status-badge ${statusClass}">
-              <i></i>${statusLabel}
-            </span>
+            <div class="order-badges">
+              <span class="status-badge ${statusClass}">
+                <i></i>${statusLabel}
+              </span>
+              ${reminderBadge(order)}
+            </div>
           </div>
 
           <div class="route-row">
