@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./detail-pesanan.css?v=20260824-core-final">
+  <link rel="stylesheet" href="./detail-pesanan.css?v=20260825-payment-deadline">
 </head>
 <body>
   <main class="app-shell">
@@ -275,7 +275,7 @@
             <span class="eyebrow">PEMBAYARAN</span>
             <h2>Penyelesaian pembayaran</h2>
           </div>
-          <span id="paymentDuePill" class="payment-due-pill">14 hari</span>
+          <span id="paymentDuePill" class="payment-due-pill">Menunggu tiba</span>
         </div>
 
         <article class="payment-card">
@@ -283,19 +283,19 @@
             <div>
               <span class="payment-kicker">TAGIHAN TERSEDIA</span>
               <strong>Selesaikan pembayaran perjalanan Anda</strong>
-              <small>Invoice telah diterbitkan setelah perjalanan dinyatakan selesai.</small>
+              <small>Batas pembayaran ditetapkan setelah kedatangan di Batam dikonfirmasi.</small>
             </div>
             <span class="payment-status-badge"><i></i> Menunggu pembayaran</span>
           </div>
 
-          <div class="payment-timer">
+          <div class="payment-deadline">
             <div>
               <small>BATAS PEMBAYARAN</small>
-              <strong id="paymentCountdown">13d 23h</strong>
-              <span id="paymentDeadlineText">—</span>
+              <strong id="paymentDeadlineText">Menunggu konfirmasi tiba di Batam</strong>
+              <span>Tempo pembayaran: 10 hari setelah tiba di Batam.</span>
             </div>
-            <span class="timer-icon">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v5l3 2"/></svg>
+            <span class="deadline-icon">
+              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="m9 15 2 2 4-4"/></svg>
             </span>
           </div>
 
@@ -323,7 +323,7 @@
 
           <div class="payment-note">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></svg>
-            <span>Tempo pembayaran adalah <strong>14 hari</strong> sejak pesanan ditandai selesai oleh LetsGo. Timer berjalan otomatis berdasarkan waktu penyelesaian pesanan.</span>
+            <span>Tempo pembayaran adalah <strong>10 hari setelah tiba di Batam</strong>. LetsGo akan menampilkan tanggal batas pembayaran setelah kedatangan dikonfirmasi.</span>
           </div>
         </article>
       </section>
@@ -383,6 +383,6 @@
 
   <div id="toast" class="toast"></div>
 
-  <script type="module" src="./detail-pesanan.js?v=20260824-core-final"></script>
+  <script type="module" src="./detail-pesanan.js?v=20260825-payment-deadline"></script>
 </body>
 </html>
