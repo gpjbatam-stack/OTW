@@ -136,80 +136,94 @@ function renderDeadline(){
   }
 }
 
-async function syncReceivableAfterVerifiedPayment(){
-  // Server-side RPC only settles a receivable when the corresponding
-  // flight_order already carries a verified paid/success payment state.
-  const {data,error}=await supabase.rpc("settle_receivable_for_order",{
-    p_flight_order_id:order.id
+async function syncPaymentWithMidtrans(){
+  if(!order?.order_code)return {ok:false,paid:false};
+  const {data,error}=await supabase.functions.invoke("midtrans-sync-payment",{
+    body:{orderCode:order.order_code}
   });
   if(error){
-    console.warn("[LetsGo settle receivable]",error);
-    return false;
+    console.warn("[LetsGo Midtrans Sync]",error);
+    return {ok:false,paid:false};
   }
-  return Boolean(data);
+  return data||{ok:false,paid:false};
 }
 
 function loadSnapScript(clientKey,environment){return new Promise((resolve,reject)=>{if(window.snap)return resolve();const s=document.createElement("script");s.src=environment==="production"?"https://app.midtrans.com/snap/snap.js":"https://app.sandbox.midtrans.com/snap/snap.js";s.dataset.clientKey=clientKey;s.onload=resolve;s.onerror=()=>reject(new Error("Gagal memuat Midtrans Snap."));document.head.appendChild(s)})}
-async function createTransaction(){const btn=$("#payBtn"),old=btn.textContent;btn.disabled=true;btn.textContent="Menyiapkan Midtrans...";try{const {data,error}=await supabase.functions.invoke("midtrans-create-payment",{body:{orderCode:order.order_code}});if(error)throw error;if(!data?.ok)throw new Error(data?.message||"Gagal membuat transaksi.");await loadSnapScript(data.clientKey,data.environment||"sandbox");window.snap.pay(data.snapToken,{onSuccess:async()=>{
-  toast("Pembayaran berhasil. Mengarahkan ke Pesanan...");
-  try{
-    await refreshPayment();
-  }catch(e){
-    console.warn("[LetsGo Payment] refresh after success",e);
+async function waitForVerifiedPayment(maxAttempts=8){
+  for(let i=0;i<maxAttempts;i++){
+    const result=await syncPaymentWithMidtrans();
+    await reloadPaymentData();
+    if(result?.paid||paymentState()==="paid")return true;
+    await new Promise(resolve=>setTimeout(resolve,1000));
   }
-  setTimeout(()=>{
-    location.replace("orders.html?payment=success");
-  },900);
-},onPending:async()=>{
-  toast("Pembayaran dibuat. Menunggu konfirmasi.");
-  await refreshPayment();
-},onError:()=>toast("Pembayaran gagal. Silakan coba metode lain."),onClose:()=>toast("Jendela pembayaran ditutup.")})}catch(e){console.error(e);toast(e.message||"Pembayaran belum dapat diproses.")}finally{btn.disabled=false;btn.textContent=old}}
+  return false;
+}
+
+async function createTransaction(){
+  const btn=$("#payBtn"),old=btn.textContent;
+  btn.disabled=true;btn.textContent="Menyiapkan Midtrans...";
+  try{
+    const {data,error}=await supabase.functions.invoke("midtrans-create-payment",{body:{orderCode:order.order_code}});
+    if(error)throw error;
+    if(!data?.ok)throw new Error(data?.message||"Gagal membuat transaksi.");
+    await loadSnapScript(data.clientKey,data.environment||"sandbox");
+    window.snap.pay(data.snapToken,{
+      onSuccess:async()=>{
+        toast("Pembayaran berhasil. Memverifikasi...");
+        const verified=await waitForVerifiedPayment(10);
+        if(verified){
+          toast("Pembayaran dikonfirmasi. Mengarahkan ke Pesanan...");
+          setTimeout(()=>location.replace("orders.html?payment=success"),700);
+        }else{
+          toast("Pembayaran diterima. Status sedang disinkronkan.");
+          startPaymentWatcher();
+        }
+      },
+      onPending:async()=>{
+        toast("Pembayaran dibuat. Menunggu konfirmasi.");
+        await syncPaymentWithMidtrans();
+        await reloadPaymentData();
+      },
+      onError:()=>toast("Pembayaran gagal. Silakan coba metode lain."),
+      onClose:async()=>{
+        await syncPaymentWithMidtrans();
+        await reloadPaymentData();
+      }
+    });
+  }catch(e){
+    console.error(e);toast(e.message||"Pembayaran belum dapat diproses.");
+  }finally{
+    btn.disabled=false;btn.textContent=old;
+  }
+}
 let paymentWatchTimer=null;
 function startPaymentWatcher(){
   if(paymentWatchTimer)clearInterval(paymentWatchTimer);
   paymentWatchTimer=setInterval(async()=>{
     try{
-      await refreshPayment();
+      await syncPaymentWithMidtrans();
+      await reloadPaymentData();
       if(paymentState()==="paid"){
-        clearInterval(paymentWatchTimer);
-        paymentWatchTimer=null;
-        toast("Pembayaran berhasil. Mengarahkan ke Pesanan...");
+        clearInterval(paymentWatchTimer);paymentWatchTimer=null;
+        toast("Pembayaran dikonfirmasi. Mengarahkan ke Pesanan...");
         setTimeout(()=>location.replace("orders.html?payment=success"),700);
       }
-    }catch(e){
-      console.warn("[LetsGo Payment Watcher]",e);
-    }
+    }catch(e){console.warn("[LetsGo Payment Watcher]",e)}
   },2500);
 }
 
-async function refreshPayment(){
-  const {data,error}=await supabase
-    .from("flight_orders")
-    .select("*")
-    .eq("order_code",order.order_code)
-    .single();
-
-  if(error||!data)return;
-
-  order=data;
-
-  // If Midtrans/webhook has already verified the payment, synchronize
-  // the receivable through a server-side RPC.
-  if(paymentState()==="paid"){
-    await syncReceivableAfterVerifiedPayment();
-  }
-
-  const {data:rows}=await supabase
-    .from("receivables")
+async function reloadPaymentData(){
+  const {data,error}=await supabase.from("flight_orders").select("*").eq("order_code",order.order_code).single();
+  if(!error&&data)order=data;
+  const {data:rows,error:receivableError}=await supabase.from("receivables")
     .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,arrived_batam_at,due_date,effective_due_date,paid_at,status,booking_blocked")
-    .eq("flight_order_id",order.id)
-    .limit(1);
-
-  receivable=Array.isArray(rows)&&rows.length?rows[0]:receivable;
-
-  renderDeadline();
-  applyPaymentState(paymentState());
-
+    .eq("flight_order_id",order.id).limit(1);
+  if(!receivableError&&Array.isArray(rows)&&rows.length)receivable=rows[0];
+  renderDeadline();applyPaymentState(paymentState());
+}
+async function refreshPayment(){
+  await syncPaymentWithMidtrans();
+  await reloadPaymentData();
   if(paymentState()==="paid")toast("Pembayaran telah dikonfirmasi.");
 }
 window.addEventListener("focus",async()=>{
