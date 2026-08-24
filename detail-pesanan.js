@@ -24,6 +24,7 @@ const STATUS={
   VERIFIED:{badge:"Terverifikasi",klass:"status-processing",kicker:"VERIFIKASI SELESAI",title:"Pengajuan sudah terverifikasi.",text:"Detail perjalanan telah diperiksa dan siap masuk tahap penerbitan.",footer:"Terverifikasi",action:"Lihat Pesanan"},
   ISSUED:{badge:"Tiket terbit",klass:"status-issued",kicker:"TIKET SIAP",title:"Perjalanan Anda siap.",text:"Tiket telah diterbitkan. Dokumen perjalanan dapat dibuka dari halaman ini.",footer:"Tiket terbit",action:"Buka Tiket"},
   COMPLETED:{badge:"Selesai",klass:"status-issued",kicker:"PERJALANAN SELESAI",title:"Perjalanan selesai. Pembayaran tersedia.",text:"Invoice telah diterbitkan. Selesaikan pembayaran sebelum tanggal yang tertera setelah kedatangan di Batam dikonfirmasi.",footer:"Menunggu pembayaran",action:"Bayar Sekarang"},
+  PAID:{badge:"Lunas",klass:"status-issued",kicker:"PEMBAYARAN SELESAI",title:"Pembayaran telah diterima.",text:"Pembayaran perjalanan ini telah diselesaikan. Invoice tetap tersedia untuk dokumentasi.",footer:"Lunas",action:"Kembali ke Pesanan"},
   CANCELLED:{badge:"Dibatalkan",klass:"status-cancelled",kicker:"PESANAN DIBATALKAN",title:"Pengajuan tidak dilanjutkan.",text:"Lihat catatan LetsGo atau hubungi Pusat Bantuan untuk informasi lebih lanjut.",footer:"Dibatalkan",action:"Pusat Bantuan"}
 };
 
@@ -77,15 +78,25 @@ async function loadData(){
   if(receivableError)console.warn("[LetsGo Receivable]",receivableError);
   receivable=receivableData||null;
 }
+function isPaymentPaid(){
+  const paymentStatus=String(receivable?.status||"").toLowerCase();
+  if(paymentStatus==="paid")return true;
+  if(receivable?.outstanding_amount!==null&&receivable?.outstanding_amount!==undefined&&Number(receivable.outstanding_amount)<=0)return true;
+  return String(order?.status||"").toUpperCase()==="PAID";
+}
+function effectiveOrderStatus(){
+  return isPaymentPaid()?"PAID":String(order?.status||"SUBMITTED").toUpperCase();
+}
 function renderStatus(){
-  const state=STATUS[String(order.status||"SUBMITTED").toUpperCase()]||STATUS.SUBMITTED;
+  const effective=effectiveOrderStatus();
+  const state=STATUS[effective]||STATUS.SUBMITTED;
   $("#statusBadge").className=`status-badge ${state.klass}`;
   $("#statusBadge").innerHTML=`<i></i>${state.badge}`;
   $("#statusKicker").textContent=state.kicker;$("#statusTitle").textContent=state.title;$("#statusText").textContent=state.text;
   $("#footerStatus").textContent=state.footer;$("#primaryActionBtn").textContent=state.action;
 
-  const status=String(order.status||"").toUpperCase();
-  $("#paymentSection")?.classList.toggle("hidden",status!=="COMPLETED");
+  const showPayment=["COMPLETED","PAID"].includes(effective);
+  $("#paymentSection")?.classList.toggle("hidden",!showPayment);
 
   const note=order.payload?.adminNotes||order.payload?.admin_notes||"";
   if(note){$("#adminNoteSection").classList.remove("hidden");$("#adminNote").textContent=note}
@@ -113,7 +124,7 @@ function renderFlight(){
 }
 function renderTimeline(){
   const status=String(order.status||"SUBMITTED").toUpperCase();
-  const rank={SUBMITTED:1,PROCESSING:2,VERIFIED:3,ISSUED:4,COMPLETED:5,CANCELLED:2}[status]||1;
+  const rank={SUBMITTED:1,PROCESSING:2,VERIFIED:3,ISSUED:4,COMPLETED:5,PAID:5,CANCELLED:2}[status]||1;
   const steps=[
     {title:"Pengajuan diterima",text:"Data perjalanan berhasil masuk ke LetsGo.",time:dateLabel(order.created_at,true)},
     {title:"Verifikasi LetsGo",text:"Harga, ketersediaan, add-on, dan dokumen diperiksa.",time:""},
@@ -214,7 +225,7 @@ function formatDeadline(v){
 }
 function renderPaymentDeadline(){
   const section=$("#paymentSection");
-  if(!section||String(order?.status||"").toUpperCase()!=="COMPLETED")return;
+  if(!section||!["COMPLETED","PAID"].includes(effectiveOrderStatus()))return;
 
   const deadline=receivable?.effective_due_date||receivable?.due_date||null;
   const arrived=receivable?.arrived_batam_at||null;
@@ -228,11 +239,8 @@ function renderPaymentDeadline(){
   const deadlineEl=$("#paymentDeadlineText");
   const pill=$("#paymentDuePill");
   const statusBadge=$(".payment-status-badge");
-  const reminderBadge=$("#paymentReminderBadge");
-  const reminderText=$("#paymentReminderText");
 
   if(paid){
-    reminderBadge?.classList.add("hidden");
     deadlineEl.textContent="Pembayaran telah diselesaikan";
     pill.textContent="Lunas";
     if(statusBadge)statusBadge.innerHTML="<i></i> Lunas";
@@ -241,7 +249,6 @@ function renderPaymentDeadline(){
   }
 
   if(!arrived||!deadline){
-    reminderBadge?.classList.add("hidden");
     deadlineEl.textContent="Batas pembayaran aktif setelah kedatangan di Batam dikonfirmasi";
     pill.textContent="Menunggu tiba";
     if(statusBadge)statusBadge.innerHTML="<i></i> Menunggu konfirmasi tiba";
@@ -250,11 +257,6 @@ function renderPaymentDeadline(){
   }
 
   deadlineEl.textContent=`Selesaikan pembayaran sebelum ${formatDeadline(deadline)}`;
-  if(reminderBadge&&reminderText){
-    reminderText.textContent=`Selesaikan sebelum ${formatDeadline(deadline)}`;
-    reminderBadge.classList.remove("hidden");
-    reminderBadge.classList.toggle("is-overdue",overdue);
-  }
   pill.textContent=overdue?"Perlu diselesaikan":"Menunggu pembayaran";
   if(statusBadge)statusBadge.innerHTML=`<i></i> ${overdue?"Perlu diselesaikan":"Menunggu pembayaran"}`;
   section.classList.toggle("payment-overdue",overdue);
@@ -301,6 +303,7 @@ $("#invoiceBtn")?.addEventListener("click",()=>location.href=invoicePageUrl());
 $("#openSptBtn")?.addEventListener("click",openSpt);
 $("#primaryActionBtn")?.addEventListener("click",()=>{
   const status=String(order?.status||"").toUpperCase();
+  if(isPaymentPaid())return location.href="orders.html";
   if(status==="ISSUED")return location.href=ticketPageUrl();
   if(status==="COMPLETED")return location.href=paymentPageUrl();
   if(status==="CANCELLED")return location.href="help.html";
