@@ -77,6 +77,7 @@ function render(){
   $("#loadingState").classList.add("hidden");
   $("#content").classList.remove("hidden");
   $("#actionBar").classList.remove("hidden");
+  if(paymentState()!=="paid")startPaymentWatcher();
 }
 function applyPaymentState(state){
   const badge=$("#paymentStatusBadge"),btn=$("#payBtn");
@@ -150,22 +151,37 @@ async function syncReceivableAfterVerifiedPayment(){
 
 function loadSnapScript(clientKey,environment){return new Promise((resolve,reject)=>{if(window.snap)return resolve();const s=document.createElement("script");s.src=environment==="production"?"https://app.midtrans.com/snap/snap.js":"https://app.sandbox.midtrans.com/snap/snap.js";s.dataset.clientKey=clientKey;s.onload=resolve;s.onerror=()=>reject(new Error("Gagal memuat Midtrans Snap."));document.head.appendChild(s)})}
 async function createTransaction(){const btn=$("#payBtn"),old=btn.textContent;btn.disabled=true;btn.textContent="Menyiapkan Midtrans...";try{const {data,error}=await supabase.functions.invoke("midtrans-create-payment",{body:{orderCode:order.order_code}});if(error)throw error;if(!data?.ok)throw new Error(data?.message||"Gagal membuat transaksi.");await loadSnapScript(data.clientKey,data.environment||"sandbox");window.snap.pay(data.snapToken,{onSuccess:async()=>{
-  toast("Pembayaran berhasil. Memverifikasi...");
-  await refreshPayment();
-
-  // Beri waktu singkat agar user melihat konfirmasi sukses,
-  // lalu kembali ke daftar Pesanan LetsGo.
-  if(paymentState()==="paid"){
-    setTimeout(()=>{location.href="orders.html"},1200);
-  }else{
-    // Webhook Midtrans kadang membutuhkan sedikit waktu.
-    // Coba verifikasi ulang sebelum redirect.
-    setTimeout(async()=>{
-      await refreshPayment();
-      if(paymentState()==="paid")location.href="orders.html";
-    },1800);
+  toast("Pembayaran berhasil. Mengarahkan ke Pesanan...");
+  try{
+    await refreshPayment();
+  }catch(e){
+    console.warn("[LetsGo Payment] refresh after success",e);
   }
-},onPending:async()=>{toast("Pembayaran dibuat. Menunggu konfirmasi.");await refreshPayment()},onError:()=>toast("Pembayaran gagal. Silakan coba metode lain."),onClose:()=>toast("Jendela pembayaran ditutup.")})}catch(e){console.error(e);toast(e.message||"Pembayaran belum dapat diproses.")}finally{btn.disabled=false;btn.textContent=old}}
+  setTimeout(()=>{
+    location.replace("orders.html?payment=success");
+  },900);
+},onPending:async()=>{
+  toast("Pembayaran dibuat. Menunggu konfirmasi.");
+  await refreshPayment();
+},onError:()=>toast("Pembayaran gagal. Silakan coba metode lain."),onClose:()=>toast("Jendela pembayaran ditutup.")})}catch(e){console.error(e);toast(e.message||"Pembayaran belum dapat diproses.")}finally{btn.disabled=false;btn.textContent=old}}
+let paymentWatchTimer=null;
+function startPaymentWatcher(){
+  if(paymentWatchTimer)clearInterval(paymentWatchTimer);
+  paymentWatchTimer=setInterval(async()=>{
+    try{
+      await refreshPayment();
+      if(paymentState()==="paid"){
+        clearInterval(paymentWatchTimer);
+        paymentWatchTimer=null;
+        toast("Pembayaran berhasil. Mengarahkan ke Pesanan...");
+        setTimeout(()=>location.replace("orders.html?payment=success"),700);
+      }
+    }catch(e){
+      console.warn("[LetsGo Payment Watcher]",e);
+    }
+  },2500);
+}
+
 async function refreshPayment(){
   const {data,error}=await supabase
     .from("flight_orders")
@@ -196,5 +212,20 @@ async function refreshPayment(){
 
   if(paymentState()==="paid")toast("Pembayaran telah dikonfirmasi.");
 }
+window.addEventListener("focus",async()=>{
+  if(!order)return;
+  try{
+    await refreshPayment();
+    if(paymentState()==="paid")location.replace("orders.html?payment=success");
+  }catch{}
+});
+document.addEventListener("visibilitychange",async()=>{
+  if(document.visibilityState!=="visible"||!order)return;
+  try{
+    await refreshPayment();
+    if(paymentState()==="paid")location.replace("orders.html?payment=success");
+  }catch{}
+});
+
 $("#backBtn").onclick=()=>history.length>1?history.back():location.href=`detail-pesanan.html?id=${encodeURIComponent(orderCode())}`;$("#retryBtn").onclick=()=>location.reload();$("#helpBtn").onclick=()=>location.href="help.html";$("#payBtn").onclick=()=>{$("#payBtn").dataset.mode==="invoice"?location.href=`invoice.html?id=${encodeURIComponent(order.order_code)}`:createTransaction()};
 (async()=>{try{if(!await ensureAuth())return;await loadOrder();render()}catch(e){console.error(e);$("#loadingState").classList.add("hidden");$("#errorState").classList.remove("hidden");$("#errorText").textContent=e.message||"Pembayaran belum dapat dimuat."}})();
