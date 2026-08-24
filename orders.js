@@ -50,15 +50,18 @@ function toast(message){
 }
 
 async function ensureAuth(){
-  const {data,error}=await supabase.auth.getSession();
-  if(error)throw error;
-  user=data?.session?.user||null;
+  // Validate the account against Supabase Auth server.
+  // A stale browser session must never be treated as an active LetsGo user.
+  const {data,error}=await supabase.auth.getUser();
 
-  if(!user){
-    location.replace("login.html");
+  if(error || !data?.user){
+    try { await supabase.auth.signOut({ scope:"local" }); } catch {}
+    user=null;
+    location.replace("login.html?next=orders.html");
     return false;
   }
 
+  user=data.user;
   return true;
 }
 
@@ -282,7 +285,7 @@ async function init(){
     if(!await ensureAuth())return;
     await loadOrders();
   }catch(error){
-    console.error("[OTW Orders]",error);
+    console.error("[LetsGo Orders]",error);
     $("#loadingState").classList.add("hidden");
     $("#errorState").classList.remove("hidden");
     $("#errorMessage").textContent=error?.message||"Pesanan belum dapat dimuat.";
