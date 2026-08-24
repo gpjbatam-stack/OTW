@@ -30,16 +30,36 @@ function paymentStatusLabel(r){
 async function loadCurrentReceivable(){
   currentReceivable=null;
   if(!currentOrder?.id)return null;
+
+  const orderId=String(currentOrder.id).trim();
+
+  // Relasi database resmi:
+  // public.flight_orders.id -> public.receivables.flight_order_id
   const {data,error}=await supabase
     .from("receivables")
     .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,issued_at,arrived_batam_at,due_date,effective_due_date,status,booking_blocked")
-    .eq("flight_order_id",currentOrder.id)
-    .maybeSingle();
+    .eq("flight_order_id",orderId)
+    .limit(1);
+
   if(error){
-    console.warn("[LetsGo Receivable]",error);
+    console.error("[LetsGo Receivable] gagal membaca receivable",{
+      order_id:orderId,
+      order_code:currentOrder?.order_code,
+      error
+    });
+    currentReceivable=null;
     return null;
   }
-  currentReceivable=data||null;
+
+  currentReceivable=Array.isArray(data)&&data.length?data[0]:null;
+
+  console.info("[LetsGo Receivable] result",{
+    order_id:orderId,
+    order_code:currentOrder?.order_code,
+    found:Boolean(currentReceivable),
+    receivable_id:currentReceivable?.id||null
+  });
+
   return currentReceivable;
 }
 function syncPaymentControl(){
@@ -76,7 +96,7 @@ function syncPaymentControl(){
     $("#arrivalInfoText").textContent="Batas pembayaran 10 hari baru dimulai setelah Admin menandai passenger telah tiba di Batam.";
   }else if(issued){
     $("#arrivalInfoTitle").textContent="Tagihan belum tersedia";
-    $("#arrivalInfoText").textContent="Tiket sudah terbit, tetapi receivable belum ditemukan. Refresh data atau periksa proses issue.";
+    $("#arrivalInfoText").textContent="Tiket sudah terbit, tetapi data tagihan belum dapat dibaca oleh Admin Console. Refresh data; jika tetap kosong, periksa policy SELECT tabel receivables.";
   }else{
     $("#arrivalInfoTitle").textContent="Menunggu tiket di-issue";
     $("#arrivalInfoText").textContent="Payment control akan aktif setelah tiket berhasil diterbitkan.";
@@ -546,4 +566,4 @@ $("#confirmArrivalBtn")?.addEventListener("click",()=>applyArrivalAction());
 
 
 
-console.info("[LetsGo] Admin Ticketing arrival/payment control loaded");
+console.info("[LetsGo] Admin Ticketing arrival/payment control FULL v2 loaded");
