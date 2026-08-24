@@ -105,14 +105,16 @@ function renderProfile(profile){
 
 async function init(){
   try{
-    const {data,error}=await supabase.auth.getSession();
-    if(error) throw error;
+    const {data,error}=await supabase.auth.getUser();
 
-    currentUser=data?.session?.user;
-    if(!currentUser){
-      location.replace(ROUTES.login);
+    if(error || !data?.user){
+      try { await supabase.auth.signOut({ scope:"local" }); } catch {}
+      currentUser=null;
+      location.replace(`${ROUTES.login}?next=profile.html`);
       return;
     }
+
+    currentUser=data.user;
 
     const profileRow=await findProfile(currentUser.id);
     renderProfile(normalizeProfile(currentUser,profileRow));
@@ -141,7 +143,7 @@ async function logout(){
   btn.textContent="Mengeluarkan akun...";
 
   try{
-    const {error}=await supabase.auth.signOut();
+    const {error}=await supabase.auth.signOut({ scope:"local" });
     if(error) throw error;
 
     sessionStorage.removeItem("letsgo_admin_profile");

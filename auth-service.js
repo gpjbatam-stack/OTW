@@ -1,15 +1,30 @@
 import { supabase } from "./supabase.js";
 
-export async function getSession() {
-  const { data, error } = await supabase.auth.getSession();
-  if (error) throw error;
-  return data.session;
+async function clearStaleSession() {
+  try {
+    await supabase.auth.signOut({ scope: "local" });
+  } catch (error) {
+    console.warn("[LetsGo Auth] Gagal membersihkan sesi lokal:", error);
+  }
 }
 
 export async function getCurrentUser() {
   const { data, error } = await supabase.auth.getUser();
-  if (error) throw error;
+  if (error || !data?.user) {
+    await clearStaleSession();
+    return null;
+  }
   return data.user;
+}
+
+export async function getSession() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error || !data?.session) return null;
+
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  return { ...data.session, user };
 }
 
 export async function signUp({ fullName, email, phone, password }) {

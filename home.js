@@ -1,5 +1,6 @@
 import { getOptionalSession } from "./guard.js";
 import { getMyProfile } from "./profile-service.js";
+import { supabase } from "./supabase.js";
 
 /* =========================================================
    LETSGO HOME — FUNCTIONAL CONTROLLER
@@ -20,7 +21,18 @@ function wait(ms) {
 }
 
 /* Home is public. Session is optional and only personalizes the experience. */
-const activeSession = await getOptionalSession({ splash: "index.html" });
+let activeSession = await getOptionalSession({ splash: "index.html" });
+
+if (activeSession) {
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !authData?.user) {
+    try { await supabase.auth.signOut({ scope: "local" }); } catch {}
+    activeSession = null;
+  } else {
+    activeSession = { ...activeSession, user: authData.user };
+  }
+}
 
 /* Visual ready state never controls visibility; it only enhances motion. */
 requestAnimationFrame(() => document.body.classList.add("home-ready"));
