@@ -1046,3 +1046,108 @@
  #travelDocModal .v9-flight-meta>div{min-height:12mm}
  #travelDocModal .v9-return,#travelDocModal .v9-passengers,#travelDocModal .v9-travel-info,#travelDocModal .v9-airport-guide,#travelDocModal .v9-issued{break-inside:avoid}
 }
+
+
+/* =========================================================
+   LETSGO — ADMIN PAYMENT CONTROL / ARRIVAL
+   ========================================================= */
+.payment-control-card{
+  border-color:#dce8f2;
+  background:linear-gradient(180deg,#fff,#fbfdff);
+}
+.payment-control-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:7px;
+}
+.payment-control-grid>div{
+  min-height:62px;
+  padding:10px 11px;
+  border:1px solid #e2e9f0;
+  border-radius:11px;
+  background:#f8fafc;
+}
+.payment-control-grid small{
+  display:block;
+  font-size:5.4px;
+  letter-spacing:.07em;
+  color:#8595a8;
+}
+.payment-control-grid strong{
+  display:block;
+  margin-top:5px;
+  font-size:8px;
+  color:#17395f;
+}
+#receivableAmount{font-size:10px;color:#0c64dc}
+#receivableDueDate{color:#0a5fc5}
+#receivableStatus.payment-open{color:#b47718}
+#receivableStatus.payment-overdue{color:#c64551}
+#receivableStatus.payment-paid{color:#0b9566}
+
+.arrival-info{
+  margin-top:8px;
+  padding:10px;
+  border-radius:11px;
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  background:#f4f8fc;
+  border:1px solid #e2e9f0;
+}
+.arrival-info.arrived{
+  background:#eef9f4;
+  border-color:#d6eee3;
+}
+.arrival-info.overdue{
+  background:#fff3f4;
+  border-color:#f0d7da;
+}
+.arrival-info-icon{
+  width:29px;height:29px;border-radius:9px;
+  display:grid;place-items:center;flex:0 0 auto;
+  background:#e9f3ff;color:#1268eb;
+}
+.arrival-info.arrived .arrival-info-icon{background:#ddf5e9;color:#0b9566}
+.arrival-info.overdue .arrival-info-icon{background:#ffe6e9;color:#c64551}
+.arrival-info-icon svg{width:14px}
+.arrival-info strong{display:block;font-size:7.2px}
+.arrival-info small{display:block;margin-top:3px;font-size:5.7px;line-height:1.5;color:#7b8da2}
+
+.arrival-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:9px;
+}
+.arrival-actions .button{width:100%}
+.arrival-actions .button:only-child{grid-column:1/-1}
+.button.arrival-primary{
+  border:0;
+  background:linear-gradient(135deg,#079FCB,#20D3F3);
+  color:#fff;
+  box-shadow:0 9px 22px rgba(7,159,203,.18);
+}
+.button.arrival-primary:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+.arrival-confirm-modal>span{
+  background:#eaf8f2;
+  color:#0b9566;
+}
+.arrival-confirm-modal.cancel-mode>span{
+  background:#fff0f1;
+  color:#c64551;
+}
+.arrival-confirm-modal.cancel-mode .arrival-primary{
+  background:#d84c59;
+  box-shadow:none;
+}
+
+@media(max-width:760px){
+  .payment-control-grid{grid-template-columns:1fr 1fr}
+  .arrival-actions{grid-template-columns:1fr}
+}

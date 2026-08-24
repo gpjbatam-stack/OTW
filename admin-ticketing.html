@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./admin-ticketing.css?v=20260821-v9-airport-first">
+  <link rel="stylesheet" href="./admin-ticketing.css?v=20260825-arrival-payment">
 </head>
 <body>
 <div class="admin-app">
@@ -263,6 +263,45 @@
         </div>
         <button id="cancelBtn" class="cancel-link" type="button">Batalkan pengajuan</button>
       </section>
+
+      <section class="workspace-card payment-control-card">
+        <header><span>08</span><div><small>PAYMENT CONTROL</small><strong>Kedatangan & batas pembayaran</strong></div></header>
+
+        <div class="payment-control-grid">
+          <div>
+            <small>STATUS KEDATANGAN</small>
+            <strong id="arrivalState">Belum tiba di Batam</strong>
+          </div>
+          <div>
+            <small>TAGIHAN TIKET</small>
+            <strong id="receivableAmount">—</strong>
+          </div>
+          <div>
+            <small>BATAS PEMBAYARAN</small>
+            <strong id="receivableDueDate">Belum tersedia</strong>
+          </div>
+          <div>
+            <small>STATUS PEMBAYARAN</small>
+            <strong id="receivableStatus">Belum dimulai</strong>
+          </div>
+        </div>
+
+        <div id="arrivalInfo" class="arrival-info">
+          <span class="arrival-info-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+          </span>
+          <div>
+            <strong id="arrivalInfoTitle">Tempo belum berjalan</strong>
+            <small id="arrivalInfoText">Batas pembayaran 10 hari baru dimulai setelah Admin menandai passenger telah tiba di Batam.</small>
+          </div>
+        </div>
+
+        <div class="arrival-actions">
+          <button id="markArrivedBtn" class="button arrival-primary" type="button">Tandai Sudah Tiba di Batam</button>
+          <button id="cancelArrivedBtn" class="button ghost hidden" type="button">Batalkan Status Tiba</button>
+        </div>
+      </section>
+
     </div>
 
     <footer class="drawer-footer">
@@ -277,6 +316,19 @@
   <section class="confirm-modal">
     <span>!</span><h3>Batalkan pengajuan?</h3><p>Status customer akan berubah menjadi CANCELLED.</p>
     <div><button id="closeCancelBtn" class="button ghost" type="button">Kembali</button><button id="confirmCancelBtn" class="button danger" type="button">Batalkan Pesanan</button></div>
+  </section>
+</div>
+
+
+<div class="modal-backdrop hidden" id="arrivalModal">
+  <section class="confirm-modal arrival-confirm-modal">
+    <span id="arrivalModalIcon">✓</span>
+    <h3 id="arrivalModalTitle">Tandai sudah tiba di Batam?</h3>
+    <p id="arrivalModalText">Pastikan passenger telah tiba di Batam. Lanjutkan?</p>
+    <div>
+      <button id="closeArrivalModalBtn" class="button ghost" type="button">Kembali</button>
+      <button id="confirmArrivalBtn" class="button arrival-primary" type="button">Ya, lanjutkan</button>
+    </div>
   </section>
 </div>
 
@@ -374,6 +426,6 @@
 
 <div id="toast" class="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
-<script type="module" src="./admin-ticketing.js?v=20260821-v9-airport-first"></script>
+<script type="module" src="./admin-ticketing.js?v=20260825-arrival-payment"></script>
 </body>
 </html>

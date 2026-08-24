@@ -5,7 +5,7 @@ const STATUS_LABEL={SUBMITTED:"Diajukan",PROCESSING:"Processing",VERIFIED:"Verif
 const STATUS_CLASS={SUBMITTED:"submitted",PROCESSING:"processing",VERIFIED:"verified",ISSUED:"issued",COMPLETED:"completed",CANCELLED:"cancelled"};
 const TICKET_BUCKET="flight-tickets";
 
-let adminUser=null,orders=[],currentOrder=null,selectedStatus="SUBMITTED",officialTicketRef=null,generatedDoc=false;
+let adminUser=null,orders=[],currentOrder=null,currentReceivable=null,selectedStatus="SUBMITTED",officialTicketRef=null,generatedDoc=false,arrivalActionMode="mark";
 
 function rupiah(v){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(v)||0)}
 function esc(v=""){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
@@ -13,6 +13,143 @@ function dt(v){if(!v)return"—";const d=new Date(v);return Number.isNaN(d.getTi
 function dateOnly(v){if(!v)return"—";const d=new Date(v);return Number.isNaN(d.getTime())?"—":new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"short",year:"numeric"}).format(d)}
 function hm(v){const m=String(v||"").match(/T(\d{2}):(\d{2})/);return m?`${m[1]}:${m[2]}`:"—"}
 function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),2200)}
+
+function dateLong(v){
+  if(!v)return"—";
+  const raw=String(v);
+  const d=/^\d{4}-\d{2}-\d{2}$/.test(raw)?new Date(`${raw}T00:00:00`):new Date(raw);
+  return Number.isNaN(d.getTime())?"—":new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"long",year:"numeric"}).format(d);
+}
+function paymentStatusLabel(r){
+  if(!r)return"Belum dimulai";
+  const s=String(r.status||"open").toLowerCase();
+  if(s==="paid"||Number(r.outstanding_amount||0)<=0)return"Lunas";
+  if(s==="overdue"||r.booking_blocked)return"Perlu Diselesaikan";
+  return r.arrived_batam_at?"Menunggu Pembayaran":"Belum dimulai";
+}
+async function loadCurrentReceivable(){
+  currentReceivable=null;
+  if(!currentOrder?.id)return null;
+  const {data,error}=await supabase
+    .from("receivables")
+    .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,issued_at,arrived_batam_at,due_date,effective_due_date,status,booking_blocked")
+    .eq("flight_order_id",currentOrder.id)
+    .maybeSingle();
+  if(error){
+    console.warn("[LetsGo Receivable]",error);
+    return null;
+  }
+  currentReceivable=data||null;
+  return currentReceivable;
+}
+function syncPaymentControl(){
+  const r=currentReceivable;
+  const issued=Boolean(currentOrder?.issued_at)||["ISSUED","COMPLETED"].includes(String(currentOrder?.status||"").toUpperCase());
+  const arrived=Boolean(r?.arrived_batam_at);
+  const paid=Boolean(r)&&(String(r.status||"").toLowerCase()==="paid"||Number(r.outstanding_amount||0)<=0);
+  const overdue=Boolean(r)&&(String(r.status||"").toLowerCase()==="overdue"||Boolean(r.booking_blocked));
+  const due=r?.effective_due_date||r?.due_date||null;
+
+  $("#arrivalState").textContent=arrived?`Sudah tiba · ${dateLong(r.arrived_batam_at)}`:"Belum tiba di Batam";
+  $("#receivableAmount").textContent=r?rupiah(r.principal_amount):"—";
+  $("#receivableDueDate").textContent=due?dateLong(due):"Belum tersedia";
+
+  const statusEl=$("#receivableStatus");
+  statusEl.textContent=paymentStatusLabel(r);
+  statusEl.className=paid?"payment-paid":overdue?"payment-overdue":r?.arrived_batam_at?"payment-open":"";
+
+  const info=$("#arrivalInfo");
+  info.classList.toggle("arrived",arrived&&!overdue);
+  info.classList.toggle("overdue",overdue);
+
+  if(paid){
+    $("#arrivalInfoTitle").textContent="Pembayaran telah diselesaikan";
+    $("#arrivalInfoText").textContent="Tagihan perjalanan ini sudah lunas.";
+  }else if(overdue){
+    $("#arrivalInfoTitle").textContent="Pembayaran perlu diselesaikan";
+    $("#arrivalInfoText").textContent=`Batas pembayaran ${dateLong(due)} telah terlewati. Pemesanan baru dapat dibatasi sampai pembayaran selesai.`;
+  }else if(arrived){
+    $("#arrivalInfoTitle").textContent="Tempo pembayaran sudah aktif";
+    $("#arrivalInfoText").textContent=`Selesaikan pembayaran sebelum ${dateLong(due)}.`;
+  }else if(r){
+    $("#arrivalInfoTitle").textContent="Tempo belum berjalan";
+    $("#arrivalInfoText").textContent="Batas pembayaran 10 hari baru dimulai setelah Admin menandai passenger telah tiba di Batam.";
+  }else if(issued){
+    $("#arrivalInfoTitle").textContent="Tagihan belum tersedia";
+    $("#arrivalInfoText").textContent="Tiket sudah terbit, tetapi receivable belum ditemukan. Refresh data atau periksa proses issue.";
+  }else{
+    $("#arrivalInfoTitle").textContent="Menunggu tiket di-issue";
+    $("#arrivalInfoText").textContent="Payment control akan aktif setelah tiket berhasil diterbitkan.";
+  }
+
+  $("#markArrivedBtn").classList.toggle("hidden",arrived||paid);
+  $("#cancelArrivedBtn").classList.toggle("hidden",!arrived||paid);
+  $("#markArrivedBtn").disabled=!r||!issued||paid;
+}
+function openArrivalModal(mode){
+  if(!currentReceivable)return toast("Tagihan perjalanan belum tersedia.");
+  arrivalActionMode=mode;
+  const modal=$("#arrivalModal");
+  const card=modal.querySelector(".arrival-confirm-modal");
+  const cancelling=mode==="cancel";
+  card.classList.toggle("cancel-mode",cancelling);
+  $("#arrivalModalIcon").textContent=cancelling?"!":"✓";
+  $("#arrivalModalTitle").textContent=cancelling?"Batalkan status tiba?":"Tandai sudah tiba di Batam?";
+  $("#arrivalModalText").textContent=cancelling
+    ?"Status perjalanan akan kembali ke Issued dan batas pembayaran 10 hari akan dibatalkan."
+    :"Pastikan passenger telah tiba di Batam. Lanjutkan?";
+  $("#confirmArrivalBtn").textContent=cancelling?"Ya, batalkan":"Ya, lanjutkan";
+  modal.classList.remove("hidden");
+}
+function closeArrivalModal(){
+  $("#arrivalModal").classList.add("hidden");
+}
+async function applyArrivalAction(){
+  if(!currentOrder||!currentReceivable)return;
+  const btn=$("#confirmArrivalBtn");
+  const old=btn.textContent;
+  btn.disabled=true;
+  btn.textContent="Memproses…";
+  try{
+    if(arrivalActionMode==="cancel"){
+      const {error}=await supabase.rpc("cancel_passenger_arrived_batam",{p_receivable_id:currentReceivable.id});
+      if(error)throw error;
+      const {error:oe}=await supabase.from("flight_orders")
+        .update({status:"ISSUED",completed_at:null})
+        .eq("id",currentOrder.id);
+      if(oe)throw oe;
+      currentOrder.status="ISSUED";
+      currentOrder.completed_at=null;
+      toast("Status tiba dibatalkan.");
+    }else{
+      const {error}=await supabase.rpc("mark_passenger_arrived_batam",{p_receivable_id:currentReceivable.id});
+      if(error)throw error;
+      const now=new Date().toISOString();
+      const {error:oe}=await supabase.from("flight_orders")
+        .update({status:"COMPLETED",completed_at:now})
+        .eq("id",currentOrder.id);
+      if(oe)throw oe;
+      currentOrder.status="COMPLETED";
+      currentOrder.completed_at=now;
+      toast("Passenger ditandai sudah tiba di Batam.");
+    }
+    await loadCurrentReceivable();
+    selectedStatus=String(currentOrder.status||"SUBMITTED").toUpperCase();
+    $("#drawerStatusText").textContent=STATUS_LABEL[selectedStatus]||selectedStatus;
+    $("#drawerStatusBadge").className=`status-pill ${STATUS_CLASS[selectedStatus]||"submitted"}`;
+    $("#drawerStatusBadge").innerHTML=`<i></i>${STATUS_LABEL[selectedStatus]||selectedStatus}`;
+    syncStatusFlow();
+    syncPaymentControl();
+    closeArrivalModal();
+    await loadOrders();
+  }catch(e){
+    console.error("[LetsGo Arrival Control]",e);
+    toast(e?.message||"Status kedatangan belum dapat diperbarui.");
+  }finally{
+    btn.disabled=false;
+    btn.textContent=old;
+  }
+}
 
 async function ensureAdmin(){
   const {data,error}=await supabase.auth.getSession(); if(error)throw error;
@@ -94,12 +231,13 @@ function computeReadiness(o=currentOrder,ops=buildOps(false)){
   return {checks,percent:Math.round(ok/vals.length*100),ready:ok===vals.length};
 }
 
-function openOrder(code){
+async function openOrder(code){
   currentOrder=orders.find(o=>o.order_code===code); if(!currentOrder)return;
   const ops=currentOrder.payload?.ticketing||{};
   selectedStatus=String(currentOrder.status||"SUBMITTED").toUpperCase();
   officialTicketRef=ops.officialTicketPath||ops.officialTicketUrl||currentOrder.ticket_url||"";
   generatedDoc=Boolean(ops.travelDocumentGeneratedAt);
+  await loadCurrentReceivable();
 
   $("#drawerCode").textContent=currentOrder.order_code;$("#drawerCreated").textContent=`Diajukan ${dt(currentOrder.created_at)}`;
   $("#drawerStatusText").textContent=STATUS_LABEL[selectedStatus]||selectedStatus;$("#drawerStatusBadge").className=`status-pill ${STATUS_CLASS[selectedStatus]||"submitted"}`;$("#drawerStatusBadge").innerHTML=`<i></i>${STATUS_LABEL[selectedStatus]||selectedStatus}`;
@@ -110,10 +248,10 @@ function openOrder(code){
   $("#drawerSptState").textContent=sptRef(currentOrder)?"Tersimpan":"Belum ada";$("#viewSptBtn").disabled=!sptRef(currentOrder);
 
   $("#supplierInput").value=ops.supplier||"";$("#supplierCostInput").value=ops.supplierCost||"";$("#pnrInput").value=ops.pnr||"";$("#ticketNumberInput").value=ops.ticketNumber||"";$("#internalNoteInput").value=ops.internalNote||"";$("#customerNoteInput").value=currentOrder.admin_notes||"";
-  syncOfficialTicketUI();syncMargin();syncTravelDoc();syncStatusFlow();syncReadiness();
+  syncOfficialTicketUI();syncMargin();syncTravelDoc();syncStatusFlow();syncReadiness();syncPaymentControl();
   $("#drawerBackdrop").classList.remove("hidden");document.body.style.overflow="hidden";
 }
-function closeDrawer(){$("#drawerBackdrop").classList.add("hidden");document.body.style.overflow="";currentOrder=null}
+function closeDrawer(){$("#drawerBackdrop").classList.add("hidden");document.body.style.overflow="";currentOrder=null;currentReceivable=null}
 
 function buildOps(fromForm=true){
   const old=currentOrder?.payload?.ticketing||{};
@@ -363,8 +501,15 @@ async function issueOrder(){
   const r=syncReadiness();if(!r.ready){toast("Belum siap issue. Lengkapi checklist terlebih dahulu.");return}
   if(!generatedDoc)generateTravelDoc();
   selectedStatus="ISSUED";
-  const payload=buildPayload();payload.ticketing={...payload.ticketing,issuedAt:new Date().toISOString(),travelDocumentGeneratedAt:payload.ticketing.travelDocumentGeneratedAt||new Date().toISOString()};
-  const {error}=await supabase.from("flight_orders").update({status:"ISSUED",payload,admin_notes:$("#customerNoteInput").value.trim()}).eq("id",currentOrder.id);if(error)throw error;
+  const payload=buildPayload();
+  const issuedAt=new Date().toISOString();
+  payload.ticketing={...payload.ticketing,issuedAt,travelDocumentGeneratedAt:payload.ticketing.travelDocumentGeneratedAt||issuedAt};
+  const {error}=await supabase.from("flight_orders").update({
+    status:"ISSUED",
+    issued_at:issuedAt,
+    payload,
+    admin_notes:$("#customerNoteInput").value.trim()
+  }).eq("id",currentOrder.id);if(error)throw error;
   toast("Tiket berhasil di-issue.");$("#travelDocModal").classList.add("hidden");closeDrawer();await loadOrders();
 }
 async function cancelOrder(){const {error}=await supabase.from("flight_orders").update({status:"CANCELLED",payload:buildPayload(),admin_notes:$("#customerNoteInput").value.trim()}).eq("id",currentOrder.id);if(error)throw error;$("#cancelModal").classList.add("hidden");toast("Pesanan dibatalkan.");closeDrawer();await loadOrders()}
@@ -390,8 +535,15 @@ $("#closeTravelDocBtn").onclick=()=>$("#travelDocModal").classList.add("hidden")
 
 $("#modalCloseBtn")?.addEventListener("click",()=>$("#travelDocModal").classList.add("hidden"));
 
+$("#markArrivedBtn")?.addEventListener("click",()=>openArrivalModal("mark"));
+$("#cancelArrivedBtn")?.addEventListener("click",()=>openArrivalModal("cancel"));
+$("#closeArrivalModalBtn")?.addEventListener("click",closeArrivalModal);
+$("#arrivalModal")?.addEventListener("click",e=>{if(e.target===$("#arrivalModal"))closeArrivalModal()});
+$("#confirmArrivalBtn")?.addEventListener("click",()=>applyArrivalAction());
 
 
 
 
-console.info("[OTW] Admin Ticketing V9 Airport First loaded");
+
+
+console.info("[LetsGo] Admin Ticketing arrival/payment control loaded");
