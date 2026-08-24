@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f8fc">
+  <title>Konfirmasi Email — LetsGo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./confirm-email.css?v=20260824-v1">
+</head>
+<body>
+  <main class="page">
+    <section class="card">
+      <img src="./letsgo-logo-horizontal.png" class="logo" alt="LetsGo by mudamas">
+      <div class="icon" id="stateIcon">✉</div>
+      <p class="eyebrow" id="eyebrow">EMAIL VERIFICATION</p>
+      <h1 id="title">Cek email Anda</h1>
+      <p class="lead" id="lead">Kami telah mengirim tautan konfirmasi ke <strong id="emailText">email Anda</strong>. Klik tautan tersebut untuk mengaktifkan akun LetsGo.</p>
+      <div id="notice" class="notice"></div>
+      <div class="actions">
+        <button id="resendBtn" class="primary" type="button">Kirim ulang email</button>
+        <a id="loginBtn" class="secondary" href="login.html">Kembali ke Login</a>
+      </div>
+      <p class="hint" id="hint">Belum menerima email? Periksa folder Spam/Junk sebelum mengirim ulang.</p>
+    </section>
+  </main>
+  <script type="module" src="./confirm-email.js?v=20260824-v1"></script>
+</body>
+</html>

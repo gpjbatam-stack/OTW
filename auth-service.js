@@ -28,15 +28,31 @@ export async function getSession() {
 }
 
 export async function signUp({ fullName, email, phone, password }) {
+  const emailRedirectTo = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, "")}confirm-email.html`;
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      emailRedirectTo,
       data: {
         full_name: fullName,
         phone,
       },
     },
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function resendSignupConfirmation(email) {
+  const emailRedirectTo = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, "")}confirm-email.html`;
+
+  const { data, error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: { emailRedirectTo },
   });
 
   if (error) throw error;

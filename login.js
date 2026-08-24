@@ -183,10 +183,13 @@ form.addEventListener("submit", async (event) => {
     setTimeout(() => window.location.replace(getSafeNext()), 180);
 
   } catch (error) {
+    const rawMessage = error?.message || "";
     const message =
-      error?.message?.includes("Invalid login credentials")
-        ? "Email atau password tidak sesuai."
-        : error?.message || "Gagal masuk. Silakan coba lagi.";
+      rawMessage.toLowerCase().includes("email not confirmed")
+        ? "Email belum dikonfirmasi. Buka email dari LetsGo lalu klik tautan verifikasi."
+        : rawMessage.includes("Invalid login credentials")
+          ? "Email atau password tidak sesuai."
+          : rawMessage || "Gagal masuk. Silakan coba lagi.";
 
     showNotice(message);
   } finally {
