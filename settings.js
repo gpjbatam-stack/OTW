@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.js";
 import { requireAuth } from "./guard.js";
+import { DEFAULT_USER_SETTINGS, readUserSettings, writeUserSettings } from "./user-settings.js";
 
 const $=(s)=>document.querySelector(s);
 const $$=(s)=>[...document.querySelectorAll(s)];
@@ -8,24 +9,10 @@ const session=await requireAuth({redirect:"login.html",splash:"index.html"});
 if(!session) await new Promise(()=>{});
 
 const user=session.user;
-const STORAGE_KEY="letsgo_user_settings";
-
-const defaults={
-  orderUpdates:true,
-  tripReminder:true,
-  serviceInfo:false,
-  cabin:"Ekonomi",
-  airport:"BTH"
-};
-
-let settings={...defaults,...readSettings()};
-
-function readSettings(){
-  try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")}catch{return{}}
-}
+let settings=readUserSettings(user.id);
 
 function saveSettings(){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(settings));
+  settings=writeUserSettings(user.id, settings);
   toast("Pengaturan disimpan.");
 }
 
@@ -51,7 +38,8 @@ async function loadProfile(){
     const name=data?.full_name||data?.name||user.user_metadata?.full_name||user.email?.split("@")[0]||"Pengguna LetsGo";
     $("#accountName").textContent=name;
     $("#avatarInitial").textContent=initials(name,user.email);
-  }catch{
+  }catch(error){
+    console.warn("[LetsGo Settings Profile]", error);
     const name=user.user_metadata?.full_name||user.email?.split("@")[0]||"Pengguna LetsGo";
     $("#accountName").textContent=name;
     $("#avatarInitial").textContent=initials(name,user.email);
@@ -143,7 +131,7 @@ $("#airportBtn")?.addEventListener("click",()=>{
 $("#profileBtn")?.addEventListener("click",()=>location.href="profile.html");
 $("#securityBtn")?.addEventListener("click",()=>location.href="security.html");
 $("#documentsBtn")?.addEventListener("click",()=>location.href="documents.html");
-$("#privacyBtn")?.addEventListener("click",()=>location.href="about.html#privacy");
+$("#privacyBtn")?.addEventListener("click",()=>location.href="privacy.html");
 $("#helpBtn")?.addEventListener("click",()=>location.href="help.html");
 $("#aboutBtn")?.addEventListener("click",()=>location.href="about.html");
 $("#backBtn")?.addEventListener("click",()=>history.length>1?history.back():location.href="profile.html");

@@ -1,4 +1,4 @@
-const MIN_SPLASH_MS = 3000;
+const MIN_SPLASH_MS = 1500;
 const EXIT_MS = 280;
 const SPLASH_SESSION_KEY = "letsgo_splash_seen";
 const startedAt = performance.now();

@@ -47,11 +47,25 @@ async function loadOrders(){
   receivablesByOrderId=new Map();
   const orderIds=orders.map(x=>x.id).filter(Boolean);
   if(orderIds.length){
-    const {data:receivables,error:receivableError}=await supabase.from("receivables")
+    const fetchReceivables=()=>supabase.from("receivables")
       .select("flight_order_id,effective_due_date,due_date,status,outstanding_amount,paid_amount,paid_at")
       .in("flight_order_id",orderIds);
-    if(receivableError)console.warn("[LetsGo Receivables]",receivableError);
-    else (receivables||[]).forEach(r=>receivablesByOrderId.set(r.flight_order_id,r));
+
+    let {data:receivables,error:receivableError}=await fetchReceivables();
+    if(receivableError){
+      console.warn("[LetsGo Receivables] first attempt failed:",receivableError);
+      await new Promise(resolve=>setTimeout(resolve,450));
+      const retry=await fetchReceivables();
+      receivables=retry.data;
+      receivableError=retry.error;
+    }
+
+    if(receivableError){
+      console.warn("[LetsGo Receivables] retry failed:",receivableError);
+      toast("Status pembayaran sedang disinkronkan. Tarik untuk memperbarui.");
+    }else{
+      (receivables||[]).forEach(r=>receivablesByOrderId.set(r.flight_order_id,r));
+    }
   }
   $("#loadingState").classList.add("hidden");updateSummary();render();
 }

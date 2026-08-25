@@ -6,7 +6,6 @@ const ROUTES = Object.freeze({
   home:"home.html",
   orders:"orders.html",
   history:"history.html",
-  request:"request.html",
   notifications:"notifications.html",
   personalData:"profile-edit.html",
   documents:"documents.html",
@@ -69,20 +68,14 @@ function normalizeProfile(user, profile){
 }
 
 async function findProfile(userId){
-  const attempts=[
-    {table:"profiles",key:"id"},
-    {table:"profiles",key:"user_id"},
-    {table:"user_profiles",key:"user_id"}
-  ];
+  const {data,error}=await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id",userId)
+    .maybeSingle();
 
-  for(const a of attempts){
-    try{
-      const {data,error}=await supabase.from(a.table).select("*").eq(a.key,userId).maybeSingle();
-      if(!error && data) return data;
-    }catch{}
-  }
-
-  return null;
+  if(error) throw error;
+  return data||null;
 }
 
 function renderProfile(profile){
@@ -153,19 +146,6 @@ async function logout(){
     sessionStorage.removeItem("letsgo_passenger_details");
     sessionStorage.removeItem("letsgo_uploaded_spt");
     sessionStorage.removeItem("letsgo_flight_review");
-
-    // Bersihkan key lama dari versi sebelum rebrand tanpa mempertahankan nama brand lama di source.
-    const legacyPrefix = String.fromCharCode(111,116,119) + "_";
-    [
-      "admin_profile",
-      "selected_flight",
-      "selected_offer_id",
-      "search",
-      "passenger_details",
-      "uploaded_spt",
-      "flight_review"
-    ].forEach(key => sessionStorage.removeItem(legacyPrefix + key));
-
 
     location.replace(ROUTES.login);
   }catch(error){

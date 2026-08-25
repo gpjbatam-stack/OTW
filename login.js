@@ -167,7 +167,7 @@ form.addEventListener("submit", async (event) => {
         throw new Error("Akun ini tidak memiliki akses administrator LetsGo.");
       }
 
-      sessionStorage.setItem("otw_admin_profile", JSON.stringify({
+      sessionStorage.setItem("letsgo_admin_profile", JSON.stringify({
         userId,
         email,
         role: admin.role,

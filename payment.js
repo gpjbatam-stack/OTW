@@ -148,7 +148,32 @@ async function syncPaymentWithMidtrans(){
   return data||{ok:false,paid:false};
 }
 
-function loadSnapScript(clientKey,environment){return new Promise((resolve,reject)=>{if(window.snap)return resolve();const s=document.createElement("script");s.src=environment==="production"?"https://app.midtrans.com/snap/snap.js":"https://app.sandbox.midtrans.com/snap/snap.js";s.dataset.clientKey=clientKey;s.onload=resolve;s.onerror=()=>reject(new Error("Gagal memuat Midtrans Snap."));document.head.appendChild(s)})}
+function validatePaymentEnvironment(environment){
+  const env=String(environment||"").toLowerCase();
+  if(!["production","sandbox"].includes(env)){
+    throw new Error("Konfigurasi environment Midtrans tidak valid.");
+  }
+
+  const host=String(location.hostname||"").toLowerCase();
+  const isLetsGoProduction=host==="letsgo.co.id"||host.endsWith(".letsgo.co.id");
+  if(isLetsGoProduction&&env!=="production"){
+    throw new Error("Pembayaran production tidak boleh menggunakan Midtrans Sandbox.");
+  }
+  return env;
+}
+function loadSnapScript(clientKey,environment){return new Promise((resolve,reject)=>{
+  try{
+    if(!clientKey)throw new Error("Midtrans Client Key tidak tersedia.");
+    const env=validatePaymentEnvironment(environment);
+    if(window.snap)return resolve();
+    const s=document.createElement("script");
+    s.src=env==="production"?"https://app.midtrans.com/snap/snap.js":"https://app.sandbox.midtrans.com/snap/snap.js";
+    s.dataset.clientKey=clientKey;
+    s.onload=resolve;
+    s.onerror=()=>reject(new Error("Gagal memuat Midtrans Snap."));
+    document.head.appendChild(s);
+  }catch(error){reject(error)}
+})}
 async function waitForVerifiedPayment(maxAttempts=8){
   for(let i=0;i<maxAttempts;i++){
     const result=await syncPaymentWithMidtrans();
@@ -166,7 +191,7 @@ async function createTransaction(){
     const {data,error}=await supabase.functions.invoke("midtrans-create-payment",{body:{orderCode:order.order_code}});
     if(error)throw error;
     if(!data?.ok)throw new Error(data?.message||"Gagal membuat transaksi.");
-    await loadSnapScript(data.clientKey,data.environment||"sandbox");
+    await loadSnapScript(data.clientKey,data.environment);
     window.snap.pay(data.snapToken,{
       onSuccess:async()=>{
         toast("Pembayaran berhasil. Memverifikasi...");

@@ -245,8 +245,36 @@ function sanitizeName(name){
 async function deleteCurrentSpt(){
   if(!uploadedSptRecord)return;
   try{
-    if(uploadedSptRecord.file_path)await supabase.storage.from(SPT_BUCKET).remove([uploadedSptRecord.file_path]);
-    if(uploadedSptRecord.id)await supabase.from("trip_documents").delete().eq("id",uploadedSptRecord.id).eq("user_id",session.user.id);
+    let dbRecord=null;
+    if(uploadedSptRecord.id){
+      const {data,error}=await supabase
+        .from("trip_documents")
+        .select("id,user_id,order_id,file_path")
+        .eq("id",uploadedSptRecord.id)
+        .eq("user_id",session.user.id)
+        .maybeSingle();
+      if(error)throw error;
+      dbRecord=data||null;
+    }
+
+    // Dokumen yang sudah terhubung ke order adalah arsip perjalanan dan
+    // tidak boleh dihapus otomatis hanya karena user kembali ke form.
+    if(dbRecord?.order_id){
+      uploadedSptRecord=null;
+      removeState("uploaded_spt");
+      return;
+    }
+
+    const filePath=dbRecord?.file_path||uploadedSptRecord.file_path||null;
+    if(filePath)await supabase.storage.from(SPT_BUCKET).remove([filePath]);
+    if(dbRecord?.id){
+      await supabase
+        .from("trip_documents")
+        .delete()
+        .eq("id",dbRecord.id)
+        .eq("user_id",session.user.id)
+        .is("order_id",null);
+    }
   }catch(error){
     console.warn("[LetsGo SPT Cleanup]",error);
   }
@@ -409,7 +437,6 @@ async function init(){
     session=await requireAuth({redirect:"login.html",splash:"index.html"});
     if(!session)return;
     renderFlightSummary();buildPassengerModels();populateContact();renderPassengers();restoreSpt();bindEvents();
-    console.info("[LetsGo] Passenger Details ready");
   }catch(error){
     console.error("[LetsGo Passenger Details]",error);
     toast(error?.message||"Halaman gagal dimuat.");

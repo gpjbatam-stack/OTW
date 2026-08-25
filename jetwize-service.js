@@ -1,4 +1,4 @@
-// OTW Jetwize Adapter
+// LetsGo Jetwize Adapter
 // IMPORTANT: Keep Jetwize secret credentials server-side.
 // Replace the placeholder config ONLY after receiving Jetwize's official API documentation.
 
@@ -37,7 +37,7 @@ export async function searchFlights(params) {
 
 export function normalizeJetwizeResponse(raw) {
   // Map Jetwize's actual response here after documentation/sample response is provided.
-  // Expected normalized shape for OTW:
+  // Expected normalized shape for LetsGo:
   // [{ id, airlineCode, airlineName, airlineLogo, flightNumber,
   //    departureTime, arrivalTime, durationMinutes, stops, baggage,
   //    cabin, supplierPrice, currency, raw }]

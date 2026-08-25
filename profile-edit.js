@@ -239,6 +239,22 @@ async function uploadAvatar(file){
       }
     });
 
+    // Best-effort cleanup: keep only the current avatar in the user's folder.
+    try{
+      const {data:files,error:listError}=await supabase.storage
+        .from("profile-avatars")
+        .list(user.id,{limit:100});
+      if(!listError && Array.isArray(files)){
+        const currentName=path.split("/").pop();
+        const oldPaths=files
+          .filter(item=>item?.name && item.name!==currentName && /^avatar-/i.test(item.name))
+          .map(item=>`${user.id}/${item.name}`);
+        if(oldPaths.length) await supabase.storage.from("profile-avatars").remove(oldPaths);
+      }
+    }catch(cleanupError){
+      console.warn("[LetsGo Avatar Cleanup]",cleanupError);
+    }
+
     $("#progressBar").style.width="100%";
     $("#progressText").textContent="Foto profil berhasil diperbarui.";
 
