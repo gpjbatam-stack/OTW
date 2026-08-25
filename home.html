@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./home.css?v=20260825-live-activity-v2">
+  <link rel="stylesheet" href="./home.css?v=20260825-live-activity-v3-coming-soon">
   <noscript>
     <style>
       .hero-shell,.booking-overlap,.content-shell,.bottom-nav{opacity:1!important;transform:none!important}
@@ -418,6 +418,23 @@
     <span class="page-transition-mark"></span>
   </div>
 
-  <script type="module" src="./home.js?v=20260825-live-activity-v2"></script>
+  <script type="module" src="./home.js?v=20260825-live-activity-v3-coming-soon"></script>
+
+  <div id="comingSoonModal" class="coming-soon-modal" aria-hidden="true">
+    <div class="coming-soon-backdrop" data-close-coming-soon></div>
+    <section class="coming-soon-card" role="dialog" aria-modal="true" aria-labelledby="comingSoonTitle">
+      <button id="comingSoonCloseBtn" class="coming-soon-close" type="button" aria-label="Tutup">
+        <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+      <div class="coming-soon-icon">
+        <svg viewBox="0 0 24 24"><path d="M5 17h14M6 17V9l6-4 6 4v8"/><path d="M9 17v-4h6v4"/></svg>
+      </div>
+      <span class="coming-soon-kicker">LETSGO</span>
+      <h2 id="comingSoonTitle">Segera Hadir</h2>
+      <p id="comingSoonText">Fitur ini sedang kami siapkan untuk pengalaman perjalanan yang lebih lengkap.</p>
+      <button id="comingSoonOkBtn" class="coming-soon-ok" type="button">Mengerti</button>
+    </section>
+  </div>
+
 </body>
 </html>

@@ -211,8 +211,31 @@ on("#flightTabBtn", "click", () => {
   setTimeout(() => card?.classList.remove("booking-focus"), 700);
 });
 
-on("#trainSearchBtn", "click", () => navigate("search-train.html"));
-on("#hotelSearchBtn", "click", () => navigate("search-hotel.html"));
+const comingSoonModal = $("#comingSoonModal");
+const comingSoonTitle = $("#comingSoonTitle");
+const comingSoonText = $("#comingSoonText");
+
+function openComingSoon(feature){
+  if (!comingSoonModal) return;
+  if (comingSoonTitle) comingSoonTitle.textContent = `${feature} Segera Hadir`;
+  if (comingSoonText) comingSoonText.textContent = `Pemesanan ${feature.toLowerCase()} sedang kami siapkan di LetsGo. Fitur ini akan tersedia segera.`;
+  comingSoonModal.classList.add("show");
+  comingSoonModal.setAttribute("aria-hidden","false");
+  document.body.classList.add("modal-open");
+}
+
+function closeComingSoon(){
+  if (!comingSoonModal) return;
+  comingSoonModal.classList.remove("show");
+  comingSoonModal.setAttribute("aria-hidden","true");
+  document.body.classList.remove("modal-open");
+}
+
+on("#trainSearchBtn", "click", () => openComingSoon("Kereta"));
+on("#hotelSearchBtn", "click", () => openComingSoon("Hotel"));
+on("#comingSoonCloseBtn", "click", closeComingSoon);
+on("#comingSoonOkBtn", "click", closeComingSoon);
+$$("[data-close-coming-soon]").forEach(el => el.addEventListener("click", closeComingSoon));
 
 /* =========================================================
    TRIP TYPE
