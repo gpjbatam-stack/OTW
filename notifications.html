@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#061a3a"><title>Notifikasi — LetsGo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./notifications.css?v=20260825-letsgo-v2">
+</head>
+<body>
+<main class="app-shell">
+<header class="topbar">
+<button id="backBtn" class="icon-btn" type="button" aria-label="Kembali"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+<div class="top-copy"><span class="eyebrow">LETSGO UPDATE</span><h1>Notifikasi</h1><p>Update penting perjalanan dan pembayaran Anda.</p></div>
+<button id="markAllBtn" class="mark-all" type="button">Baca semua</button>
+</header>
+<section class="summary-card"><div><small>BELUM DIBACA</small><strong id="unreadCount">0</strong><span>notifikasi terbaru</span></div><div class="summary-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 19h4"/></svg></div></section>
+<section class="tabs" id="tabs"><button class="active" data-filter="all" type="button">Semua</button><button data-filter="unread" type="button">Belum dibaca</button><button data-filter="payment" type="button">Pembayaran</button><button data-filter="trip" type="button">Perjalanan</button></section>
+<section id="loadingCard" class="loading-card"><span class="skeleton big"></span><span class="skeleton"></span><span class="skeleton"></span></section>
+<section id="notificationList" class="notification-list hidden"></section>
+<section id="emptyState" class="state-card hidden"><span class="state-icon"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 19h4"/></svg></span><strong>Belum ada notifikasi</strong><p>Update pesanan, tiket, kedatangan, pembayaran, dan jatuh tempo akan muncul di sini.</p></section>
+<section id="errorState" class="state-card hidden"><span class="state-icon danger">!</span><strong>Notifikasi belum dapat dimuat</strong><p id="errorMessage">Silakan coba lagi.</p><button id="retryBtn" type="button">Coba lagi</button></section>
+</main>
+<nav class="bottom-nav">
+<a href="home.html"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9H3z"/><path d="M9 20v-6h6v6"/></svg><span>Home</span></a>
+<a href="orders.html"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Pesanan</span></a>
+<a href="home.html" class="center-action"><span class="center-icon">＋</span><span>Ajukan</span></a>
+<a href="notifications.html" class="active"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M10 19h4"/></svg><span>Notifikasi</span></a>
+<a href="profile.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Akun</span></a>
+</nav>
+<div id="toast" class="toast"></div>
+<script type="module" src="./notifications.js?v=20260825-letsgo-v2"></script>
+</body></html>
