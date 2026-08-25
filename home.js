@@ -539,6 +539,320 @@ on("#documentsNav", "click", () => navigateProtected("documents.html"));
 on("#profileNav", "click", () => activeSession ? navigate("profile.html") : navigate("login.html?next=profile.html"));
 on("#helpBtn", "click", () => navigate("help.html"));
 
+
+/* =========================================================
+   LIVE HOME ACTIVITY — NOTIFICATIONS + ACTIVE JOURNEY
+   ========================================================= */
+const notificationDot = $("#notificationDot");
+const notificationTrayLoading = $("#notificationTrayLoading");
+const notificationTrayList = $("#notificationTrayList");
+const notificationTrayEmpty = $("#notificationTrayEmpty");
+const viewAllNotificationsBtn = $("#viewAllNotificationsBtn");
+const journeyLoadingCard = $("#journeyLoadingCard");
+const activeJourneyCard = $("#activeJourneyCard");
+const emptyJourneyCard = $("#emptyJourneyCard");
+
+let homeNotifications = [];
+let activeJourney = null;
+let notificationChannel = null;
+let orderChannel = null;
+let receivableChannel = null;
+
+function activityDate(value) {
+  if (!value) return "—";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "—";
+  return new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"short",year:"numeric"}).format(d);
+}
+
+function relativeTime(value) {
+  if (!value) return "";
+  const diff = Math.max(0,Date.now()-new Date(value).getTime());
+  const mins = Math.floor(diff/60000);
+  if (mins < 1) return "Baru saja";
+  if (mins < 60) return `${mins} menit lalu`;
+  const hours = Math.floor(mins/60);
+  if (hours < 24) return `${hours} jam lalu`;
+  const days = Math.floor(hours/24);
+  if (days < 7) return `${days} hari lalu`;
+  return activityDate(value);
+}
+
+function notificationIcon(type) {
+  const t = String(type||"").toLowerCase();
+  if (["paid","payment","payment_due","payment_reminder","overdue"].includes(t)) {
+    return `<svg viewBox="0 0 24 24"><path d="M3 6h18v12H3z"/><path d="M3 10h18M16 15h2"/></svg>`;
+  }
+  return `<svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg>`;
+}
+
+function renderNotificationTray() {
+  if (!activeSession) {
+    notificationTrayLoading?.classList.add("hidden");
+    notificationTrayList?.classList.add("hidden");
+    notificationTrayEmpty?.classList.remove("hidden");
+    viewAllNotificationsBtn?.classList.add("hidden");
+    notificationDot?.classList.add("hidden");
+    return;
+  }
+
+  const unread = homeNotifications.filter(n => !n.is_read).length;
+  notificationDot?.classList.toggle("hidden", unread === 0);
+  notificationBtn?.setAttribute("aria-label", unread ? `Buka notifikasi, ${unread} belum dibaca` : "Buka notifikasi");
+
+  notificationTrayLoading?.classList.add("hidden");
+
+  if (!homeNotifications.length) {
+    notificationTrayList?.classList.add("hidden");
+    notificationTrayEmpty?.classList.remove("hidden");
+    viewAllNotificationsBtn?.classList.add("hidden");
+    return;
+  }
+
+  notificationTrayEmpty?.classList.add("hidden");
+  notificationTrayList?.classList.remove("hidden");
+  viewAllNotificationsBtn?.classList.remove("hidden");
+
+  notificationTrayList.innerHTML = homeNotifications.slice(0,5).map(n => `
+    <button class="tray-notification ${n.is_read ? "" : "unread"}" type="button"
+      data-notification-id="${n.id}" data-order-code="${n.order_code || ""}">
+      <span class="tray-notification-icon">${notificationIcon(n.type)}</span>
+      <span class="tray-notification-copy">
+        <strong>${String(n.title||"Update LetsGo").replace(/[<>&"]/g,"")}</strong>
+        <p>${String(n.message||"").replace(/[<>&"]/g,"")}</p>
+        <small>${relativeTime(n.created_at)}</small>
+      </span>
+      ${n.is_read ? "" : '<span class="tray-unread-dot"></span>'}
+    </button>
+  `).join("");
+}
+
+async function loadHomeNotifications() {
+  if (!activeSession?.user?.id) {
+    homeNotifications = [];
+    renderNotificationTray();
+    return;
+  }
+
+  try {
+    // Also materialize due-soon / overdue reminders.
+    try { await supabase.rpc("sync_my_letsgo_notifications"); } catch {}
+
+    const {data,error} = await supabase
+      .from("notifications")
+      .select("id,user_id,order_id,order_code,title,message,type,is_read,created_at")
+      .eq("user_id",activeSession.user.id)
+      .order("created_at",{ascending:false})
+      .limit(20);
+
+    if (error) throw error;
+    homeNotifications = data || [];
+    renderNotificationTray();
+  } catch (error) {
+    console.warn("[LetsGo Home Notifications]",error);
+    notificationTrayLoading?.classList.add("hidden");
+    notificationTrayList?.classList.add("hidden");
+    notificationTrayEmpty?.classList.remove("hidden");
+  }
+}
+
+async function markHomeNotificationRead(id) {
+  if (!activeSession?.user?.id || !id) return;
+  const {error} = await supabase
+    .from("notifications")
+    .update({is_read:true})
+    .eq("id",id)
+    .eq("user_id",activeSession.user.id);
+  if (!error) {
+    const item = homeNotifications.find(n => n.id === id);
+    if (item) item.is_read = true;
+    renderNotificationTray();
+  }
+}
+
+notificationTrayList?.addEventListener("click", async event => {
+  const item = event.target.closest("[data-notification-id]");
+  if (!item) return;
+  await markHomeNotificationRead(item.dataset.notificationId);
+  const code = item.dataset.orderCode;
+  if (code) return navigate(`detail-pesanan.html?id=${encodeURIComponent(code)}`);
+  return navigate("notifications.html");
+});
+
+viewAllNotificationsBtn?.addEventListener("click", () => navigateProtected("notifications.html"));
+
+function journeyEffectiveStatus(order, receivable) {
+  const rs = String(receivable?.status||"").toLowerCase();
+  if (rs === "paid" || (receivable?.outstanding_amount != null && Number(receivable.outstanding_amount) <= 0)) return "PAID";
+  return String(order?.status||"SUBMITTED").toUpperCase();
+}
+
+function journeyStatusLabel(status) {
+  return ({
+    SUBMITTED:"Diajukan",
+    PROCESSING:"Diproses",
+    VERIFIED:"Terverifikasi",
+    ISSUED:"Tiket terbit",
+    COMPLETED:"Menunggu pembayaran",
+    PAID:"Lunas",
+    CANCELLED:"Dibatalkan"
+  })[status] || status;
+}
+
+function renderActiveJourney() {
+  journeyLoadingCard?.classList.add("hidden");
+
+  if (!activeSession || !activeJourney) {
+    activeJourneyCard?.classList.add("hidden");
+    emptyJourneyCard?.classList.remove("hidden");
+    return;
+  }
+
+  emptyJourneyCard?.classList.add("hidden");
+  activeJourneyCard?.classList.remove("hidden");
+
+  const {order,receivable} = activeJourney;
+  const status = journeyEffectiveStatus(order,receivable);
+  const due = receivable?.effective_due_date || receivable?.due_date || null;
+
+  $("#activeJourneyKicker").textContent = status === "PAID" ? "PERJALANAN SELESAI" : "AKTIVITAS TERBARU";
+  $("#activeJourneyTitle").textContent = `${order.origin||"---"} → ${order.destination||"---"}`;
+  $("#activeJourneyOrigin").textContent = order.origin||"---";
+  $("#activeJourneyDestination").textContent = order.destination||"---";
+  $("#activeJourneyAirline").textContent = order.airline_name||"Maskapai";
+  $("#activeJourneyDate").textContent = activityDate(order.depart_at);
+  $("#activeJourneyOrder").textContent = order.order_code||"LG-—";
+
+  const statusEl = $("#activeJourneyStatus");
+  statusEl.textContent = journeyStatusLabel(status);
+  statusEl.classList.toggle("is-paid",status==="PAID");
+  statusEl.classList.toggle("is-warning",status==="COMPLETED");
+
+  const reminder = $("#activeJourneyReminder");
+  const isPaid = status === "PAID";
+  if (!isPaid && due) {
+    reminder.textContent = `Selesaikan sebelum ${activityDate(due)}`;
+    reminder.classList.remove("hidden");
+  } else {
+    reminder.classList.add("hidden");
+  }
+
+  activeJourneyCard.dataset.orderCode = order.order_code || "";
+}
+
+async function loadActiveJourney() {
+  if (!activeSession?.user?.id) {
+    activeJourney = null;
+    renderActiveJourney();
+    return;
+  }
+
+  journeyLoadingCard?.classList.remove("hidden");
+  emptyJourneyCard?.classList.add("hidden");
+
+  try {
+    const {data:orderRows,error} = await supabase
+      .from("flight_orders")
+      .select("*")
+      .eq("user_id",activeSession.user.id)
+      .neq("status","CANCELLED")
+      .order("updated_at",{ascending:false})
+      .limit(8);
+
+    if (error) throw error;
+
+    const orders = orderRows || [];
+    if (!orders.length) {
+      activeJourney = null;
+      renderActiveJourney();
+      return;
+    }
+
+    const ids = orders.map(x=>x.id).filter(Boolean);
+    let receivables = [];
+    if (ids.length) {
+      const {data:rRows,error:rError} = await supabase
+        .from("receivables")
+        .select("flight_order_id,status,outstanding_amount,due_date,effective_due_date,arrived_batam_at")
+        .in("flight_order_id",ids);
+      if (!rError) receivables = rRows || [];
+    }
+    const rMap = new Map(receivables.map(r=>[r.flight_order_id,r]));
+
+    // Prefer genuinely active activity. Paid/completed are fallback if most recent.
+    const priority = {PROCESSING:1,VERIFIED:2,ISSUED:3,COMPLETED:4,SUBMITTED:5,PAID:6};
+    const sorted = [...orders].sort((a,b)=>{
+      const sa=journeyEffectiveStatus(a,rMap.get(a.id));
+      const sb=journeyEffectiveStatus(b,rMap.get(b.id));
+      const pa=priority[sa]??9, pb=priority[sb]??9;
+      if (pa!==pb) return pa-pb;
+      return new Date(b.updated_at||b.created_at)-new Date(a.updated_at||a.created_at);
+    });
+
+    const selected = sorted[0];
+    activeJourney = {order:selected,receivable:rMap.get(selected.id)||null};
+    renderActiveJourney();
+  } catch (error) {
+    console.warn("[LetsGo Home Journey]",error);
+    activeJourney = null;
+    renderActiveJourney();
+  }
+}
+
+activeJourneyCard?.addEventListener("click", () => {
+  const code = activeJourneyCard.dataset.orderCode;
+  if (code) navigate(`detail-pesanan.html?id=${encodeURIComponent(code)}`);
+});
+activeJourneyCard?.addEventListener("keydown", event => {
+  if (!["Enter"," "].includes(event.key)) return;
+  event.preventDefault();
+  activeJourneyCard.click();
+});
+
+async function startHomeRealtime() {
+  if (!activeSession?.user?.id) return;
+  const uid = activeSession.user.id;
+
+  notificationChannel = supabase
+    .channel(`home-notifications-${uid}`)
+    .on("postgres_changes",{event:"*",schema:"public",table:"notifications",filter:`user_id=eq.${uid}`},()=>loadHomeNotifications())
+    .subscribe();
+
+  orderChannel = supabase
+    .channel(`home-orders-${uid}`)
+    .on("postgres_changes",{event:"*",schema:"public",table:"flight_orders",filter:`user_id=eq.${uid}`},()=>loadActiveJourney())
+    .subscribe();
+
+  // Receivable has no user_id, so reload latest journey for any receivable change.
+  receivableChannel = supabase
+    .channel(`home-receivables-${uid}`)
+    .on("postgres_changes",{event:"*",schema:"public",table:"receivables"},()=>loadActiveJourney())
+    .subscribe();
+}
+
+if (activeSession) {
+  notificationTrayLoading?.classList.remove("hidden");
+  await Promise.all([loadHomeNotifications(),loadActiveJourney()]);
+  await startHomeRealtime();
+} else {
+  notificationTrayLoading?.classList.add("hidden");
+  renderNotificationTray();
+  renderActiveJourney();
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible" || !activeSession) return;
+  loadHomeNotifications();
+  loadActiveJourney();
+});
+
+window.addEventListener("pagehide", () => {
+  if (notificationChannel) supabase.removeChannel(notificationChannel);
+  if (orderChannel) supabase.removeChannel(orderChannel);
+  if (receivableChannel) supabase.removeChannel(receivableChannel);
+});
+
+
 /* =========================================================
    MICRO INTERACTIONS
    ========================================================= */

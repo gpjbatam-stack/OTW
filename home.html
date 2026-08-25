@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./home.css">
+  <link rel="stylesheet" href="./home.css?v=20260825-live-activity-v1">
   <noscript>
     <style>
       .hero-shell,.booking-overlap,.content-shell,.bottom-nav{opacity:1!important;transform:none!important}
@@ -45,6 +45,7 @@
         <div class="top-actions">
           <button class="icon-btn" id="notificationBtn" type="button" aria-label="Buka notifikasi" aria-expanded="false" aria-controls="notificationTray">
             <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+            <span id="notificationDot" class="notification-dot hidden" aria-hidden="true"></span>
           </button>
           <button class="auth-entry-btn guest" id="authEntryBtn" type="button" aria-label="Masuk atau buka akun">
             <span id="authEntryLabel">Masuk</span>
@@ -210,19 +211,49 @@
           </div>
         </article>
 
-        <article class="empty-state-card">
-          <div class="empty-visual">
-            <div class="ticket-layer ticket-back"></div>
-            <div class="ticket-layer ticket-front"></div>
-            <div class="flight-orb">
-              <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
+        <div id="journeyActivity">
+          <article id="journeyLoadingCard" class="journey-loading-card hidden">
+            <span class="journey-loading-icon"></span>
+            <div><strong>Memuat perjalanan...</strong><small>Mengambil aktivitas terbaru.</small></div>
+          </article>
+
+          <article id="activeJourneyCard" class="active-journey-card hidden" role="button" tabindex="0" aria-label="Buka perjalanan aktif">
+            <div class="active-journey-head">
+              <div>
+                <span id="activeJourneyKicker" class="active-journey-kicker">PERJALANAN AKTIF</span>
+                <strong id="activeJourneyTitle">BTH → CGK</strong>
+              </div>
+              <span id="activeJourneyStatus" class="active-journey-status">Diproses</span>
             </div>
-          </div>
-          <div class="empty-copy">
-            <strong>Belum ada perjalanan aktif</strong>
-            <p>Ketika tiket sudah dipesan, detail keberangkatan akan tampil otomatis di sini.</p>
-          </div>
-        </article>
+            <div class="active-journey-route">
+              <div><strong id="activeJourneyOrigin">BTH</strong><small>Asal</small></div>
+              <span class="active-journey-line"><i></i><svg viewBox="0 0 24 24"><path d="M2 16.5 22 12 2 7.5l4.5 4.5L2 16.5Z"/></svg><i></i></span>
+              <div class="right"><strong id="activeJourneyDestination">CGK</strong><small>Tujuan</small></div>
+            </div>
+            <div class="active-journey-meta">
+              <span id="activeJourneyAirline">Maskapai</span>
+              <b>•</b>
+              <span id="activeJourneyDate">—</span>
+              <b>•</b>
+              <span id="activeJourneyOrder">LG-—</span>
+            </div>
+            <div id="activeJourneyReminder" class="active-journey-reminder hidden">Selesaikan sebelum —</div>
+          </article>
+
+          <article id="emptyJourneyCard" class="empty-state-card">
+            <div class="empty-visual">
+              <div class="ticket-layer ticket-back"></div>
+              <div class="ticket-layer ticket-front"></div>
+              <div class="flight-orb">
+                <svg viewBox="0 0 24 24"><path d="m3 11 18-7-7 18-3-8-8-3Z"/></svg>
+              </div>
+            </div>
+            <div class="empty-copy">
+              <strong>Belum ada perjalanan aktif</strong>
+              <p>Ketika ada aktivitas pesanan, perjalanan terbaru akan tampil otomatis di sini.</p>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section class="insight-card">
@@ -291,13 +322,24 @@
       </button>
     </div>
 
-    <div class="notification-empty">
+    <div id="notificationTrayLoading" class="notification-tray-loading">
+      <span></span><span></span><span></span>
+    </div>
+
+    <div id="notificationTrayList" class="notification-tray-list hidden"></div>
+
+    <div id="notificationTrayEmpty" class="notification-empty hidden">
       <span class="notification-empty-icon">
         <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
       </span>
-      <strong>Belum ada notifikasi baru</strong>
-      <p>Informasi pesanan dan perjalanan terbaru akan muncul di sini.</p>
+      <strong>Belum ada aktivitas baru</strong>
+      <p>Update pesanan, tiket, kedatangan, dan pembayaran akan muncul di sini.</p>
     </div>
+
+    <button id="viewAllNotificationsBtn" class="tray-view-all hidden" type="button">
+      Lihat semua notifikasi
+      <svg viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+    </button>
   </aside>
 
   <div class="sheet-backdrop" id="sheetBackdrop"></div>
@@ -376,6 +418,6 @@
     <span class="page-transition-mark"></span>
   </div>
 
-  <script type="module" src="./home.js"></script>
+  <script type="module" src="./home.js?v=20260825-live-activity-v1"></script>
 </body>
 </html>
