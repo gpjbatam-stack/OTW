@@ -779,9 +779,23 @@ async function loadActiveJourney() {
     }
     const rMap = new Map(receivables.map(r=>[r.flight_order_id,r]));
 
-    // Prefer genuinely active activity. Paid/completed are fallback if most recent.
-    const priority = {PROCESSING:1,VERIFIED:2,ISSUED:3,COMPLETED:4,SUBMITTED:5,PAID:6};
-    const sorted = [...orders].sort((a,b)=>{
+    // Home "Perjalanan saya" hanya menampilkan perjalanan yang masih aktif/actionable.
+    // Pesanan PAID tidak lagi dianggap perjalanan aktif.
+    const activeStatuses = new Set(["SUBMITTED","PROCESSING","VERIFIED","ISSUED","COMPLETED"]);
+    const priority = {PROCESSING:1,VERIFIED:2,ISSUED:3,COMPLETED:4,SUBMITTED:5};
+
+    const activeOrders = orders.filter(order => {
+      const status = journeyEffectiveStatus(order,rMap.get(order.id));
+      return activeStatuses.has(status);
+    });
+
+    if (!activeOrders.length) {
+      activeJourney = null;
+      renderActiveJourney();
+      return;
+    }
+
+    const sorted = [...activeOrders].sort((a,b)=>{
       const sa=journeyEffectiveStatus(a,rMap.get(a.id));
       const sb=journeyEffectiveStatus(b,rMap.get(b.id));
       const pa=priority[sa]??9, pb=priority[sb]??9;

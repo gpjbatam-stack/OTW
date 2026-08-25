@@ -3040,3 +3040,13 @@ button:focus-visible,
   .tray-notification{grid-template-columns:31px 1fr auto;padding:9px}
   .tray-notification-icon{width:31px;height:31px}
 }
+
+/* FIX V2 — mutually exclusive journey states */
+.journey-loading-card.hidden,
+.active-journey-card.hidden,
+#emptyJourneyCard.hidden,
+#notificationTrayList.hidden,
+#notificationTrayEmpty.hidden,
+#viewAllNotificationsBtn.hidden{
+  display:none !important;
+}
