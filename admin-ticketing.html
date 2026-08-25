@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#061a3a">
-  <title>Admin Ticketing — OTW</title>
+  <title>Admin Ticketing — LetsGo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <span class="brand-mark">O</span>
-      <div><strong>OTW</strong><small>ADMIN CONSOLE</small></div>
+      <div><strong>LetsGo</strong><small>ADMIN CONSOLE</small></div>
     </div>
 
     <nav class="side-nav">
@@ -52,7 +52,7 @@
   <main class="workspace">
     <header class="mobile-header">
       <button id="menuBtn" class="square-btn" type="button"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-      <div><small>OTW ADMIN</small><strong>Ticketing</strong></div>
+      <div><small>LETSGO ADMIN</small><strong>Ticketing</strong></div>
       <button id="mobileRefreshBtn" class="square-btn" type="button"><svg viewBox="0 0 24 24"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M6 9a7 7 0 0 1 12-3l2 5M18 15a7 7 0 0 1-12 3l-2-5"/></svg></button>
     </header>
 
@@ -142,7 +142,7 @@
     <header class="drawer-header">
       <div>
         <span class="eyebrow">TICKETING WORKSPACE</span>
-        <h2 id="drawerCode">OTW-—</h2>
+        <h2 id="drawerCode">LG-—</h2>
         <p id="drawerCreated">—</p>
       </div>
       <button id="closeDrawerBtn" type="button">×</button>
@@ -230,13 +230,13 @@
       </section>
 
       <section class="workspace-card travel-doc-card">
-        <header><span>05</span><div><small>OTW TRAVEL DOCUMENT</small><strong>Dokumen perjalanan OTW</strong></div></header>
+        <header><span>05</span><div><small>LETSGO TRAVEL DOCUMENT</small><strong>Dokumen perjalanan LetsGo</strong></div></header>
         <div class="travel-doc-preview">
-          <div class="travel-doc-brand"><span>OTW</span><small>OFFICIAL TRIP FOR WORK</small></div>
+          <div class="travel-doc-brand"><span>LetsGo</span><small>LETSGO TRAVEL</small></div>
           <div><small>TRAVEL DOCUMENT</small><strong id="travelDocRoute">--- → ---</strong><span id="travelDocReference">Booking Reference: —</span></div>
           <b>VERIFIED TRIP</b>
         </div>
-        <p class="helper-copy">Dokumen OTW adalah ringkasan perjalanan. E-ticket resmi maskapai tetap disediakan terpisah.</p>
+        <p class="helper-copy">Dokumen LetsGo adalah ringkasan perjalanan. E-ticket resmi maskapai tetap disediakan terpisah.</p>
         <div class="document-actions three">
           <button id="previewTravelDocBtn" type="button">Preview</button>
           <button id="generateTravelDocBtn" type="button">Generate</button>
@@ -247,7 +247,7 @@
       <section class="workspace-card">
         <header><span>06</span><div><small>COMMUNICATION</small><strong>Catatan operasional</strong></div></header>
         <div class="form-grid one">
-          <label><span>Catatan internal admin</span><textarea id="internalNoteInput" rows="3" placeholder="Hanya untuk tim OTW. Tidak terlihat customer."></textarea></label>
+          <label><span>Catatan internal admin</span><textarea id="internalNoteInput" rows="3" placeholder="Hanya untuk tim LetsGo. Tidak terlihat customer."></textarea></label>
           <label><span>Catatan untuk customer</span><textarea id="customerNoteInput" rows="3" placeholder="Informasi yang akan tampil di Detail Pesanan customer."></textarea></label>
         </div>
       </section>
@@ -332,24 +332,24 @@
   </section>
 </div>
 
-<div class="modal-backdrop hidden otwdoc-backdrop" id="travelDocModal">
-  <section class="otwdoc-modal otwdoc-v8" role="dialog" aria-modal="true" aria-labelledby="otwdocPreviewTitle">
-    <header class="otwdoc-modalbar">
-      <div><span>OTW TRAVEL DOCUMENT</span><h3 id="otwdocPreviewTitle">Preview tiket perjalanan</h3></div>
+<div class="modal-backdrop hidden letsgo-doc-backdrop" id="travelDocModal">
+  <section class="letsgo-doc-modal letsgo-doc-v8" role="dialog" aria-modal="true" aria-labelledby="letsgo-docPreviewTitle">
+    <header class="letsgo-doc-modalbar">
+      <div><span>LETSGO TRAVEL DOCUMENT</span><h3 id="letsgo-docPreviewTitle">Preview tiket perjalanan</h3></div>
       <button id="closeTravelDocBtn" type="button" aria-label="Tutup">×</button>
     </header>
 
-    <div class="otwdoc-scroll">
-      <article id="printableTravelDoc" class="otwdoc-paper otwdoc-v9-ticket">
+    <div class="letsgo-doc-scroll">
+      <article id="printableTravelDoc" class="letsgo-doc-paper letsgo-doc-v9-ticket">
   <header class="v9-head">
-    <div class="v9-brand"><strong>OTW</strong><span>Official Trip for Work<small>E-TICKET / TRAVEL DOCUMENT</small></span></div>
+    <div class="v9-brand"><strong>LetsGo</strong><span>LetsGo Travel<small>E-TICKET / TRAVEL DOCUMENT</small></span></div>
     <div class="v9-verified"><i>✓</i><span><small>DOCUMENT STATUS</small><strong>VERIFIED</strong></span></div>
   </header>
 
   <section class="v9-booking">
-    <div><small>OTW ORDER</small><strong id="docOrderCode">—</strong></div>
+    <div><small>LETSGO ORDER</small><strong id="docOrderCode">—</strong></div>
     <div class="v9-pnr"><small>BOOKING CODE / PNR</small><strong id="docPnr">—</strong></div>
-    <div class="v9-qr"><div id="docQr" class="otwdoc-qr"></div><span>SCAN TO VERIFY</span></div>
+    <div class="v9-qr"><div id="docQr" class="letsgo-doc-qr"></div><span>SCAN TO VERIFY</span></div>
     <span id="docTicketNumber" class="hidden">—</span>
   </section>
 
@@ -408,18 +408,18 @@
   </section>
 
   <section class="v9-issued">
-    <span><small>ISSUED BY</small><strong>OTW Ticketing</strong></span>
+    <span><small>ISSUED BY</small><strong>LetsGo Ticketing</strong></span>
     <span><small>ISSUED AT</small><strong id="docIssuedAt">—</strong></span>
     <span><small>STATUS</small><strong id="docStatus">ISSUED</strong></span>
   </section>
 
-  <footer class="v9-foot"><div><strong>OTW</strong><span>Official Trip for Work</span></div><small>SECURE ELECTRONIC TRAVEL DOCUMENT</small></footer>
+  <footer class="v9-foot"><div><strong>LetsGo</strong><span>LetsGo Travel</span></div><small>SECURE ELECTRONIC TRAVEL DOCUMENT</small></footer>
 </article>
     </div>
 
-    <footer class="otwdoc-actions">
-      <button id="modalCloseBtn" class="otwdoc-btn secondary" type="button">Tutup</button>
-      <button id="modalPrintBtn" class="otwdoc-btn primary" type="button"><span>▣</span> Cetak / Simpan PDF</button>
+    <footer class="letsgo-doc-actions">
+      <button id="modalCloseBtn" class="letsgo-doc-btn secondary" type="button">Tutup</button>
+      <button id="modalPrintBtn" class="letsgo-doc-btn primary" type="button"><span>▣</span> Cetak / Simpan PDF</button>
     </footer>
   </section>
 </div>

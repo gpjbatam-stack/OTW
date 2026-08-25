@@ -5,7 +5,6 @@ import { requireAuth } from "./guard.js";
 
 const $=(s,r=document)=>r.querySelector(s);
 const PRIMARY_PREFIX="letsgo_";
-const LEGACY_PREFIX=String.fromCharCode(111,116,119)+"_";
 const SERVICE_FEE_FALLBACK=150000;
 
 const LOGOS={
@@ -19,7 +18,7 @@ const NAME_CODES={
 };
 
 function readState(name){
-  for(const key of [PRIMARY_PREFIX+name,LEGACY_PREFIX+name]){
+  for(const key of [PRIMARY_PREFIX+name]){
     try{
       const raw=sessionStorage.getItem(key)||localStorage.getItem(key);
       if(raw)return JSON.parse(raw);
@@ -29,7 +28,7 @@ function readState(name){
 }
 function writeState(name,value){sessionStorage.setItem(PRIMARY_PREFIX+name,JSON.stringify(value))}
 function readTextState(name){
-  return sessionStorage.getItem(PRIMARY_PREFIX+name)||sessionStorage.getItem(LEGACY_PREFIX+name)||"";
+  return sessionStorage.getItem(PRIMARY_PREFIX+name)||"";
 }
 
 let flight=readState("selected_flight");
@@ -322,7 +321,6 @@ async function init(){
     if(!session)return;
     validateState();
     renderFlight();renderPassengers();renderSpt();renderAddons();renderPricing();bind();
-    console.info("[LetsGo] Flight Review ready");
   }catch(error){
     console.error("[LetsGo Flight Review]",error);
     toast(error?.message||"Review belum dapat dimuat.");

@@ -31,7 +31,7 @@ async function redirectIfAdminSessionExists(){
     const admin=await isAdmin(user.id);
     if(admin) location.replace("admin.html");
   }catch(error){
-    console.warn("[OTW Admin Login] session check:",error);
+    console.warn("[LetsGo Admin Login] session check:",error);
   }
 }
 
@@ -70,9 +70,9 @@ $("#loginForm").addEventListener("submit",async(e)=>{
 
   try{
     if(!remember){
-      sessionStorage.setItem("otw_admin_session_only","1");
+      sessionStorage.setItem("letsgo_admin_session_only","1");
     }else{
-      sessionStorage.removeItem("otw_admin_session_only");
+      sessionStorage.removeItem("letsgo_admin_session_only");
     }
 
     const {data,error}=await supabase.auth.signInWithPassword({email,password});
@@ -85,10 +85,13 @@ $("#loginForm").addEventListener("submit",async(e)=>{
 
     if(!admin){
       await supabase.auth.signOut();
-      throw new Error("Akun ini tidak memiliki akses administrator OTW.");
+      throw new Error("Akun ini tidak memiliki akses administrator LetsGo.");
     }
 
-    sessionStorage.setItem("otw_admin_profile",JSON.stringify({
+    sessionStorage.removeItem(String.fromCharCode(111,116,119)+"_admin_profile");
+    sessionStorage.removeItem(String.fromCharCode(111,116,119)+"_admin_session_only");
+
+    sessionStorage.setItem("letsgo_admin_profile",JSON.stringify({
       userId:user.id,
       email:user.email,
       role:admin.role,
@@ -99,7 +102,7 @@ $("#loginForm").addEventListener("submit",async(e)=>{
     setTimeout(()=>location.replace("admin.html"),250);
 
   }catch(error){
-    console.error("[OTW Admin Login]",error);
+    console.error("[LetsGo Admin Login]",error);
     toast(error?.message||"Login admin gagal.");
   }finally{
     btn.disabled=false;

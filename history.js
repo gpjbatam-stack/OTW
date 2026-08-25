@@ -66,17 +66,18 @@ function airlineCode(order){
 
 function normalizeStatus(status=""){
   const s=String(status).toUpperCase();
-  if(["COMPLETED","DONE","FINISHED","ISSUED"].includes(s)) return "completed";
+  if(["COMPLETED","PAID","DONE","FINISHED"].includes(s)) return "completed";
   if(["CANCELLED","CANCELED","REJECTED","VOID"].includes(s)) return "cancelled";
   return "other";
 }
 
 function statusLabel(status=""){
-  const type=normalizeStatus(status);
-  if(type==="completed"){
-    return String(status).toUpperCase()==="ISSUED" ? "Tiket terbit" : "Selesai";
-  }
+  const s=String(status).toUpperCase();
+  const type=normalizeStatus(s);
+  if(s==="PAID") return "Lunas";
+  if(type==="completed") return "Selesai";
   if(type==="cancelled") return "Dibatalkan";
+  if(s==="ISSUED") return "Tiket terbit";
   return String(status||"Diproses").replaceAll("_"," ");
 }
 

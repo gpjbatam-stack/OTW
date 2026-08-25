@@ -64,7 +64,7 @@
     if(!sb) throw new Error("Supabase client belum tersedia. Pastikan supabase.js dimuat.");
     const {data:{session}}=await sb.auth.getSession();
     if(!session){location.replace("admin-login.html");return false}
-    currentUser=session.user; $("sideEmail").textContent=currentUser.email||"Admin OTW";
+    currentUser=session.user; $("sideEmail").textContent=currentUser.email||"Admin LetsGo";
     const {data:admin,error}=await sb.from("app_admins").select("*").eq("user_id",currentUser.id).maybeSingle();
     if(error || !admin || admin.is_active===false){await sb.auth.signOut();location.replace("admin-login.html");return false}
     return true;

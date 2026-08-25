@@ -1,6 +1,7 @@
 import { getOptionalSession } from "./guard.js";
 import { getMyProfile } from "./profile-service.js";
 import { supabase } from "./supabase.js";
+import { readUserSettings, isNotificationEnabled } from "./user-settings.js";
 
 /* =========================================================
    LETSGO HOME — FUNCTIONAL CONTROLLER
@@ -134,6 +135,20 @@ const airports = [
   { code:"TKG", city:"Bandar Lampung", name:"Radin Inten II Airport" },
   { code:"LOP", city:"Lombok", name:"Zainuddin Abdul Madjid International Airport" },
 ];
+
+let homeUserSettings = readUserSettings(activeSession?.user?.id || null);
+
+function applySearchPreferences() {
+  if (!activeSession?.user?.id) return;
+  homeUserSettings = readUserSettings(activeSession.user.id);
+  const preferredAirport = airports.find(a => a.code === String(homeUserSettings.airport || "BTH").toUpperCase());
+  if (preferredAirport) state.origin = preferredAirport;
+  if (homeUserSettings.cabin) state.cabin = homeUserSettings.cabin;
+  syncRouteUI?.();
+  const cabinText = $("#cabinText");
+  if (cabinText) cabinText.textContent = state.cabin;
+  $$(".cabin-option").forEach(btn => btn.classList.toggle("active", btn.dataset.cabin === state.cabin));
+}
 
 /* =========================================================
    OVERLAYS: notification tray + bottom sheets are mutually exclusive
@@ -527,7 +542,16 @@ on("#searchFlightBtn", "click", async () => {
 
   if (state.returnDate) params.set("return", state.returnDate);
 
-  await navigate(`search-flight.html?${params.toString()}`);
+  const target = `search-flight.html?${params.toString()}`;
+
+  // Guest can prepare a search without losing it. After login, resume directly
+  // to the exact search URL from this browser tab.
+  if (!activeSession) {
+    sessionStorage.setItem("letsgo_pending_search_url", target);
+    return navigate("login.html?next=home.html%3FresumeSearch%3D1");
+  }
+
+  await navigate(target);
 });
 
 
@@ -557,7 +581,14 @@ on("#homeNav", "click", () => {
 });
 
 on("#ordersNav", "click", () => navigateProtected("orders.html"));
-on("#applyNav", "click", () => navigateProtected("pengajuan.html"));
+on("#applyNav", "click", () => {
+  setNotificationTray(false);
+  closeSheets();
+  const booking = $(".booking-card");
+  booking?.scrollIntoView({ behavior:"smooth", block:"center" });
+  booking?.classList.add("booking-focus");
+  setTimeout(() => booking?.classList.remove("booking-focus"), 700);
+});
 on("#documentsNav", "click", () => navigateProtected("documents.html"));
 on("#profileNav", "click", () => activeSession ? navigate("profile.html") : navigate("login.html?next=profile.html"));
 on("#helpBtn", "click", () => navigate("help.html"));
@@ -659,7 +690,7 @@ async function loadHomeNotifications() {
 
   try {
     // Also materialize due-soon / overdue reminders.
-    try { await supabase.rpc("sync_my_letsgo_notifications"); } catch {}
+    try { await supabase.rpc("sync_my_letsgo_notifications"); } catch (error) { console.warn("[LetsGo Notification Sync]", error); }
 
     const {data,error} = await supabase
       .from("notifications")
@@ -669,7 +700,8 @@ async function loadHomeNotifications() {
       .limit(20);
 
     if (error) throw error;
-    homeNotifications = data || [];
+    homeUserSettings = readUserSettings(activeSession.user.id);
+    homeNotifications = (data || []).filter(n => isNotificationEnabled(n, homeUserSettings));
     renderNotificationTray();
   } catch (error) {
     console.warn("[LetsGo Home Notifications]",error);
@@ -846,6 +878,30 @@ activeJourneyCard?.addEventListener("keydown", event => {
   activeJourneyCard.click();
 });
 
+async function startReceivableRealtimeForActiveJourney() {
+  if (receivableChannel) {
+    await supabase.removeChannel(receivableChannel);
+    receivableChannel = null;
+  }
+
+  const orderId = activeJourney?.order?.id;
+  const uid = activeSession?.user?.id;
+  if (!uid || !orderId) return;
+
+  receivableChannel = supabase
+    .channel(`home-receivable-${uid}-${orderId}`)
+    .on("postgres_changes",{
+      event:"*",
+      schema:"public",
+      table:"receivables",
+      filter:`flight_order_id=eq.${orderId}`
+    }, async () => {
+      await loadActiveJourney();
+      await startReceivableRealtimeForActiveJourney();
+    })
+    .subscribe();
+}
+
 async function startHomeRealtime() {
   if (!activeSession?.user?.id) return;
   const uid = activeSession.user.id;
@@ -857,17 +913,27 @@ async function startHomeRealtime() {
 
   orderChannel = supabase
     .channel(`home-orders-${uid}`)
-    .on("postgres_changes",{event:"*",schema:"public",table:"flight_orders",filter:`user_id=eq.${uid}`},()=>loadActiveJourney())
+    .on("postgres_changes",{event:"*",schema:"public",table:"flight_orders",filter:`user_id=eq.${uid}`},async()=>{
+      await loadActiveJourney();
+      await startReceivableRealtimeForActiveJourney();
+    })
     .subscribe();
 
-  // Receivable has no user_id, so reload latest journey for any receivable change.
-  receivableChannel = supabase
-    .channel(`home-receivables-${uid}`)
-    .on("postgres_changes",{event:"*",schema:"public",table:"receivables"},()=>loadActiveJourney())
-    .subscribe();
+  await startReceivableRealtimeForActiveJourney();
+}
+
+const homeParams = new URLSearchParams(location.search);
+if (activeSession && homeParams.get("resumeSearch") === "1") {
+  const pendingSearchUrl = sessionStorage.getItem("letsgo_pending_search_url") || "";
+  sessionStorage.removeItem("letsgo_pending_search_url");
+  if (/^search-flight\.html\?/.test(pendingSearchUrl)) {
+    await navigate(pendingSearchUrl);
+    await new Promise(() => {});
+  }
 }
 
 if (activeSession) {
+  applySearchPreferences();
   notificationTrayLoading?.classList.remove("hidden");
   await Promise.all([loadHomeNotifications(),loadActiveJourney()]);
   await startHomeRealtime();
@@ -890,6 +956,15 @@ window.addEventListener("pagehide", () => {
 });
 
 
+if (location.hash === "#booking") {
+  requestAnimationFrame(() => {
+    const booking = $(".booking-card");
+    booking?.scrollIntoView({ behavior:"smooth", block:"center" });
+    booking?.classList.add("booking-focus");
+    setTimeout(() => booking?.classList.remove("booking-focus"), 700);
+  });
+}
+
 /* =========================================================
    MICRO INTERACTIONS
    ========================================================= */
@@ -898,4 +973,12 @@ $$("button, .airport-option, .meta-card, .cabin-option").forEach(el => {
   ["pointerup","pointercancel","pointerleave"].forEach(eventName => {
     el.addEventListener(eventName, () => el.classList.remove("is-pressed"));
   });
+});
+
+window.addEventListener("storage", event => {
+  if (!activeSession?.user?.id) return;
+  if (event.key === `letsgo_user_settings_${activeSession.user.id}`) {
+    applySearchPreferences();
+    loadHomeNotifications();
+  }
 });

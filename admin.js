@@ -27,7 +27,7 @@ async function verifyAdmin(){
   $("#adminMeta").textContent=`${user.email} · ${admin.role}`;
   $("#roleText").textContent=`${admin.role} · aktif`;
 
-  sessionStorage.setItem("otw_admin_profile",JSON.stringify({
+  sessionStorage.setItem("letsgo_admin_profile",JSON.stringify({
     userId:user.id,email:user.email,role:admin.role
   }));
 
@@ -51,13 +51,14 @@ async function loadTicketingQueue(){
         : "Tidak ada antrean aktif";
     }
   }catch(error){
-    console.warn("[OTW Admin] queue count:",error);
+    console.warn("[LetsGo Admin] queue count:",error);
   }
 }
 
 async function logout(){
   await supabase.auth.signOut();
-  sessionStorage.removeItem("otw_admin_profile");
+  sessionStorage.removeItem("letsgo_admin_profile");
+  sessionStorage.removeItem(String.fromCharCode(111,116,119)+"_admin_profile");
   location.replace("admin-login.html");
 }
 

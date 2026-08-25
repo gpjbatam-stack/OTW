@@ -31,7 +31,7 @@ async function load(){
   if(error)throw error;
   order=data;
   if(order.user_id && order.user_id!==user.id)throw new Error("E-ticket ini bukan milik akun Anda.");
-  if(!["ISSUED","COMPLETED"].includes(String(order.status||"").toUpperCase()))throw new Error("E-ticket belum diterbitkan.");
+  if(!["ISSUED","COMPLETED","PAID"].includes(String(order.status||"").toUpperCase()))throw new Error("E-ticket belum diterbitkan.");
 }
 
 function resolve(){
@@ -85,8 +85,8 @@ async function openOfficial(){
   toast("E-ticket resmi belum dapat dibuka.");
 }
 async function share(){
-  const url=location.href,title=`OTW E-Ticket ${order?.order_code||""}`;
-  if(navigator.share){try{await navigator.share({title,text:"E-ticket perjalanan OTW",url});return}catch{}}
+  const url=location.href,title=`LetsGo E-Ticket ${order?.order_code||""}`;
+  if(navigator.share){try{await navigator.share({title,text:"E-ticket perjalanan LetsGo",url});return}catch{}}
   try{await navigator.clipboard.writeText(url);toast("Link e-ticket disalin.")}catch{toast("Tidak dapat membagikan link.")}
 }
 

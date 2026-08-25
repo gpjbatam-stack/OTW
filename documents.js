@@ -61,7 +61,7 @@ function filtered(){
       if(activeFilter!=="TICKET" && type!==activeFilter)return false;
     }
     if(query){
-      const hay=[doc.file_name,doc.document_type,doc.status,doc.order_id].join(" ").toLowerCase();
+      const hay=[doc.file_name,doc.document_type,doc.status,doc.order_id,doc.order_code].join(" ").toLowerCase();
       if(!hay.includes(query))return false;
     }
     return true;
@@ -70,14 +70,27 @@ function filtered(){
 
 async function openDocument(doc){
   if(!doc.file_path)return toast("File dokumen belum tersedia.");
-  try{
-    const {data,error}=await supabase.storage
-      .from("spt-documents")
-      .createSignedUrl(doc.file_path,60);
 
-    if(error)throw error;
-    if(data?.signedUrl)window.open(data.signedUrl,"_blank","noopener,noreferrer");
-    else toast("Tautan dokumen belum tersedia.");
+  const type=String(doc.document_type||"").toUpperCase();
+  const explicitBucket=String(doc.storage_bucket||doc.bucket||"").trim();
+  const candidates=[];
+
+  if(explicitBucket)candidates.push(explicitBucket);
+  if(type==="SPT")candidates.push("spt-documents");
+  else if(["TICKET","ETICKET","E-TICKET"].includes(type))candidates.push("flight-tickets","tickets","documents");
+  else if(type==="INVOICE")candidates.push("documents","invoices","flight-tickets");
+  else candidates.push("documents","spt-documents","flight-tickets","tickets");
+
+  const buckets=[...new Set(candidates.filter(Boolean))];
+  try{
+    for(const bucket of buckets){
+      const {data,error}=await supabase.storage.from(bucket).createSignedUrl(doc.file_path,60);
+      if(!error&&data?.signedUrl){
+        window.open(data.signedUrl,"_blank","noopener,noreferrer");
+        return;
+      }
+    }
+    throw new Error("File dokumen tidak ditemukan pada penyimpanan yang tersedia.");
   }catch(error){
     console.error("[LetsGo Documents Open]",error);
     toast(error?.message||"Dokumen belum dapat dibuka.");
@@ -113,7 +126,7 @@ function render(){
       </div>
       <div class="doc-actions">
         <button class="open-btn" type="button" data-open="${esc(doc.id||"")}">Buka</button>
-        ${doc.order_id?`<button class="order-btn" type="button" data-order="${esc(doc.order_id)}">Pesanan</button>`:""}
+        ${doc.order_code?`<button class="order-btn" type="button" data-order="${esc(doc.order_code)}">Pesanan</button>`:""}
       </div>
     `;
     list.appendChild(card);
@@ -149,6 +162,19 @@ async function loadDocuments(){
 
     if(error)throw error;
     documents=data||[];
+
+    const orderIds=[...new Set(documents.map(x=>x.order_id).filter(Boolean))];
+    if(orderIds.length){
+      const {data:orders,error:ordersError}=await supabase
+        .from("flight_orders")
+        .select("id,order_code,user_id")
+        .eq("user_id",session.user.id)
+        .in("id",orderIds);
+      if(ordersError)throw ordersError;
+      const orderMap=new Map((orders||[]).map(x=>[String(x.id),x.order_code]));
+      documents=documents.map(doc=>({...doc,order_code:orderMap.get(String(doc.order_id))||null}));
+    }
+
     renderStats();
     render();
   }catch(error){

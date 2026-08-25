@@ -1,4 +1,4 @@
-let sb=null, rows=[], filtered=[];
+let sb=null, currentUser=null, rows=[], filtered=[], adminAuthorized=false;
 const $=(s,r=document)=>r.querySelector(s);
 const rupiah=v=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(v||0));
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
@@ -6,18 +6,47 @@ function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("show");cl
 async function getSupabase(){
   try{
     const mod=await import("./supabase.js");
-    const candidates=[mod.supabase,mod.default,mod.supabaseClient,window.supabaseClient,window.otwSupabase];
+    const candidates=[mod.supabase,mod.default,mod.supabaseClient,window.supabaseClient,window.letsgoSupabase];
     return candidates.find(x=>x&&typeof x.from==="function")||null;
   }catch(e){
-    return [window.supabaseClient,window.otwSupabase].find(x=>x&&typeof x.from==="function")||null;
+    return [window.supabaseClient,window.letsgoSupabase].find(x=>x&&typeof x.from==="function")||null;
   }
+}
+async function ensureAdmin(){
+  if(!sb) sb=await getSupabase();
+  if(!sb) throw new Error("Supabase client belum tersedia. Pastikan supabase.js dimuat.");
+
+  const {data:{session},error:sessionError}=await sb.auth.getSession();
+  if(sessionError) throw sessionError;
+  if(!session){
+    location.replace("admin-login.html");
+    return false;
+  }
+
+  currentUser=session.user;
+  const {data:admin,error:adminError}=await sb
+    .from("app_admins")
+    .select("user_id,role,is_active")
+    .eq("user_id",currentUser.id)
+    .eq("is_active",true)
+    .maybeSingle();
+
+  if(adminError || !admin){
+    try{await sb.auth.signOut();}catch{}
+    location.replace("admin-login.html");
+    return false;
+  }
+
+  adminAuthorized=true;
+  return true;
 }
 function selling(r){const auto=Math.max(Number(r.reference_price||0)*(1+Number(r.buffer_percent||0)/100),Number(r.minimum_price||0));return r.manual_selling_price==null?auto:Number(r.manual_selling_price)}
 function margin(r){return selling(r)-Number(r.reference_price||0)}
 async function load(){
   setSync("Memuat...");
-  if(!sb){sb=await getSupabase()}
-  if(!sb){setSync("Supabase belum terhubung",false);toast("Tidak dapat membaca ./supabase.js");return}
+  if(!adminAuthorized){
+    if(!await ensureAdmin()) return;
+  }
   const {data,error}=await sb.from("addon_pricing").select("*").order("airline_name").order("addon_type").order("addon_name");
   if(error){setSync("Gagal sinkron",false);toast(error.message);return}
   rows=data||[];buildAirlines();applyFilters();setSync("Tersinkron");
@@ -47,7 +76,12 @@ function openDrawer(){$("#drawer").classList.remove("hidden");document.body.styl
 function closeDrawer(){$("#drawer").classList.add("hidden");document.body.style.overflow=""}
 function updatePreview(){const ref=Number($("#referencePrice").value||0),buf=Number($("#bufferPercent").value||0),min=Number($("#minimumPrice").value||0),manual=$("#manualPrice").value;const auto=Math.max(ref*(1+buf/100),min),sell=manual===""?auto:Number(manual);$("#autoPreview").textContent=rupiah(auto);$("#sellingPreview").textContent=rupiah(sell);$("#riskBox").classList.toggle("hidden",sell>=ref);$("#weightWrap").classList.toggle("hidden",$("#addonType").value!=="BAGGAGE")}
 async function save(e){
- e.preventDefault();if(!sb)return toast("Supabase belum terhubung.");
+ e.preventDefault();
+ if(!adminAuthorized || !sb){
+   toast("Sesi admin tidak valid.");
+   location.replace("admin-login.html");
+   return;
+ }
  const id=$("#rowId").value,payload={airline_code:$("#airlineCode").value.trim().toUpperCase(),airline_name:$("#airlineName").value.trim(),addon_type:$("#addonType").value,addon_code:$("#addonCode").value.trim().toUpperCase(),addon_name:$("#addonName").value.trim(),weight_kg:$("#addonType").value==="BAGGAGE"&&$("#weightKg").value!==""?Number($("#weightKg").value):null,reference_price:Number($("#referencePrice").value||0),buffer_percent:Number($("#bufferPercent").value||0),minimum_price:Number($("#minimumPrice").value||0),manual_selling_price:$("#manualPrice").value===""?null:Number($("#manualPrice").value),is_active:$("#isActive").checked,notes:$("#notes").value.trim()||null};
  const sell=payload.manual_selling_price??Math.max(payload.reference_price*(1+payload.buffer_percent/100),payload.minimum_price);
  if(sell<payload.reference_price&&!confirm("Harga tayang lebih rendah dari harga referensi. Tetap simpan?"))return;
@@ -57,6 +91,11 @@ async function save(e){
  if(error)return toast(error.message);toast("Pricing berhasil disimpan.");closeDrawer();await load();
 }
 async function remove(){
+ if(!adminAuthorized || !sb){
+   toast("Sesi admin tidak valid.");
+   location.replace("admin-login.html");
+   return;
+ }
  const id=$("#rowId").value;if(!id||!confirm("Hapus add-on ini secara permanen?"))return;
  const {error}=await sb.from("addon_pricing").delete().eq("id",id);if(error)return toast(error.message);toast("Add-on dihapus.");closeDrawer();await load();
 }

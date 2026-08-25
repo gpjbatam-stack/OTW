@@ -53,13 +53,6 @@ async function loadCurrentReceivable(){
 
   currentReceivable=Array.isArray(data)&&data.length?data[0]:null;
 
-  console.info("[LetsGo Receivable] result",{
-    order_id:orderId,
-    order_code:currentOrder?.order_code,
-    found:Boolean(currentReceivable),
-    receivable_id:currentReceivable?.id||null
-  });
-
   return currentReceivable;
 }
 function syncPaymentControl(){
@@ -408,7 +401,7 @@ function renderQr(orderCode){
       correctLevel:QRCode.CorrectLevel.M
     });
   }else{
-    box.textContent="OTW";
+    box.textContent="LG";
   }
 }
 
@@ -494,7 +487,7 @@ function fillTravelDoc(){
     const name=[p.title,p.fullName||p.full_name||p.name].filter(Boolean).join(" ").trim()||`Penumpang ${index+1}`;
     const type=p.type||p.label||"ADULT";
     const paxTicket=p.ticketNumber||p.eTicketNumber||ticketNumber;
-    return `<div class="otwdoc-pax-v8">
+    return `<div class="letsgo-doc-pax-v8">
       <span>${index+1}</span>
       <div><strong>${esc(name.toUpperCase())}</strong><small>${esc(String(type).toUpperCase())} · ${esc(String(cabin).toUpperCase())}</small></div>
       <b>${esc(paxTicket||"—")}</b>
@@ -505,12 +498,12 @@ function fillTravelDoc(){
   if(baggageItems.length)serviceChips.push(`Extra bagasi ${extraBaggage}`);
   if(insurance)serviceChips.push(insurance.addonName||insurance.name||"Asuransi perjalanan");
   if(!serviceChips.length)serviceChips.push("Tanpa add-on tambahan");
-  $("#docServiceList").innerHTML=serviceChips.map(name=>`<span class="otwdoc-service-chip ${!baggageItems.length&&!insurance?"none":""}">${esc(name)}</span>`).join("");
+  $("#docServiceList").innerHTML=serviceChips.map(name=>`<span class="letsgo-doc-service-chip ${!baggageItems.length&&!insurance?"none":""}">${esc(name)}</span>`).join("");
 
   renderQr(currentOrder.order_code);
 }
 function previewTravelDoc(){fillTravelDoc();$("#travelDocModal").classList.remove("hidden")}
-function generateTravelDoc(){const r=syncReadiness();if(!r.ready){toast("Lengkapi seluruh Issue Readiness terlebih dahulu.");return}generatedDoc=true;syncTravelDoc();previewTravelDoc();toast("OTW Travel Document siap dicetak.");}
+function generateTravelDoc(){const r=syncReadiness();if(!r.ready){toast("Lengkapi seluruh Issue Readiness terlebih dahulu.");return}generatedDoc=true;syncTravelDoc();previewTravelDoc();toast("LetsGo Travel Document siap dicetak.");}
 
 async function saveOrder({status=selectedStatus,close=true}={}){
   const payload=buildPayload();const patch={payload,admin_notes:$("#customerNoteInput").value.trim(),status};
@@ -560,10 +553,3 @@ $("#cancelArrivedBtn")?.addEventListener("click",()=>openArrivalModal("cancel"))
 $("#closeArrivalModalBtn")?.addEventListener("click",closeArrivalModal);
 $("#arrivalModal")?.addEventListener("click",e=>{if(e.target===$("#arrivalModal"))closeArrivalModal()});
 $("#confirmArrivalBtn")?.addEventListener("click",()=>applyArrivalAction());
-
-
-
-
-
-
-console.info("[LetsGo] Admin Ticketing arrival/payment control FULL v2 loaded");
