@@ -94,5 +94,19 @@ linear-gradient(125deg,#04162f,#082f67 62%,#0d64c7 145%)}
   .invoice-paper{font-size:10pt}
 }
 
-.invoice-status>strong.unpaid{background:rgba(228,155,40,.13);border-color:rgba(255,199,104,.32);color:#ffd38d}
-.invoice-status>strong.unpaid i{background:#d9982d;color:#fff}
+@media screen and (max-width:699px){
+.app-shell{width:100%;max-width:480px;padding:0 12px 104px}.topbar{min-height:68px}
+.top-copy .eyebrow{font-size:9px}.top-copy h1{font-size:18px}.top-copy p{font-size:10px}
+.invoice-paper{border:0;border-radius:20px}.invoice-hero{min-height:108px;padding:20px 18px}
+.brand-block>strong{font-size:31px}.brand-block>span{font-size:10px}.brand-block>small{font-size:9px}
+.invoice-status>small{font-size:8px}.invoice-status>strong{font-size:10px}
+.invoice-meta{grid-template-columns:1fr!important}.invoice-meta>div,.invoice-meta>div:nth-child(3){min-height:auto;padding:12px 15px;border-right:0;border-top:1px solid #edf1f5}
+.invoice-meta small,.section-kicker,.trip-card small,.trip-facts small{font-size:9px}.invoice-meta strong{font-size:12px}
+.customer-card{grid-template-columns:1fr!important;margin:10px;padding:14px}.customer-card strong{font-size:14px}.customer-card small{font-size:10px}.payment-ref{text-align:left}.payment-ref>span{font-size:9px}
+.trip-card{margin:10px;padding:14px}.trip-head strong{font-size:13px}.trip-pill{font-size:9px}.route{grid-template-columns:1fr 58px 1fr!important}.route>div>strong{font-size:32px!important}.route>div>span{font-size:10px}
+.trip-facts{grid-template-columns:1fr!important}.trip-facts>div:nth-child(3){grid-column:auto}.trip-facts strong{font-size:12px}
+.billing-section{margin:18px 10px 0}.section-title h2{font-size:18px}.paid-mini{font-size:9px}.bill-row{min-height:50px}.bill-row span{font-size:11px}.bill-row strong{font-size:12px}
+.grand-total-card{min-height:82px}.grand-total-card small{font-size:8px}.grand-total-card span{font-size:9px}.grand-total-card>strong{font-size:23px}
+.secure-note{margin:11px 10px 12px}.secure-note strong{font-size:11px}.secure-note small{font-size:9px}.invoice-footer strong{font-size:16px}.invoice-footer span,.invoice-footer>small{font-size:8px}
+.action-panel{max-width:480px;margin:auto;z-index:30}.action-panel .button{font-size:11px}.toast{font-size:10px}}
+.invoice-status>strong.unpaid{background:rgba(245,158,11,.15);border-color:rgba(251,191,36,.35);color:#ffd27a}.invoice-status>strong.unpaid i{background:#e99a18}

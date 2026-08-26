@@ -1,7 +1,7 @@
 import { supabase } from "./supabase.js";
 
 const $=s=>document.querySelector(s);
-let user=null,order=null,receivable=null,receivableChannel=null;
+let user=null,order=null,receivable=null;
 
 const rupiah=v=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(v)||0);
 const dateOnly=v=>{if(!v)return"—";const d=new Date(v);return Number.isNaN(d.getTime())?"—":new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"short",year:"numeric"}).format(d)};
@@ -40,13 +40,7 @@ async function loadData(){
 
 function isPaid(){
   const status=String(receivable?.status||"").toLowerCase();
-  const outstanding=receivable?.outstanding_amount;
-  return status==="paid" || (
-    outstanding!==null &&
-    outstanding!==undefined &&
-    Number.isFinite(Number(outstanding)) &&
-    Number(outstanding)<=0
-  );
+  return status==="paid"||Number(receivable?.outstanding_amount||0)<=0;
 }
 
 function getPricing(){
@@ -149,7 +143,7 @@ function render(){
     document.querySelector(".secure-note small").textContent="Invoice ini belum berstatus lunas.";
   }
 
-  $("#ticketBtn").disabled=!["ISSUED","COMPLETED","PAID"].includes(String(order.status||"").toUpperCase());
+  $("#ticketBtn").disabled=!(["ISSUED","COMPLETED","PAID"].includes(String(order.status||"").toUpperCase()));
 
   $("#loadingState").classList.add("hidden");
   $("#invoicePaper").classList.remove("hidden");
@@ -170,48 +164,10 @@ async function openStorageRef(ref,buckets=["flight-tickets","tickets","documents
 
 async function openTicket(){
   if(!order?.order_code)return toast("E-ticket belum tersedia.");
+  const status=String(order.status||"").toUpperCase();
+  if(!["ISSUED","COMPLETED","PAID"].includes(status))return toast("E-ticket belum diterbitkan.");
   location.href=`e-ticket.html?id=${encodeURIComponent(order.order_code)}`;
 }
-
-
-async function refreshInvoice(){
-  if(!order?.order_code||!user?.id)return;
-  try{
-    const code=order.order_code;
-    const {data:orderData,error:orderError}=await supabase.from("flight_orders").select("*").eq("order_code",code).single();
-    if(orderError)throw orderError;
-    if(orderData.user_id&&orderData.user_id!==user.id)throw new Error("Anda tidak memiliki akses ke invoice pesanan ini.");
-    order=orderData;
-
-    const {data:rows,error:re}=await supabase
-      .from("receivables")
-      .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,paid_at,status,booking_blocked")
-      .eq("flight_order_id",order.id)
-      .limit(1);
-    if(re)throw re;
-    receivable=Array.isArray(rows)&&rows.length?rows[0]:null;
-    if(!receivable)throw new Error("Tagihan perjalanan belum tersedia.");
-    render();
-  }catch(error){
-    console.warn("[LetsGo Invoice Refresh]",error);
-  }
-}
-async function startInvoiceRealtime(){
-  if(!order?.id||!user?.id)return;
-  if(receivableChannel)await supabase.removeChannel(receivableChannel);
-  receivableChannel=supabase
-    .channel(`invoice-receivable-${user.id}-${order.id}`)
-    .on("postgres_changes",{
-      event:"*",
-      schema:"public",
-      table:"receivables",
-      filter:`flight_order_id=eq.${order.id}`
-    },()=>refreshInvoice())
-    .subscribe();
-}
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refreshInvoice()});
-window.addEventListener("focus",()=>refreshInvoice());
-window.addEventListener("pagehide",()=>{if(receivableChannel)supabase.removeChannel(receivableChannel)});
 
 $("#backBtn").onclick=()=>history.length>1?history.back():location.href=`orders.html`;
 $("#printTopBtn").onclick=()=>window.print();
@@ -224,7 +180,6 @@ $("#retryBtn").onclick=()=>location.reload();
     if(!await ensureAuth())return;
     await loadData();
     render();
-    await startInvoiceRealtime();
   }catch(e){
     console.error("[LetsGo Invoice]",e);
     $("#loadingState").classList.add("hidden");
