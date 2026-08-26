@@ -40,7 +40,16 @@ function resolveFlight(){const p=order.payload||{},f=p.flight||{},segs=Array.isA
 function paymentSnapshot(){const p=order.payload||{},pricing=p.pricing||{};const flight=Number(order.flight_total??pricing.flightTotal??0),baggage=Number(pricing.baggageTotal||0),insurance=Number(pricing.insuranceTotal||0),serviceFee=Number(pricing.serviceFee||pricing.service_fee||0),grand=Number(order.grand_total??pricing.grandTotal??flight+baggage+insurance+serviceFee);return{flight,baggage,insurance,serviceFee,grand}}
 function paymentState(){
   const rs=String(receivable?.status||"").toLowerCase();
-  if(rs==="paid"||Number(receivable?.outstanding_amount||0)<=0)return"paid";
+  const outstanding=receivable?.outstanding_amount;
+  if(
+    rs==="paid" ||
+    (
+      outstanding!==null &&
+      outstanding!==undefined &&
+      Number.isFinite(Number(outstanding)) &&
+      Number(outstanding)<=0
+    )
+  )return"paid";
   const p=order.payload?.payment||{};
   const state=String(p.transaction_status||p.status||order.payment_status||"").toLowerCase();
   if(["settlement","capture","paid","success"].includes(state)||String(order.status).toUpperCase()==="PAID")return"paid";
@@ -266,3 +275,5 @@ document.addEventListener("visibilitychange",async()=>{
 
 $("#backBtn").onclick=()=>history.length>1?history.back():location.href=`detail-pesanan.html?id=${encodeURIComponent(orderCode())}`;$("#retryBtn").onclick=()=>location.reload();$("#helpBtn").onclick=()=>location.href="help.html";$("#payBtn").onclick=()=>{$("#payBtn").dataset.mode==="invoice"?location.href=`invoice.html?id=${encodeURIComponent(order.order_code)}`:createTransaction()};
 (async()=>{try{if(!await ensureAuth())return;await loadOrder();render()}catch(e){console.error(e);$("#loadingState").classList.add("hidden");$("#errorState").classList.remove("hidden");$("#errorText").textContent=e.message||"Pembayaran belum dapat dimuat."}})();
+
+window.addEventListener("pagehide",()=>{if(paymentWatchTimer){clearInterval(paymentWatchTimer);paymentWatchTimer=null}});

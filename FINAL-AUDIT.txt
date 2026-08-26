@@ -1,0 +1,29 @@
+LETSGO CUSTOMER FINAL V3 — COMPLETE PACKAGE
+Date: 2026-08-26
+
+RESULT
+- Local JS dependency graph: PASS
+- JavaScript syntax check: PASS
+- Frontend service-role / Midtrans server secret scan: PASS
+- Payment baseline: payment(4).js, previously verified with Midtrans Sandbox E2E
+- Supabase baseline: supabase(9).js
+- Cache version: 20260826-customer-final-v3
+
+SHARED DEPENDENCIES INCLUDED
+- supabase.js
+- guard.js
+- auth-service.js
+- profile-service.js
+- user-settings.js
+
+FINAL HARDENING
+- Detail Pesanan ownership check before dependent customer data is loaded.
+- Orders uses receivable state for LUNAS and realtime is filtered per loaded flight_order_id.
+- Invoice refreshes payment status from receivables in realtime/focus.
+- E-ticket verifies authenticated user + order ownership.
+- Notifications debounce realtime reloads.
+- Payment keeps the already-proven Midtrans Sandbox flow.
+- profile-service getMyProfile uses maybeSingle so Home does not fail merely because a profile row is absent.
+
+IMPORTANT
+Database RLS, Storage policies, RPC privileges, and Edge Function security remain a separate backend/security audit before production.

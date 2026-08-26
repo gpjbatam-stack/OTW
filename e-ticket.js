@@ -20,9 +20,13 @@ function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show"
 function code(){return new URLSearchParams(location.search).get("id")||""}
 
 async function auth(){
-  const {data,error}=await supabase.auth.getSession();if(error)throw error;
-  user=data?.session?.user||null;
-  if(!user){location.replace("login.html");return false}
+  const {data,error}=await supabase.auth.getUser();
+  if(error||!data?.user){
+    try{await supabase.auth.signOut({scope:"local"})}catch{}
+    location.replace(`login.html?next=${encodeURIComponent(location.pathname.split("/").pop()+location.search)}`);
+    return false;
+  }
+  user=data.user;
   return true;
 }
 async function load(){

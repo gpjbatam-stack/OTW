@@ -837,7 +837,7 @@ async function loadActiveJourney() {
     // Home "Perjalanan saya" hanya menampilkan perjalanan yang masih aktif/actionable.
     // Pesanan PAID tidak lagi dianggap perjalanan aktif.
     const activeStatuses = new Set(["SUBMITTED","PROCESSING","VERIFIED","ISSUED","COMPLETED"]);
-    const priority = {PROCESSING:1,VERIFIED:2,ISSUED:3,COMPLETED:4,SUBMITTED:5};
+    const priority ={COMPLETED:0,ISSUED:1,PROCESSING:2,VERIFIED:3,SUBMITTED:4};
 
     const activeOrders = orders.filter(order => {
       const status = journeyEffectiveStatus(order,rMap.get(order.id));

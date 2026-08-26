@@ -1,0 +1,28 @@
+LETSGO CUSTOMER FINAL V4
+Date: 2026-08-26
+
+FOUR RE-AUDIT FIXES APPLIED
+1. payment.js
+   Paid status no longer defaults to true when receivable/outstanding_amount is absent or NULL.
+
+2. invoice.js
+   LUNAS requires explicit paid status or a real numeric outstanding_amount <= 0.
+
+3. detail-pesanan.js
+   Customer flight fare source priority normalized:
+   flight_total -> pricing.flightTotal -> ticket_price -> pricing.ticketFare.
+
+4. home.js
+   Active journey priority revised:
+   COMPLETED/payment stage -> ISSUED -> PROCESSING -> VERIFIED -> SUBMITTED.
+
+REGRESSION CHECK
+- Local dependency graph: PASS
+- JavaScript syntax: PASS
+- Frontend secret scan: PASS
+- Payment proven Midtrans Sandbox flow retained.
+- PNG/assets intentionally not bundled per user instruction.
+- Cache version: 20260826-customer-final-v4
+
+BACKEND NOTE
+RLS, Storage policies, RPC grants, triggers, and Edge Function security still require the separate backend audit before production.

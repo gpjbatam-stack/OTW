@@ -8,10 +8,11 @@ const STATUS_LABEL={
 };
 const STATUS_CLASS={
   SUBMITTED:"st-submitted", PROCESSING:"st-processing", VERIFIED:"st-processing",
-  ISSUED:"st-issued", COMPLETED:"st-completed", PAID:"st-completed", CANCELLED:"st-cancelled"
+  ISSUED:"st-issued", COMPLETED:"st-completed", PAID:"st-paid", CANCELLED:"st-cancelled"
 };
 
 let user=null,orders=[],receivablesByOrderId=new Map(),activeStatus="ALL",sortMode="NEWEST",query="";
+let ordersChannel=null,receivablesChannel=null,reloadTimer=null;
 
 function rupiah(v){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(v)||0)}
 function dateLabel(v){if(!v)return"—";const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";return new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"short",year:"numeric"}).format(d)}
@@ -127,5 +128,49 @@ $("#filterBtn")?.addEventListener("click",openFilter);$("#closeFilterBtn")?.addE
 $("#filterSheet")?.addEventListener("click",e=>{if(e.target===$("#filterSheet"))closeFilter()});
 document.querySelectorAll(".filter-option").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".filter-option").forEach(x=>x.classList.remove("active"));btn.classList.add("active");sortMode=btn.dataset.sort}));
 $("#applyFilterBtn")?.addEventListener("click",()=>{render();closeFilter()});
-async function init(){try{if(!await ensureAuth())return;await loadOrders()}catch(error){console.error("[LetsGo Orders]",error);$("#loadingState").classList.add("hidden");$("#errorState").classList.remove("hidden");$("#errorMessage").textContent=error?.message||"Pesanan belum dapat dimuat."}}
+
+function scheduleReload(delay=180){
+  clearTimeout(reloadTimer);
+  reloadTimer=setTimeout(()=>loadOrders().catch(error=>console.warn("[LetsGo Orders Realtime]",error)),delay);
+}
+async function startRealtime(){
+  if(!user?.id)return;
+  if(ordersChannel)await supabase.removeChannel(ordersChannel);
+  if(receivablesChannel)await supabase.removeChannel(receivablesChannel);
+
+  ordersChannel=supabase
+    .channel(`orders-flight-orders-${user.id}`)
+    .on("postgres_changes",{event:"*",schema:"public",table:"flight_orders",filter:`user_id=eq.${user.id}`},()=>scheduleReload())
+    .subscribe();
+
+  // RLS remains the security boundary. Any receivable change visible to this user
+  // triggers a debounced refresh so settlement is reflected without manual reload.
+  receivablesChannel=supabase.channel(`orders-receivables-${user.id}`);
+  for(const item of orders){
+    if(!item?.id)continue;
+    receivablesChannel.on(
+      "postgres_changes",
+      {event:"*",schema:"public",table:"receivables",filter:`flight_order_id=eq.${item.id}`},
+      ()=>scheduleReload(250)
+    );
+  }
+  receivablesChannel.subscribe();
+}
+function handlePaymentReturn(){
+  const params=new URLSearchParams(location.search);
+  if(params.get("payment")==="success"){
+    toast("Pembayaran berhasil dan status pesanan telah diperbarui.");
+    params.delete("payment");
+    const next=`${location.pathname}${params.toString()?`?${params}`:""}${location.hash||""}`;
+    history.replaceState({},document.title,next);
+  }
+}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&user)scheduleReload(0)});
+window.addEventListener("focus",()=>{if(user)scheduleReload(0)});
+window.addEventListener("pagehide",()=>{
+  if(ordersChannel)supabase.removeChannel(ordersChannel);
+  if(receivablesChannel)supabase.removeChannel(receivablesChannel);
+});
+
+async function init(){try{if(!await ensureAuth())return;await loadOrders();handlePaymentReturn();await startRealtime()}catch(error){console.error("[LetsGo Orders]",error);$("#loadingState").classList.add("hidden");$("#errorState").classList.remove("hidden");$("#errorMessage").textContent=error?.message||"Pesanan belum dapat dimuat."}}
 init();

@@ -53,7 +53,15 @@ async function loadData(){
   if(!code)throw new Error("Nomor pesanan tidak ditemukan pada URL.");
 
   const {data,error}=await supabase.from("flight_orders").select("*").eq("order_code",code).single();
-  if(error)throw error;order=data;
+  if(error)throw error;
+
+  const sessionUserId=session?.user?.id||session?.user_id||null;
+  if(!sessionUserId)throw new Error("Sesi pengguna tidak valid. Silakan masuk kembali.");
+  if(data?.user_id&&data.user_id!==sessionUserId){
+    throw new Error("Anda tidak memiliki akses ke pesanan ini.");
+  }
+
+  order=data;
 
   const [paxRes,addonRes,docRes]=await Promise.all([
     supabase.from("flight_passengers").select("*").eq("order_id",order.id).order("passenger_index"),
@@ -71,7 +79,7 @@ async function loadData(){
 
   const {data:receivableData,error:receivableError}=await supabase
     .from("receivables")
-    .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,arrived_batam_at,due_date,effective_due_date,status,booking_blocked")
+    .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,arrived_batam_at,due_date,effective_due_date,paid_at,status,booking_blocked")
     .eq("flight_order_id",order.id)
     .maybeSingle();
 
@@ -197,7 +205,7 @@ function renderSpt(){
 }
 function renderPricing(){
   const p=order.payload?.pricing||{};
-  const ticket=Number(order.ticket_price??p.ticketFare??0);
+  const ticket=Number(order.flight_total??p.flightTotal??order.ticket_price??p.ticketFare??0);
   const service=Number(order.service_fee??p.serviceFee??150000);
   const baggageTotal=addons.length
     ? addons.filter(x=>x.addon_type==="BAGGAGE").reduce((s,x)=>s+Number(x.total_price||0),0)
@@ -230,7 +238,13 @@ function renderPaymentDeadline(){
   const deadline=receivable?.effective_due_date||receivable?.due_date||null;
   const arrived=receivable?.arrived_batam_at||null;
   const paymentStatus=String(receivable?.status||"open").toLowerCase();
-  const paid=paymentStatus==="paid"||Number(receivable?.outstanding_amount||0)<=0;
+  const outstanding=receivable?.outstanding_amount;
+  const paid=paymentStatus==="paid"||(
+    outstanding!==null &&
+    outstanding!==undefined &&
+    Number.isFinite(Number(outstanding)) &&
+    Number(outstanding)<=0
+  );
   const overdue=Boolean(deadline)&&!paid&&new Date(`${deadline}T23:59:59`).getTime()<Date.now();
 
   $("#paymentAmount").textContent=rupiah(receivable?.outstanding_amount??order?.grand_total??0);
@@ -303,7 +317,7 @@ $("#invoiceBtn")?.addEventListener("click",()=>location.href=invoicePageUrl());
 $("#openSptBtn")?.addEventListener("click",openSpt);
 $("#primaryActionBtn")?.addEventListener("click",()=>{
   const status=String(order?.status||"").toUpperCase();
-  if(isPaymentPaid())return location.href="orders.html";
+  if(isPaymentPaid())return location.href=invoicePageUrl();
   if(status==="ISSUED")return location.href=ticketPageUrl();
   if(status==="COMPLETED")return location.href=paymentPageUrl();
   if(status==="CANCELLED")return location.href="help.html";

@@ -93,3 +93,6 @@ linear-gradient(125deg,#04162f,#082f67 62%,#0d64c7 145%)}
   .invoice-hero,.grand-total-card,.invoice-footer,.secure-note{print-color-adjust:exact;-webkit-print-color-adjust:exact}
   .invoice-paper{font-size:10pt}
 }
+
+.invoice-status>strong.unpaid{background:rgba(228,155,40,.13);border-color:rgba(255,199,104,.32);color:#ffd38d}
+.invoice-status>strong.unpaid i{background:#d9982d;color:#fff}
