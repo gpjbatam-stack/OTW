@@ -154,11 +154,9 @@ function validatePaymentEnvironment(environment){
     throw new Error("Konfigurasi environment Midtrans tidak valid.");
   }
 
-  const host=String(location.hostname||"").toLowerCase();
-  const isLetsGoProduction=host==="letsgo.co.id"||host.endsWith(".letsgo.co.id");
-  if(isLetsGoProduction&&env!=="production"){
-    throw new Error("Pembayaran production tidak boleh menggunakan Midtrans Sandbox.");
-  }
+  // Testing mode: izinkan Midtrans Sandbox berjalan di domain letsgo.co.id.
+  // Saat akun Midtrans production sudah aktif, backend cukup mengembalikan
+  // environment="production" dan Snap otomatis memakai endpoint production.
   return env;
 }
 function loadSnapScript(clientKey,environment){return new Promise((resolve,reject)=>{
