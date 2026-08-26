@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061a3a">
+  <title>Invoice — LetsGo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./invoice.css?v=20260826-v1">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar no-print">
+      <button id="backBtn" class="icon-btn" type="button" aria-label="Kembali">
+        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="top-copy">
+        <span class="eyebrow">LETSGO BILLING</span>
+        <h1>Invoice perjalanan</h1>
+        <p id="topOrder">Memuat...</p>
+      </div>
+      <button id="printTopBtn" class="icon-btn" type="button" aria-label="Cetak invoice">
+        <svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>
+      </button>
+    </header>
+
+    <section id="loadingState" class="state-card">
+      <span class="spinner"></span>
+      <div><strong>Menyiapkan invoice...</strong><small>Memuat transaksi dan status pembayaran.</small></div>
+    </section>
+
+    <section id="errorState" class="error-card hidden">
+      <span class="state-icon">!</span>
+      <strong>Invoice belum dapat dimuat</strong>
+      <p id="errorText">Silakan coba lagi.</p>
+      <button id="retryBtn" type="button">Coba lagi</button>
+    </section>
+
+    <article id="invoicePaper" class="invoice-paper hidden">
+      <header class="invoice-hero">
+        <div class="brand-block">
+          <strong>LetsGo</strong>
+          <span>by mudamas</span>
+          <small>Perjalanan, dalam Genggaman.</small>
+        </div>
+        <div class="invoice-status">
+          <small>STATUS PEMBAYARAN</small>
+          <strong id="paymentBadge"><i>✓</i> LUNAS</strong>
+        </div>
+      </header>
+
+      <section class="invoice-meta">
+        <div>
+          <small>NO. INVOICE</small>
+          <strong id="invoiceNumber">INV-—</strong>
+        </div>
+        <div>
+          <small>TANGGAL</small>
+          <strong id="invoiceDate">—</strong>
+        </div>
+        <div>
+          <small>ORDER LETSGO</small>
+          <strong id="orderCode">—</strong>
+        </div>
+      </section>
+
+      <section class="customer-card">
+        <div>
+          <span class="section-kicker">DITAGIHKAN KEPADA</span>
+          <strong id="customerName">—</strong>
+          <small id="customerEmail">—</small>
+        </div>
+        <div class="payment-ref">
+          <span>REFERENSI PEMBAYARAN</span>
+          <strong id="paymentRef">—</strong>
+          <small id="paymentMethod">Midtrans</small>
+        </div>
+      </section>
+
+      <section class="trip-card">
+        <div class="trip-head">
+          <div><span class="section-kicker">PERJALANAN</span><strong id="airlineName">—</strong></div>
+          <span id="tripType" class="trip-pill">Sekali jalan</span>
+        </div>
+        <div class="route">
+          <div>
+            <small>BERANGKAT</small>
+            <strong id="origin">---</strong>
+            <span id="departAt">—</span>
+          </div>
+          <div class="route-center"><i></i><b>✈</b><i></i><small id="flightNumber">—</small></div>
+          <div class="right">
+            <small>TIBA</small>
+            <strong id="destination">---</strong>
+            <span id="arrivalAt">—</span>
+          </div>
+        </div>
+        <div class="trip-facts">
+          <div><small>PNR / BOOKING CODE</small><strong id="pnr">—</strong></div>
+          <div><small>E-TICKET</small><strong id="ticketNumber">—</strong></div>
+          <div><small>PENUMPANG</small><strong id="passengerCount">—</strong></div>
+        </div>
+      </section>
+
+      <section class="billing-section">
+        <div class="section-title">
+          <div><span class="section-kicker">RINCIAN TAGIHAN</span><h2>Ringkasan pembayaran</h2></div>
+          <span class="paid-mini">PAID</span>
+        </div>
+
+        <div class="bill-table">
+          <div class="bill-row">
+            <span>Harga penerbangan</span>
+            <strong id="flightTotal">Rp0</strong>
+          </div>
+          <div id="baggageRow" class="bill-row hidden">
+            <span>Bagasi tambahan</span>
+            <strong id="baggageTotal">Rp0</strong>
+          </div>
+          <div id="insuranceRow" class="bill-row hidden">
+            <span>Perlindungan perjalanan</span>
+            <strong id="insuranceTotal">Rp0</strong>
+          </div>
+          <div id="serviceFeeRow" class="bill-row hidden">
+            <span>Biaya layanan</span>
+            <strong id="serviceFee">Rp0</strong>
+          </div>
+        </div>
+
+        <div class="grand-total-card">
+          <div>
+            <small>TOTAL DIBAYAR</small>
+            <span id="paidAt">Pembayaran terkonfirmasi</span>
+          </div>
+          <strong id="grandTotal">Rp0</strong>
+        </div>
+      </section>
+
+      <section class="secure-note">
+        <span>✓</span>
+        <div>
+          <strong>Pembayaran terverifikasi</strong>
+          <small>Invoice ini dibuat berdasarkan transaksi yang tercatat pada sistem LetsGo.</small>
+        </div>
+      </section>
+
+      <footer class="invoice-footer">
+        <div>
+          <strong>LetsGo</strong>
+          <span>by mudamas</span>
+        </div>
+        <small>Dokumen elektronik • Tidak memerlukan tanda tangan basah</small>
+      </footer>
+    </article>
+
+    <section id="actionPanel" class="action-panel hidden no-print">
+      <button id="ticketBtn" class="button secondary" type="button">Lihat E-ticket</button>
+      <button id="printBtn" class="button primary" type="button">Cetak / Simpan PDF</button>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+  <script type="module" src="./invoice.js?v=20260826-v1"></script>
+</body>
+</html>
