@@ -32,26 +32,47 @@ async function loadCurrentReceivable(){
   if(!currentOrder?.id)return null;
 
   const orderId=String(currentOrder.id).trim();
+  const fields="id,flight_order_id,principal_amount,paid_amount,outstanding_amount,issued_at,arrived_batam_at,due_date,effective_due_date,status,booking_blocked";
 
-  // Relasi database resmi:
-  // public.flight_orders.id -> public.receivables.flight_order_id
+  // Percobaan pertama: direct SELECT.
+  // Pada sebagian konfigurasi production, RLS receivables hanya mengizinkan
+  // pemilik order sehingga akun admin tidak selalu dapat membaca row customer.
   const {data,error}=await supabase
     .from("receivables")
-    .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,issued_at,arrived_batam_at,due_date,effective_due_date,status,booking_blocked")
+    .select(fields)
     .eq("flight_order_id",orderId)
     .limit(1);
 
-  if(error){
-    console.error("[LetsGo Receivable] gagal membaca receivable",{
+  if(!error && Array.isArray(data) && data.length){
+    currentReceivable=data[0];
+    return currentReceivable;
+  }
+
+  // Fallback resmi untuk Admin Console.
+  // RPC ini SECURITY DEFINER dan wajib memverifikasi is_letsgo_admin(auth.uid()).
+  // Dengan cara ini kita tidak melonggarkan RLS tabel receivables untuk seluruh
+  // authenticated user hanya demi kebutuhan Admin Ticketing.
+  const {data:rpcData,error:rpcError}=await supabase.rpc(
+    "admin_get_flight_receivable",
+    {p_flight_order_id:orderId}
+  );
+
+  if(rpcError){
+    console.error("[LetsGo Receivable] admin lookup gagal",{
       order_id:orderId,
       order_code:currentOrder?.order_code,
-      error
+      direct_error:error||null,
+      rpc_error:rpcError
     });
     currentReceivable=null;
     return null;
   }
 
-  currentReceivable=Array.isArray(data)&&data.length?data[0]:null;
+  if(Array.isArray(rpcData)){
+    currentReceivable=rpcData.length?rpcData[0]:null;
+  }else{
+    currentReceivable=rpcData||null;
+  }
 
   return currentReceivable;
 }
@@ -97,10 +118,23 @@ function syncPaymentControl(){
 
   $("#markArrivedBtn").classList.toggle("hidden",arrived||paid);
   $("#cancelArrivedBtn").classList.toggle("hidden",!arrived||paid);
-  $("#markArrivedBtn").disabled=!r||!issued||paid;
+
+  const markBtn=$("#markArrivedBtn");
+  markBtn.disabled=!issued||paid||!r;
+  markBtn.title=!issued
+    ?"Tiket harus berstatus Issued terlebih dahulu."
+    :paid
+      ?"Pembayaran sudah lunas."
+      :!r
+        ?"Receivable belum dapat dibaca. Pastikan RPC admin_get_flight_receivable sudah terpasang."
+        :"Tandai passenger sudah tiba di Batam.";
 }
-function openArrivalModal(mode){
-  if(!currentReceivable)return toast("Tagihan perjalanan belum tersedia.");
+async function openArrivalModal(mode){
+  if(!currentReceivable){
+    await loadCurrentReceivable();
+    syncPaymentControl();
+  }
+  if(!currentReceivable)return toast("Tagihan perjalanan belum dapat dibaca. Refresh Admin Ticketing setelah RPC admin dipasang.");
   arrivalActionMode=mode;
   const modal=$("#arrivalModal");
   const card=modal.querySelector(".arrival-confirm-modal");
@@ -548,8 +582,8 @@ $("#closeTravelDocBtn").onclick=()=>$("#travelDocModal").classList.add("hidden")
 
 $("#modalCloseBtn")?.addEventListener("click",()=>$("#travelDocModal").classList.add("hidden"));
 
-$("#markArrivedBtn")?.addEventListener("click",()=>openArrivalModal("mark"));
-$("#cancelArrivedBtn")?.addEventListener("click",()=>openArrivalModal("cancel"));
+$("#markArrivedBtn")?.addEventListener("click",()=>openArrivalModal("mark").catch(e=>{console.error(e);toast(e?.message||"Tagihan belum dapat dibaca.");}));
+$("#cancelArrivedBtn")?.addEventListener("click",()=>openArrivalModal("cancel").catch(e=>{console.error(e);toast(e?.message||"Tagihan belum dapat dibaca.");}));
 $("#closeArrivalModalBtn")?.addEventListener("click",closeArrivalModal);
 $("#arrivalModal")?.addEventListener("click",e=>{if(e.target===$("#arrivalModal"))closeArrivalModal()});
 $("#confirmArrivalBtn")?.addEventListener("click",()=>applyArrivalAction());
