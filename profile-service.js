@@ -13,7 +13,7 @@ export async function getMyProfile() {
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .maybeSingle();
+    .single();
 
   if (error) throw error;
   return data;

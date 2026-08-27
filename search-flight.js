@@ -1,10 +1,15 @@
 import { requireAuth } from "./guard.js";
 import { supabase } from "./supabase.js";
 
-const activeSession = await requireAuth({ redirect: "login.html", splash: "index.html" });
-if (!activeSession) await new Promise(() => {});
+try {
+  await requireAuth({ redirect: "login.html" });
+} catch (authError) {
+  console.error("[OTW] requireAuth gagal:", authError);
+}
+console.info("[OTW] search-flight v9 Supabase SDK auth loaded");
 
-const PRICING_RPC = "calculate_public_flight_price";
+const SUPABASE_URL = "https://vumyxlbybhlaicubtgun.supabase.co";
+const EDGE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/jetwize-search`;
 
 const AIRPORTS = Object.freeze({
   BTH: "Hang Nadim",
@@ -172,8 +177,6 @@ function normalizeOffer(offer) {
     basePrice: Number(offer.basePrice || 0),
     tax: Number(offer.tax || 0),
     supplierTotalPrice: Number(offer.supplierTotalPrice ?? offer.totalPrice ?? 0),
-    displayTicketPrice: 0,
-    letsgoPricing: null,
     currency: offer.currency || "IDR",
     seatsAvailable: offer.seatsAvailable ?? null,
     expiresAt: offer.expiresAt || null,
@@ -238,7 +241,7 @@ function render() {
   }
 
   if (sortMode === "cheapest") {
-    rows.sort((a, b) => a.displayTicketPrice - b.displayTicketPrice);
+    rows.sort((a, b) => a.supplierTotalPrice - b.supplierTotalPrice);
   } else if (sortMode === "fastest") {
     rows.sort((a, b) => a.durationMinutes - b.durationMinutes);
   }
@@ -319,9 +322,9 @@ function render() {
 
         <div class="price-row">
           <div class="price-copy">
-            <small>Harga penerbangan LetsGo</small>
-            <strong class="price">${formatCurrency(f.displayTicketPrice, f.currency)}</strong>
-            <em>Biaya layanan ditampilkan pada detail perjalanan</em>
+            <small>Harga supplier / orang</small>
+            <strong class="price">${formatCurrency(f.supplierTotalPrice, f.currency)}</strong>
+            <em>Markup & biaya layanan OTW belum diterapkan</em>
           </div>
           <button class="select-flight" data-index="${index}" type="button">Pilih</button>
         </div>
@@ -343,78 +346,25 @@ function selectFlight(flight) {
     searchSnapshot: { ...search }
   };
 
-  sessionStorage.setItem("letsgo_selected_flight", JSON.stringify(selected));
-  sessionStorage.setItem("letsgo_selected_offer_id", flight.offerId || "");
-  sessionStorage.setItem("letsgo_search", JSON.stringify(search));
+  sessionStorage.setItem("otw_selected_flight", JSON.stringify(selected));
+  sessionStorage.setItem("otw_selected_offer_id", flight.offerId || "");
+  sessionStorage.setItem("otw_search", JSON.stringify(search));
 
   location.href = "flight-detail.html";
 }
 
-async function invokeFlightSearch(payload, retry = true) {
-  const { data, error } = await supabase.functions.invoke("jetwize-search", { body: payload });
-
-  if (!error) return data || {};
-
-  const status = Number(error?.context?.status || error?.status || 0);
-  if (retry && status === 401) {
-    const refreshed = await supabase.auth.refreshSession();
-    if (!refreshed.error && refreshed.data?.session) {
-      return invokeFlightSearch(payload, false);
-    }
+async function postFlightSearch(payload) {
+  // Flight browsing is public. Supabase client sends the project key automatically.
+  // The Edge Function jetwize-search must be deployed as a public function
+  // (verify_jwt = false) while keeping Jetwize credentials server-side.
+  const {data,error}=await supabase.functions.invoke("jetwize-search",{body:payload});
+  if(error){
+    const status=Number(error?.context?.status||error?.status||0);
+    if(status===401) throw new Error("Pencarian publik belum diaktifkan pada server LetsGo.");
+    throw error;
   }
-
-  throw new Error(
-    data?.error?.message ||
-    data?.message ||
-    error?.message ||
-    "Pencarian penerbangan belum dapat diproses."
-  );
+  return {response:{ok:true,status:200},data:data||{}};
 }
-
-async function applyLetsGoPricing(rows) {
-  const uniquePrices = [...new Set(
-    rows.map(row => Number(row.supplierTotalPrice || 0)).filter(price => price > 0)
-  )];
-
-  if (!uniquePrices.length) {
-    throw new Error("Harga penerbangan belum tersedia dari penyedia.");
-  }
-
-  const pricingBySupplier = new Map();
-
-  await Promise.all(uniquePrices.map(async supplierPrice => {
-    const { data, error } = await supabase.rpc(PRICING_RPC, { p_supplier_price: supplierPrice });
-    if (error) throw new Error("Konfigurasi harga LetsGo belum dapat dimuat.");
-
-    const row = Array.isArray(data) ? data[0] : data;
-    const ticketPrice = Number(row?.ticket_price || 0);
-    if (!row || ticketPrice <= 0) {
-      throw new Error("Harga LetsGo belum tersedia untuk salah satu penerbangan.");
-    }
-
-    pricingBySupplier.set(supplierPrice, {
-      supplierPrice,
-      ticketPrice,
-      serviceFee: Number(row.service_fee || 0),
-      totalPrice: ticketPrice + Number(row.service_fee || 0),
-      currency: row.currency || "IDR",
-      pricingUpdatedAt: row.pricing_updated_at || null,
-      source: "LETSGO_ADMIN_PRICING"
-    });
-  }));
-
-  return rows.map(row => {
-    const pricing = pricingBySupplier.get(Number(row.supplierTotalPrice || 0));
-    if (!pricing) throw new Error("Harga LetsGo gagal dipetakan.");
-    return {
-      ...row,
-      displayTicketPrice: pricing.ticketPrice,
-      letsgoPricing: pricing,
-      currency: pricing.currency || row.currency || "IDR"
-    };
-  });
-}
-
 async function searchFlights(searchData) {
   if (!searchData.destination) throw new Error("Pilih bandara tujuan terlebih dahulu.");
   if (!searchData.depart) throw new Error("Pilih tanggal keberangkatan terlebih dahulu.");
@@ -436,15 +386,21 @@ async function searchFlights(searchData) {
     payload.returnDate = searchData.return;
   }
 
-  const data = await invokeFlightSearch(payload);
+  const { response, data } = await postFlightSearch(payload);
 
-  if (data?.error) {
-    throw new Error(data?.error?.message || data?.message || "Pencarian penerbangan gagal.");
+  if (!response.ok || data?.error) {
+    if (response.status === 401) {
+      throw new Error("Sesi login tidak berlaku. Silakan logout, login kembali, lalu ulangi pencarian.");
+    }
+
+    throw new Error(
+      data?.error?.message ||
+      data?.message ||
+      `Pencarian gagal (${response.status}).`
+    );
   }
 
-  const normalized = (Array.isArray(data.results) ? data.results : []).map(normalizeOffer);
-  if (!normalized.length) return [];
-  return applyLetsGoPricing(normalized);
+  return (Array.isArray(data.results) ? data.results : []).map(normalizeOffer);
 }
 
 async function loadFlights() {
@@ -466,7 +422,7 @@ async function loadFlights() {
 
     render();
   } catch (err) {
-    console.error("[LetsGo Flight Search]", err);
+    console.error("[OTW] flight search:", err);
     els.loading.classList.add("hidden");
     els.error.classList.remove("hidden");
     els.count.textContent = "Pencarian gagal";

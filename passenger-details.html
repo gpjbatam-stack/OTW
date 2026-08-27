@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./passenger-details.css?v=20260824-core-final">
+  <link rel="stylesheet" href="./passenger-details.css?v=20260827-flow-v3">
 </head>
 <body>
   <main class="app-shell">
@@ -160,6 +160,30 @@
       <div id="passengerList" class="passenger-list"></div>
     </section>
 
+
+    <section class="section-block hidden" id="ktpGateSection">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">VERIFIKASI AKUN</span>
+          <h2>e-KTP Pemesan</h2>
+        </div>
+        <span class="required-pill">Wajib pertama kali</span>
+      </div>
+      <article class="upload-card">
+        <input id="ktpFile" class="file-input" type="file" accept=".jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+        <label class="upload-zone" for="ktpFile" id="ktpUploadZone">
+          <span class="upload-icon">ID</span>
+          <div class="upload-copy"><strong>Upload e-KTP</strong><span>JPG, PNG atau PDF · maks. 5 MB</span></div>
+          <span class="upload-action">Pilih file</span>
+        </label>
+        <div class="file-preview hidden" id="ktpPreview">
+          <span class="file-type">KTP</span>
+          <div class="file-meta"><strong id="ktpFileName">e-ktp</strong><span id="ktpFileSize">—</span></div>
+        </div>
+        <div class="spt-status hidden" id="ktpStatus"><span class="spt-status-icon">✓</span><div><strong id="ktpStatusTitle">e-KTP tersimpan</strong><small id="ktpStatusText">Dokumen identitas siap digunakan.</small></div></div>
+        <small class="field-error spt-error" id="ktpError"></small>
+      </article>
+    </section>
 
     <section class="section-block">
       <div class="section-head">
@@ -370,6 +394,6 @@
     </article>
   </template>
 
-  <script type="module" src="./passenger-details.js?v=20260824-core-final"></script>
+  <script type="module" src="./passenger-details.js?v=20260827-flow-v3"></script>
 </body>
 </html>

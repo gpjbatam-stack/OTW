@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./admin-ticketing.css?v=20260825-arrival-payment">
+  <link rel="stylesheet" href="./admin-ticketing.css?v=20260827-flow-v3">
 </head>
 <body>
 <div class="admin-app">
@@ -86,11 +86,9 @@
     </section>
 
     <section class="metrics">
-      <article><span class="metric-icon blue">01</span><div><small>ORDER BARU</small><strong id="metricSubmitted">0</strong><p>Perlu review</p></div></article>
-      <article><span class="metric-icon amber">02</span><div><small>PROCESSING</small><strong id="metricProcessing">0</strong><p>Fulfillment aktif</p></div></article>
-      <article><span class="metric-icon violet">03</span><div><small>VERIFIED</small><strong id="metricVerified">0</strong><p>Siap issue</p></div></article>
-      <article><span class="metric-icon green">04</span><div><small>ISSUED</small><strong id="metricIssued">0</strong><p>Tiket terbit</p></div></article>
-      <article><span class="metric-icon slate">05</span><div><small>COMPLETED</small><strong id="metricCompleted">0</strong><p>Closed</p></div></article>
+      <article><span class="metric-icon blue">01</span><div><small>DIAJUKAN</small><strong id="metricSubmitted">0</strong><p>Menunggu keputusan</p></div></article>
+      <article><span class="metric-icon green">02</span><div><small>ISSUED</small><strong id="metricIssued">0</strong><p>Tiket terbit</p></div></article>
+      <article><span class="metric-icon slate">03</span><div><small>SELESAI</small><strong id="metricCompleted">0</strong><p>Tiba di Batam</p></div></article>
     </section>
 
     <section class="workbar">
@@ -100,12 +98,10 @@
       </div>
       <select id="statusFilter">
         <option value="ALL">Semua status</option>
-        <option value="SUBMITTED">Order baru</option>
-        <option value="PROCESSING">Processing</option>
-        <option value="VERIFIED">Verified</option>
+        <option value="SUBMITTED">Diajukan</option>
         <option value="ISSUED">Issued</option>
-        <option value="COMPLETED">Completed</option>
-        <option value="CANCELLED">Cancelled</option>
+        <option value="COMPLETED">Selesai</option>
+        <option value="CANCELLED">Ditolak / dibatalkan</option>
       </select>
       <select id="sortFilter">
         <option value="NEWEST">Terbaru</option>
@@ -256,12 +252,10 @@
         <header><span>07</span><div><small>STATUS CONTROL</small><strong>Lifecycle pesanan</strong></div></header>
         <div class="status-flow" id="statusFlow">
           <button data-status="SUBMITTED" type="button">Diajukan</button>
-          <button data-status="PROCESSING" type="button">Processing</button>
-          <button data-status="VERIFIED" type="button">Verified</button>
+          <button data-status="CANCELLED" type="button">Tolak</button>
           <button data-status="ISSUED" type="button">Issued</button>
-          <button data-status="COMPLETED" type="button">Completed</button>
         </div>
-        <button id="cancelBtn" class="cancel-link" type="button">Batalkan pengajuan</button>
+        
       </section>
 
       <section class="workspace-card payment-control-card">
@@ -426,6 +420,6 @@
 
 <div id="toast" class="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
-<script type="module" src="./admin-ticketing.js?v=20260825-arrival-payment-v2"></script>
+<script type="module" src="./admin-ticketing.js?v=20260827-flow-v3"></script>
 </body>
 </html>

@@ -29,5 +29,3 @@ button,input{font:inherit}button{cursor:pointer}svg{fill:none;stroke:currentColo
 .payment-reminder{display:inline-flex;align-items:center;gap:5px;max-width:170px;padding:6px 8px;border:1px solid #ffd5a1;border-radius:999px;background:linear-gradient(135deg,#fff7e8,#ffedd0);color:#a85c00;box-shadow:0 5px 14px rgba(214,126,17,.10);font-size:5.8px;font-weight:900;white-space:nowrap}
 .payment-reminder svg{width:10px;flex:0 0 auto;stroke-width:2}
 @media(max-width:360px){.payment-reminder{font-size:5.4px;padding:5px 7px;max-width:155px}}
-
-.st-paid{background:#e9f8f2;color:#0b8e63}.st-paid i{background:#15bd80}

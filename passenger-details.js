@@ -4,6 +4,7 @@ import { requireAuth } from "./guard.js";
 "use strict";
 
 const SPT_BUCKET="spt-documents";
+const KTP_BUCKET="identity-documents";
 const MAX_SPT_BYTES=5*1024*1024;
 const PRIMARY_PREFIX="letsgo_";
 const LEGACY_PREFIX=String.fromCharCode(111,116,119)+"_";
@@ -20,6 +21,9 @@ let uploadedSptRecord=readState("uploaded_spt")||null;
 let isUploading=false;
 let isSubmitting=false;
 let session=null;
+let ktpRequired=false;
+let ktpRecord=null;
+let ktpUploading=false;
 
 const LOGOS={
   GA:"GA.png",JT:"JT.png",QG:"QG.png",ID:"ID.png",IU:"IU.png",
@@ -378,7 +382,8 @@ function validateForm(){
   return ok;
 }
 async function continueFlow(){
-  if(isSubmitting||isUploading)return toast("Tunggu proses upload selesai.");
+  if(isSubmitting||isUploading||ktpUploading)return toast("Tunggu proses upload selesai.");
+  if(ktpRequired&&!ktpRecord){$("#ktpError").textContent="Upload e-KTP wajib untuk pemesanan pertama.";$("#ktpGateSection")?.scrollIntoView({behavior:"smooth",block:"center"});return;}
   copyContactToFirstPassenger();
   if(!validateForm())return;
 
@@ -413,12 +418,56 @@ async function continueFlow(){
     isSubmitting=false;btn.disabled=false;btn.classList.remove("loading");btn.innerHTML=old;
   }
 }
+async function loadKtpGate(){
+  const [{count:orderCount,error:orderError},{data:docs,error:docError}]=await Promise.all([
+    supabase.from("flight_orders").select("id",{count:"exact",head:true}).eq("user_id",session.user.id),
+    supabase.from("trip_documents").select("id,file_name,file_path,file_size,mime_type,status").eq("user_id",session.user.id).eq("document_type","KTP").eq("status","ACTIVE").order("uploaded_at",{ascending:false}).limit(1)
+  ]);
+  if(orderError)throw orderError;
+  if(docError)throw docError;
+  ktpRecord=docs?.[0]||null;
+  ktpRequired=Number(orderCount||0)===0&&!ktpRecord;
+  $("#ktpGateSection")?.classList.toggle("hidden",!ktpRequired);
+}
+async function uploadKtp(file){
+  $("#ktpError").textContent="";
+  if(!file)return false;
+  if(file.size>MAX_SPT_BYTES){$("#ktpError").textContent="Ukuran e-KTP maksimal 5 MB.";return false}
+  const allowed=["image/jpeg","image/png","application/pdf"];
+  if(!allowed.includes(file.type)){ $("#ktpError").textContent="Gunakan JPG, PNG atau PDF.";return false }
+  ktpUploading=true;$("#continueBtn").disabled=true;
+  try{
+    const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
+    const path=`${session.user.id}/identity/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+    const {error:up}=await supabase.storage.from(KTP_BUCKET).upload(path,file,{cacheControl:"3600",upsert:false,contentType:file.type||undefined});
+    if(up)throw up;
+    const {data,error}=await supabase.from("trip_documents").insert({
+      user_id:session.user.id,order_id:null,order_code:null,document_type:"KTP",
+      file_name:file.name,file_path:path,file_size:file.size,mime_type:file.type||null,status:"ACTIVE",
+      metadata:{source:"first-booking-identity",uploadedBeforeOrder:true}
+    }).select("id,file_name,file_path,file_size,mime_type,status").single();
+    if(error){await supabase.storage.from(KTP_BUCKET).remove([path]);throw error}
+    ktpRecord=data;ktpRequired=false;
+    $("#ktpPreview").classList.remove("hidden");$("#ktpFileName").textContent=file.name;$("#ktpFileSize").textContent=`${Math.ceil(file.size/1024)} KB`;
+    $("#ktpStatus").classList.remove("hidden");$("#ktpGateSection").classList.remove("hidden");
+    toast("e-KTP berhasil disimpan.");
+    return true;
+  }catch(error){
+    const raw=String(error?.message||"");
+    $("#ktpError").textContent=/bucket|document_type|constraint|row-level|policy/i.test(raw)
+      ?"Penyimpanan e-KTP belum dikonfigurasi di server LetsGo."
+      :(raw||"Upload e-KTP gagal.");
+    return false;
+  }finally{ktpUploading=false;$("#continueBtn").disabled=false}
+}
+
 function bindEvents(){
   $("#backBtn")?.addEventListener("click",()=>history.back());
   $("#continueBtn")?.addEventListener("click",continueFlow);
   $("#useForFirstPassenger")?.addEventListener("change",copyContactToFirstPassenger);
   $("#contactName")?.addEventListener("input",copyContactToFirstPassenger);
 
+  $("#ktpFile")?.addEventListener("change",async e=>{const file=e.target.files?.[0];if(file)await uploadKtp(file)});
   $("#sptFile")?.addEventListener("change",async e=>{
     const file=e.target.files?.[0];if(file)await uploadSpt(file);
   });
@@ -436,7 +485,7 @@ async function init(){
   try{
     session=await requireAuth({redirect:"login.html",splash:"index.html"});
     if(!session)return;
-    renderFlightSummary();buildPassengerModels();populateContact();renderPassengers();restoreSpt();bindEvents();
+    await loadKtpGate();renderFlightSummary();buildPassengerModels();populateContact();renderPassengers();restoreSpt();bindEvents();
   }catch(error){
     console.error("[LetsGo Passenger Details]",error);
     toast(error?.message||"Halaman gagal dimuat.");

@@ -198,5 +198,8 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
+const registerLink=document.querySelector("#userFooter a");
+if(registerLink)registerLink.href=`register.html?next=${encodeURIComponent(getSafeNext())}`;
+
 setMode("user");
 routeExistingSession();

@@ -47,7 +47,7 @@ form.addEventListener("submit", async (event) => {
   btn.textContent = "Membuat akun...";
 
   try {
-    const result = await signUp({ fullName, email, phone, password });
+    const result = await signUp({ fullName, email, phone, password, next: safeNext });
     if (!result?.user) throw new Error("Akun gagal dibuat.");
 
     // With Confirm Email enabled Supabase intentionally returns no session.
@@ -55,7 +55,7 @@ form.addEventListener("submit", async (event) => {
     if (!result.session) {
       sessionStorage.setItem("letsgo_pending_email", email);
       sessionStorage.setItem("letsgo_pending_next", safeNext);
-      window.location.replace(`confirm-email.html?email=${encodeURIComponent(email)}&pending=1`);
+      window.location.replace(`confirm-email.html?email=${encodeURIComponent(email)}&pending=1&next=${encodeURIComponent(safeNext)}`);
       return;
     }
 

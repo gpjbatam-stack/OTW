@@ -27,8 +27,9 @@ export async function getSession() {
   return { ...data.session, user };
 }
 
-export async function signUp({ fullName, email, phone, password }) {
-  const emailRedirectTo = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, "")}confirm-email.html`;
+export async function signUp({ fullName, email, phone, password, next = "home.html" }) {
+  const safeNext = /^[a-zA-Z0-9._-]+(?:\?[a-zA-Z0-9%&=._-]*)?$/.test(next) && !next.includes("://") ? next : "home.html";
+  const emailRedirectTo = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, "")}confirm-email.html?next=${encodeURIComponent(safeNext)}`;
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -46,8 +47,9 @@ export async function signUp({ fullName, email, phone, password }) {
   return data;
 }
 
-export async function resendSignupConfirmation(email) {
-  const emailRedirectTo = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, "")}confirm-email.html`;
+export async function resendSignupConfirmation(email, next = "home.html") {
+  const safeNext = /^[a-zA-Z0-9._-]+(?:\?[a-zA-Z0-9%&=._-]*)?$/.test(next) && !next.includes("://") ? next : "home.html";
+  const emailRedirectTo = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, "")}confirm-email.html?next=${encodeURIComponent(safeNext)}`;
 
   const { data, error } = await supabase.auth.resend({
     type: "signup",

@@ -1,0 +1,33 @@
+LETSGO FLOW REVISION — 2026-08-27
+
+Implemented:
+1. Guest may browse flight schedule/price; login is required only when continuing booking.
+2. Registration keeps the intended booking destination.
+3. Email confirmation no longer signs the user out; confirmed session auto-continues.
+4. First booking requires e-KTP upload (stored as trip_documents document_type=KTP).
+5. Submit success wording is 'Pengajuan perjalanan berhasil dikirim.'
+6. Admin Ticketing lifecycle UI: Diajukan / Tolak / Issued. Completed remains automatic from 'Tandai Sudah Tiba di Batam'.
+   Legacy PROCESSING/VERIFIED rows are displayed as Diajukan for compatibility.
+7. Orders tabs: Semua / Dibatalkan / Tiket / Selesai.
+
+SERVER CONFIG REQUIRED:
+A) Supabase Auth > SMTP Settings:
+   configure Custom SMTP for a LetsGo-domain sender (e.g. no-reply@letsgo.co.id).
+   Frontend code cannot change the actual email sender.
+
+B) Guest flight search:
+   place supabase-functions-jetwize-search-config.toml as:
+   supabase/functions/jetwize-search/config.toml
+   and redeploy jetwize-search.
+   The function itself must not reject requests merely because auth.getUser() is absent.
+   Jetwize/API secrets must remain server-side.
+
+
+V2 RE-AUDIT FIXES
+- admin-ticketing false-LUNAS fallback fixed.
+- e-KTP moved to private bucket: identity-documents.
+- SETUP-EKTP-SUPABASE.sql added for bucket/constraint inspection.
+- Guest search frontend is ready, but jetwize-search FUNCTION SOURCE was not supplied in this package.
+  Therefore server-side auth.getUser()/authorization enforcement cannot be removed or verified here.
+  Before production, inspect/revise the deployed jetwize-search source and redeploy with verify_jwt=false.
+- Custom SMTP is still required in Supabase Auth for LetsGo sender email.

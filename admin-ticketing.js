@@ -1,7 +1,7 @@
 import { supabase } from "./supabase.js";
 
 const $=s=>document.querySelector(s);
-const STATUS_LABEL={SUBMITTED:"Diajukan",PROCESSING:"Processing",VERIFIED:"Verified",ISSUED:"Issued",COMPLETED:"Completed",CANCELLED:"Cancelled"};
+const STATUS_LABEL={SUBMITTED:"Diajukan",PROCESSING:"Diajukan",VERIFIED:"Diajukan",ISSUED:"Issued",COMPLETED:"Selesai",CANCELLED:"Ditolak"};
 const STATUS_CLASS={SUBMITTED:"submitted",PROCESSING:"processing",VERIFIED:"verified",ISSUED:"issued",COMPLETED:"completed",CANCELLED:"cancelled"};
 const TICKET_BUCKET="flight-tickets";
 
@@ -23,7 +23,7 @@ function dateLong(v){
 function paymentStatusLabel(r){
   if(!r)return"Belum dimulai";
   const s=String(r.status||"open").toLowerCase();
-  if(s==="paid"||Number(r.outstanding_amount||0)<=0)return"Lunas";
+  if(s==="paid"||(r.outstanding_amount!==null&&r.outstanding_amount!==undefined&&Number.isFinite(Number(r.outstanding_amount))&&Number(r.outstanding_amount)<=0))return"Lunas";
   if(s==="overdue"||r.booking_blocked)return"Perlu Diselesaikan";
   return r.arrived_batam_at?"Menunggu Pembayaran":"Belum dimulai";
 }
@@ -32,47 +32,26 @@ async function loadCurrentReceivable(){
   if(!currentOrder?.id)return null;
 
   const orderId=String(currentOrder.id).trim();
-  const fields="id,flight_order_id,principal_amount,paid_amount,outstanding_amount,issued_at,arrived_batam_at,due_date,effective_due_date,status,booking_blocked";
 
-  // Percobaan pertama: direct SELECT.
-  // Pada sebagian konfigurasi production, RLS receivables hanya mengizinkan
-  // pemilik order sehingga akun admin tidak selalu dapat membaca row customer.
+  // Relasi database resmi:
+  // public.flight_orders.id -> public.receivables.flight_order_id
   const {data,error}=await supabase
     .from("receivables")
-    .select(fields)
+    .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,issued_at,arrived_batam_at,due_date,effective_due_date,status,booking_blocked")
     .eq("flight_order_id",orderId)
     .limit(1);
 
-  if(!error && Array.isArray(data) && data.length){
-    currentReceivable=data[0];
-    return currentReceivable;
-  }
-
-  // Fallback resmi untuk Admin Console.
-  // RPC ini SECURITY DEFINER dan wajib memverifikasi is_letsgo_admin(auth.uid()).
-  // Dengan cara ini kita tidak melonggarkan RLS tabel receivables untuk seluruh
-  // authenticated user hanya demi kebutuhan Admin Ticketing.
-  const {data:rpcData,error:rpcError}=await supabase.rpc(
-    "admin_get_flight_receivable",
-    {p_flight_order_id:orderId}
-  );
-
-  if(rpcError){
-    console.error("[LetsGo Receivable] admin lookup gagal",{
+  if(error){
+    console.error("[LetsGo Receivable] gagal membaca receivable",{
       order_id:orderId,
       order_code:currentOrder?.order_code,
-      direct_error:error||null,
-      rpc_error:rpcError
+      error
     });
     currentReceivable=null;
     return null;
   }
 
-  if(Array.isArray(rpcData)){
-    currentReceivable=rpcData.length?rpcData[0]:null;
-  }else{
-    currentReceivable=rpcData||null;
-  }
+  currentReceivable=Array.isArray(data)&&data.length?data[0]:null;
 
   return currentReceivable;
 }
@@ -80,7 +59,7 @@ function syncPaymentControl(){
   const r=currentReceivable;
   const issued=Boolean(currentOrder?.issued_at)||["ISSUED","COMPLETED"].includes(String(currentOrder?.status||"").toUpperCase());
   const arrived=Boolean(r?.arrived_batam_at);
-  const paid=Boolean(r)&&(String(r.status||"").toLowerCase()==="paid"||Number(r.outstanding_amount||0)<=0);
+  const paid=Boolean(r)&&(String(r.status||"").toLowerCase()==="paid"||(r.outstanding_amount!==null&&r.outstanding_amount!==undefined&&Number.isFinite(Number(r.outstanding_amount))&&Number(r.outstanding_amount)<=0));
   const overdue=Boolean(r)&&(String(r.status||"").toLowerCase()==="overdue"||Boolean(r.booking_blocked));
   const due=r?.effective_due_date||r?.due_date||null;
 
@@ -118,23 +97,10 @@ function syncPaymentControl(){
 
   $("#markArrivedBtn").classList.toggle("hidden",arrived||paid);
   $("#cancelArrivedBtn").classList.toggle("hidden",!arrived||paid);
-
-  const markBtn=$("#markArrivedBtn");
-  markBtn.disabled=!issued||paid||!r;
-  markBtn.title=!issued
-    ?"Tiket harus berstatus Issued terlebih dahulu."
-    :paid
-      ?"Pembayaran sudah lunas."
-      :!r
-        ?"Receivable belum dapat dibaca. Pastikan RPC admin_get_flight_receivable sudah terpasang."
-        :"Tandai passenger sudah tiba di Batam.";
+  $("#markArrivedBtn").disabled=!r||!issued||paid;
 }
-async function openArrivalModal(mode){
-  if(!currentReceivable){
-    await loadCurrentReceivable();
-    syncPaymentControl();
-  }
-  if(!currentReceivable)return toast("Tagihan perjalanan belum dapat dibaca. Refresh Admin Ticketing setelah RPC admin dipasang.");
+function openArrivalModal(mode){
+  if(!currentReceivable)return toast("Tagihan perjalanan belum tersedia.");
   arrivalActionMode=mode;
   const modal=$("#arrivalModal");
   const card=modal.querySelector(".arrival-confirm-modal");
@@ -181,7 +147,7 @@ async function applyArrivalAction(){
       toast("Passenger ditandai sudah tiba di Batam.");
     }
     await loadCurrentReceivable();
-    selectedStatus=String(currentOrder.status||"SUBMITTED").toUpperCase();
+    selectedStatus=["PROCESSING","VERIFIED"].includes(String(currentOrder.status||"").toUpperCase())?"SUBMITTED":String(currentOrder.status||"SUBMITTED").toUpperCase();
     $("#drawerStatusText").textContent=STATUS_LABEL[selectedStatus]||selectedStatus;
     $("#drawerStatusBadge").className=`status-pill ${STATUS_CLASS[selectedStatus]||"submitted"}`;
     $("#drawerStatusBadge").innerHTML=`<i></i>${STATUS_LABEL[selectedStatus]||selectedStatus}`;
@@ -223,7 +189,7 @@ function setLoading(on){
 }
 function count(s){return orders.filter(o=>String(o.status).toUpperCase()===s).length}
 function updateMetrics(){
-  $("#metricSubmitted").textContent=count("SUBMITTED");$("#metricProcessing").textContent=count("PROCESSING");$("#metricVerified").textContent=count("VERIFIED");$("#metricIssued").textContent=count("ISSUED");$("#metricCompleted").textContent=count("COMPLETED");
+  $("#metricSubmitted").textContent=count("SUBMITTED")+count("PROCESSING")+count("VERIFIED");$("#metricIssued").textContent=count("ISSUED");$("#metricCompleted").textContent=count("COMPLETED");
   $("#navQueueCount").textContent=count("SUBMITTED")+count("PROCESSING")+count("VERIFIED");
   const today=orders.filter(o=>new Date(o.created_at).toDateString()===new Date().toDateString());
   $("#todayOrders").textContent=today.length; $("#todayAmount").textContent=rupiah(today.reduce((s,o)=>s+Number(o.grand_total||0),0));
@@ -233,7 +199,9 @@ function filtered(){
   let rows=orders.filter(o=>{
     const ops=o.payload?.ticketing||{};
     const hay=[o.order_code,o.origin,o.destination,o.airline_name,o.flight_number,ops.pnr,ops.ticketNumber].join(" ").toLowerCase();
-    return (status==="ALL"||String(o.status).toUpperCase()===status)&&(!q||hay.includes(q));
+    const raw=String(o.status||"").toUpperCase();
+    const statusMatch=status==="ALL"||(status==="SUBMITTED"?["SUBMITTED","PROCESSING","VERIFIED"].includes(raw):raw===status);
+    return statusMatch&&(!q||hay.includes(q));
   });
   if(sort==="OLDEST")rows.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
   else if(sort==="HIGHEST")rows.sort((a,b)=>Number(b.grand_total||0)-Number(a.grand_total||0));
@@ -281,7 +249,7 @@ function computeReadiness(o=currentOrder,ops=buildOps(false)){
 async function openOrder(code){
   currentOrder=orders.find(o=>o.order_code===code); if(!currentOrder)return;
   const ops=currentOrder.payload?.ticketing||{};
-  selectedStatus=String(currentOrder.status||"SUBMITTED").toUpperCase();
+  selectedStatus=["PROCESSING","VERIFIED"].includes(String(currentOrder.status||"").toUpperCase())?"SUBMITTED":String(currentOrder.status||"SUBMITTED").toUpperCase();
   officialTicketRef=ops.officialTicketPath||ops.officialTicketUrl||currentOrder.ticket_url||"";
   generatedDoc=Boolean(ops.travelDocumentGeneratedAt);
   await loadCurrentReceivable();
@@ -571,10 +539,15 @@ $("#supplierCostInput").oninput=()=>{syncMargin();syncReadiness()};["supplierInp
 $("#officialTicketInput").onchange=e=>uploadOfficialTicket(e.target.files?.[0]).catch(err=>toast(err.message));
 $("#openOfficialTicketBtn").onclick=()=>openStorageRef(officialTicketRef).then(ok=>!ok&&toast("Dokumen belum dapat dibuka."));
 $("#removeOfficialTicketBtn").onclick=()=>{officialTicketRef=null;syncOfficialTicketUI();syncReadiness();toast("Referensi e-ticket dihapus dari draft.")};
-document.querySelectorAll("#statusFlow button").forEach(b=>b.onclick=()=>{selectedStatus=b.dataset.status;syncStatusFlow()});
+document.querySelectorAll("#statusFlow button").forEach(b=>b.onclick=()=>{
+  const target=b.dataset.status;
+  if(target==="CANCELLED"){ $("#cancelModal").classList.remove("hidden"); return; }
+  if(target==="ISSUED"){ issueOrder().catch(e=>toast(e.message)); return; }
+  selectedStatus="SUBMITTED";syncStatusFlow();saveOrder({status:"SUBMITTED",close:false}).catch(e=>toast(e.message));
+});
 $("#saveDraftBtn").onclick=()=>saveOrder({status:String(currentOrder.status||"SUBMITTED").toUpperCase()}).catch(e=>toast(e.message));
 $("#saveStatusBtn").onclick=()=>saveOrder().catch(e=>toast(e.message));$("#issueBtn").onclick=()=>issueOrder().catch(e=>toast(e.message));
-$("#cancelBtn").onclick=()=>$("#cancelModal").classList.remove("hidden");$("#closeCancelBtn").onclick=()=>$("#cancelModal").classList.add("hidden");$("#confirmCancelBtn").onclick=()=>cancelOrder().catch(e=>toast(e.message));
+$("#cancelBtn")?.addEventListener("click",()=>$("#cancelModal").classList.remove("hidden"));$("#closeCancelBtn").onclick=()=>$("#cancelModal").classList.add("hidden");$("#confirmCancelBtn").onclick=()=>cancelOrder().catch(e=>toast(e.message));
 $("#previewTravelDocBtn").onclick=previewTravelDoc;$("#generateTravelDocBtn").onclick=generateTravelDoc;$("#printTravelDocBtn").onclick=()=>{previewTravelDoc();setTimeout(()=>window.print(),180)};
 $("#closeTravelDocBtn").onclick=()=>$("#travelDocModal").classList.add("hidden");$("#modalPrintBtn").onclick=()=>{fillTravelDoc();setTimeout(()=>window.print(),120)};
 
@@ -582,8 +555,8 @@ $("#closeTravelDocBtn").onclick=()=>$("#travelDocModal").classList.add("hidden")
 
 $("#modalCloseBtn")?.addEventListener("click",()=>$("#travelDocModal").classList.add("hidden"));
 
-$("#markArrivedBtn")?.addEventListener("click",()=>openArrivalModal("mark").catch(e=>{console.error(e);toast(e?.message||"Tagihan belum dapat dibaca.");}));
-$("#cancelArrivedBtn")?.addEventListener("click",()=>openArrivalModal("cancel").catch(e=>{console.error(e);toast(e?.message||"Tagihan belum dapat dibaca.");}));
+$("#markArrivedBtn")?.addEventListener("click",()=>openArrivalModal("mark"));
+$("#cancelArrivedBtn")?.addEventListener("click",()=>openArrivalModal("cancel"));
 $("#closeArrivalModalBtn")?.addEventListener("click",closeArrivalModal);
 $("#arrivalModal")?.addEventListener("click",e=>{if(e.target===$("#arrivalModal"))closeArrivalModal()});
 $("#confirmArrivalBtn")?.addEventListener("click",()=>applyArrivalAction());
