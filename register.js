@@ -1,12 +1,9 @@
 import { signUp } from "./auth-service.js";
 import { redirectIfAuthenticated } from "./guard.js";
 
-const nextParam = new URLSearchParams(window.location.search).get("next") || "home.html";
-const safeNext = (/^[a-zA-Z0-9._-]+(?:\?[a-zA-Z0-9%&=._-]*)?$/.test(nextParam) && !nextParam.includes("://"))
-  ? nextParam
-  : "home.html";
+const POST_CONFIRM_REDIRECT = "home.html";
 
-await redirectIfAuthenticated({ redirect: safeNext });
+await redirectIfAuthenticated({ redirect: POST_CONFIRM_REDIRECT });
 
 const form = document.querySelector("#registerForm");
 const notice = document.querySelector("#notice");
@@ -47,20 +44,20 @@ form.addEventListener("submit", async (event) => {
   btn.textContent = "Membuat akun...";
 
   try {
-    const result = await signUp({ fullName, email, phone, password, next: safeNext });
+    const result = await signUp({ fullName, email, phone, password, next: POST_CONFIRM_REDIRECT });
     if (!result?.user) throw new Error("Akun gagal dibuat.");
 
     // With Confirm Email enabled Supabase intentionally returns no session.
     // Never treat that as a registration failure.
     if (!result.session) {
       sessionStorage.setItem("letsgo_pending_email", email);
-      sessionStorage.setItem("letsgo_pending_next", safeNext);
-      window.location.replace(`confirm-email.html?email=${encodeURIComponent(email)}&pending=1&next=${encodeURIComponent(safeNext)}`);
+      sessionStorage.setItem("letsgo_pending_next", POST_CONFIRM_REDIRECT);
+      window.location.replace(`confirm-email.html?email=${encodeURIComponent(email)}&pending=1&next=${encodeURIComponent(POST_CONFIRM_REDIRECT)}`);
       return;
     }
 
     // Defensive fallback if confirmation is disabled in Supabase.
-    window.location.replace(safeNext);
+    window.location.replace(POST_CONFIRM_REDIRECT);
   } catch (error) {
     const lower = String(error?.message || "").toLowerCase();
     const msg = lower.includes("already registered") || lower.includes("already been registered")

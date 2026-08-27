@@ -21,8 +21,7 @@ function showNotice(message, type="success"){
 }
 
 async function detectConfirmedSession(){
-  const rawNext=params.get("next")||sessionStorage.getItem("letsgo_pending_next")||"home.html";
-  const safeNext=/^[a-zA-Z0-9._-]+(?:\?[a-zA-Z0-9%&=._-]*)?$/.test(rawNext)&&!rawNext.includes("://")?rawNext:"home.html";
+  const safeNext = "home.html";
 
   // Supabase detectSessionInUrl:true exchanges the confirmation callback for a session.
   // Wait briefly for that exchange, then validate against the Auth server.
@@ -58,7 +57,7 @@ resendBtn.addEventListener("click", async () => {
   resendBtn.disabled = true;
   resendBtn.textContent = "Mengirim...";
   try {
-    await resendSignupConfirmation(email, params.get("next")||sessionStorage.getItem("letsgo_pending_next")||"home.html");
+    await resendSignupConfirmation(email, "home.html");
     showNotice("Email konfirmasi berhasil dikirim ulang.");
   } catch (error) {
     showNotice(error?.message || "Email konfirmasi gagal dikirim ulang.", "error");
