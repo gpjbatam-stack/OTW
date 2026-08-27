@@ -1,6 +1,7 @@
 import { signIn } from "./auth-service.js";
 import { supabase } from "./supabase.js";
 import { requireSplashFirst } from "./guard.js";
+import { refreshGuestQuoteAfterAuth } from "./auth-requote.js";
 
 if (!requireSplashFirst({ splash: "index.html" })) {
   await new Promise(() => {});
@@ -179,8 +180,14 @@ form.addEventListener("submit", async (event) => {
       return;
     }
 
-    showNotice("Login berhasil. Menyiapkan LetsGo...", "success");
-    setTimeout(() => window.location.replace(getSafeNext()), 180);
+    showNotice("Login berhasil. Memverifikasi ulang harga penerbangan...", "success");
+    try {
+      await refreshGuestQuoteAfterAuth();
+    } catch (quoteError) {
+      console.warn("[LetsGo Requote]", quoteError);
+      sessionStorage.setItem("letsgo_requote_error", quoteError?.message || "Penerbangan perlu dicari ulang.");
+    }
+    window.location.replace(getSafeNext());
 
   } catch (error) {
     const rawMessage = error?.message || "";

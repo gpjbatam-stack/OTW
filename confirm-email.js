@@ -1,5 +1,6 @@
 import { supabase } from "./supabase.js";
 import { resendSignupConfirmation } from "./auth-service.js";
+import { refreshGuestQuoteAfterAuth } from "./auth-requote.js";
 
 const params = new URLSearchParams(window.location.search);
 const email = params.get("email") || sessionStorage.getItem("letsgo_pending_email") || "";
@@ -40,7 +41,15 @@ async function detectConfirmedSession(){
         hint.textContent="Verifikasi berhasil. Sesi login Anda sudah aktif.";
         sessionStorage.removeItem("letsgo_pending_email");
         sessionStorage.removeItem("letsgo_pending_next");
-        setTimeout(()=>window.location.replace(safeNext),700);
+        // Registration confirmation still lands on Home as required,
+        // but refresh the guest quote first so the server stores it for this user.
+        try {
+          await refreshGuestQuoteAfterAuth();
+        } catch (quoteError) {
+          console.warn("[LetsGo Requote after confirmation]", quoteError);
+          sessionStorage.setItem("letsgo_requote_error", quoteError?.message || "Penerbangan perlu dicari ulang.");
+        }
+        setTimeout(()=>window.location.replace(safeNext),350);
         return;
       }
     }
