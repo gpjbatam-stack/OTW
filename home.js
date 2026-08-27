@@ -544,13 +544,9 @@ on("#searchFlightBtn", "click", async () => {
 
   const target = `search-flight.html?${params.toString()}`;
 
-  // Guest can prepare a search without losing it. After login, resume directly
-  // to the exact search URL from this browser tab.
-  if (!activeSession) {
-    sessionStorage.setItem("letsgo_pending_search_url", target);
-    return navigate("login.html?next=home.html%3FresumeSearch%3D1");
-  }
-
+  // Flight search is public. Guests may browse schedules and prices.
+  // Authentication is required only when the customer chooses a flight
+  // and continues into the booking flow.
   await navigate(target);
 });
 
@@ -837,7 +833,7 @@ async function loadActiveJourney() {
     // Home "Perjalanan saya" hanya menampilkan perjalanan yang masih aktif/actionable.
     // Pesanan PAID tidak lagi dianggap perjalanan aktif.
     const activeStatuses = new Set(["SUBMITTED","PROCESSING","VERIFIED","ISSUED","COMPLETED"]);
-    const priority ={COMPLETED:0,ISSUED:1,PROCESSING:2,VERIFIED:3,SUBMITTED:4};
+    const priority = {PROCESSING:1,VERIFIED:2,ISSUED:3,COMPLETED:4,SUBMITTED:5};
 
     const activeOrders = orders.filter(order => {
       const status = journeyEffectiveStatus(order,rMap.get(order.id));
@@ -922,15 +918,6 @@ async function startHomeRealtime() {
   await startReceivableRealtimeForActiveJourney();
 }
 
-const homeParams = new URLSearchParams(location.search);
-if (activeSession && homeParams.get("resumeSearch") === "1") {
-  const pendingSearchUrl = sessionStorage.getItem("letsgo_pending_search_url") || "";
-  sessionStorage.removeItem("letsgo_pending_search_url");
-  if (/^search-flight\.html\?/.test(pendingSearchUrl)) {
-    await navigate(pendingSearchUrl);
-    await new Promise(() => {});
-  }
-}
 
 if (activeSession) {
   applySearchPreferences();

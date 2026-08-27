@@ -1,12 +1,6 @@
-import { requireAuth } from "./guard.js";
 import { supabase } from "./supabase.js";
 
-try {
-  await requireAuth({ redirect: "login.html" });
-} catch (authError) {
-  console.error("[OTW] requireAuth gagal:", authError);
-}
-console.info("[OTW] search-flight v9 Supabase SDK auth loaded");
+console.info("[LetsGo] search-flight public browsing enabled");
 
 const SUPABASE_URL = "https://vumyxlbybhlaicubtgun.supabase.co";
 const EDGE_FUNCTION_URL = `${SUPABASE_URL}/functions/v1/jetwize-search`;
@@ -339,7 +333,7 @@ function render() {
   });
 }
 
-function selectFlight(flight) {
+async function selectFlight(flight) {
   const selected = {
     ...flight,
     selectedAt: new Date().toISOString(),
@@ -349,6 +343,14 @@ function selectFlight(flight) {
   sessionStorage.setItem("otw_selected_flight", JSON.stringify(selected));
   sessionStorage.setItem("otw_selected_offer_id", flight.offerId || "");
   sessionStorage.setItem("otw_search", JSON.stringify(search));
+
+  // Browsing is public; booking starts here and requires an account.
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user) {
+    sessionStorage.setItem("letsgo_pending_booking_url", "flight-detail.html");
+    location.href = "login.html?next=flight-detail.html";
+    return;
+  }
 
   location.href = "flight-detail.html";
 }
