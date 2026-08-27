@@ -55,6 +55,28 @@ function passengerCount(){
   const p=search?.passengers||{};
   return Number(p.adult??search.adults??1)+Number(p.child??search.children??0)+Number(p.infant??search.infants??0)||1;
 }
+
+function resolveOutbound(flightData, searchData){
+  const segs=Array.isArray(flightData?.segments)?flightData.segments:[];
+  const origin=String(searchData?.origin||flightData?.origin||segs[0]?.origin||"").toUpperCase();
+  const wanted=String(searchData?.destination||flightData?.destination||"").toUpperCase();
+  let outbound=[];
+  for(const seg of segs){
+    outbound.push(seg);
+    if(wanted && String(seg?.destination||"").toUpperCase()===wanted) break;
+  }
+  if(!outbound.length && segs.length) outbound=[segs[0]];
+  const first=outbound[0]||{};
+  let last=outbound.at(-1)||first;
+  // Round-trip provider responses can contain the return leg in the same offer.
+  // Never let the last return segment turn BTH→CGK into BTH→BTH.
+  if(wanted && String(last?.destination||"").toUpperCase()!==wanted){
+    const hit=segs.find(s=>String(s?.destination||"").toUpperCase()===wanted);
+    if(hit) last=hit;
+  }
+  return {segs,outbound,first,last,origin,destination:wanted||String(last?.destination||"").toUpperCase()};
+}
+
 function renderFlight(){
   if(!selected){
     $("#verifyTitle").textContent="Data penerbangan tidak ditemukan";
@@ -62,7 +84,7 @@ function renderFlight(){
     $("#continueBtn").disabled=true;
     return;
   }
-  const segs=selected.segments||[], first=segs[0]||{}, last=segs.at(-1)||first;
+  const {segs,first,last,destination}=resolveOutbound(selected,search);
   const code=airlineCode();
   const name=first.carrierName||selected.airlineName||"Maskapai";
 
@@ -72,7 +94,7 @@ function renderFlight(){
   $("#departureTime").textContent=hm(first.departureLocalTime||first.departureTime||selected.departureTime);
   $("#arrivalTime").textContent=hm(last.arrivalLocalTime||last.arrivalTime||selected.arrivalTime);
   $("#originCode").textContent=first.origin||selected.origin||search.origin||"---";
-  $("#destinationCode").textContent=last.destination||selected.destination||search.destination||"---";
+  $("#destinationCode").textContent=destination||last.destination||selected.destination||"---";
 
   const stops=Number(selected.stops??Math.max(0,segs.length-1));
   $("#stopBadge").textContent=stops?`${stops} Transit`:"Langsung";

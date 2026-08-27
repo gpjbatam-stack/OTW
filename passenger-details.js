@@ -83,9 +83,31 @@ function logoHTML(code,name){
     ?`<img src="./${src}?v=20260824" alt="${esc(name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span style="display:none">${esc(c)}</span>`
     :`<span>${esc(c)}</span>`;
 }
+
+function resolveOutbound(flightData, searchData){
+  const segs=Array.isArray(flightData?.segments)?flightData.segments:[];
+  const origin=String(searchData?.origin||flightData?.origin||segs[0]?.origin||"").toUpperCase();
+  const wanted=String(searchData?.destination||flightData?.destination||"").toUpperCase();
+  let outbound=[];
+  for(const seg of segs){
+    outbound.push(seg);
+    if(wanted && String(seg?.destination||"").toUpperCase()===wanted) break;
+  }
+  if(!outbound.length && segs.length) outbound=[segs[0]];
+  const first=outbound[0]||{};
+  let last=outbound.at(-1)||first;
+  // Round-trip provider responses can contain the return leg in the same offer.
+  // Never let the last return segment turn BTH→CGK into BTH→BTH.
+  if(wanted && String(last?.destination||"").toUpperCase()!==wanted){
+    const hit=segs.find(s=>String(s?.destination||"").toUpperCase()===wanted);
+    if(hit) last=hit;
+  }
+  return {segs,outbound,first,last,origin,destination:wanted||String(last?.destination||"").toUpperCase()};
+}
+
 function renderFlightSummary(){
   if(!selectedFlight)return;
-  const segments=selectedFlight.segments||[],first=segments[0]||{},last=segments.at(-1)||first;
+  const {segs:segments,first,last,destination}=resolveOutbound(selectedFlight,search);
   const name=first.carrierName||selectedFlight.airlineName||"Maskapai";
   const code=first.carrier||selectedFlight.airlineCode||"";
   const cabin=first.cabinClass||selectedFlight.cabin||search.cabin||"Ekonomi";
@@ -94,7 +116,7 @@ function renderFlightSummary(){
   $("#airlineName").textContent=name;
   $("#flightCode").textContent=`${first.flightNumber||selectedFlight.flightNumber||"—"} · ${cabin}`;
   $("#originCode").textContent=first.origin||selectedFlight.origin||search.origin||"---";
-  $("#destinationCode").textContent=last.destination||selectedFlight.destination||search.destination||"---";
+  $("#destinationCode").textContent=destination||last.destination||selectedFlight.destination||"---";
   $("#departureTime").textContent=hm(first.departureLocalTime||first.departureTime||selectedFlight.departureTime);
   $("#arrivalTime").textContent=hm(last.arrivalLocalTime||last.arrivalTime||selectedFlight.arrivalTime);
   $("#flightDate").textContent=dateLabel(first.departureLocalTime||first.departureTime||selectedFlight.departureTime||search.departDate);

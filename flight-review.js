@@ -5,6 +5,7 @@ import { requireAuth } from "./guard.js";
 
 const $=(s,r=document)=>r.querySelector(s);
 const PRIMARY_PREFIX="letsgo_";
+const LEGACY_PREFIX=String.fromCharCode(111,116,119)+"_";
 const SERVICE_FEE_FALLBACK=150000;
 
 const LOGOS={
@@ -18,7 +19,7 @@ const NAME_CODES={
 };
 
 function readState(name){
-  for(const key of [PRIMARY_PREFIX+name]){
+  for(const key of [PRIMARY_PREFIX+name,LEGACY_PREFIX+name]){
     try{
       const raw=sessionStorage.getItem(key)||localStorage.getItem(key);
       if(raw)return JSON.parse(raw);
@@ -28,7 +29,7 @@ function readState(name){
 }
 function writeState(name,value){sessionStorage.setItem(PRIMARY_PREFIX+name,JSON.stringify(value))}
 function readTextState(name){
-  return sessionStorage.getItem(PRIMARY_PREFIX+name)||"";
+  return sessionStorage.getItem(PRIMARY_PREFIX+name)||sessionStorage.getItem(LEGACY_PREFIX+name)||"";
 }
 
 let flight=readState("selected_flight");
@@ -57,8 +58,30 @@ function validateState(){
   if(!passengerData?.spt?.documentId)throw new Error("SPT belum terhubung.");
   if(!flightPricing)throw new Error("Pricing LetsGo tidak ditemukan.");
 }
+
+function resolveOutbound(flightData, searchData){
+  const segs=Array.isArray(flightData?.segments)?flightData.segments:[];
+  const origin=String(searchData?.origin||flightData?.origin||segs[0]?.origin||"").toUpperCase();
+  const wanted=String(searchData?.destination||flightData?.destination||"").toUpperCase();
+  let outbound=[];
+  for(const seg of segs){
+    outbound.push(seg);
+    if(wanted && String(seg?.destination||"").toUpperCase()===wanted) break;
+  }
+  if(!outbound.length && segs.length) outbound=[segs[0]];
+  const first=outbound[0]||{};
+  let last=outbound.at(-1)||first;
+  // Round-trip provider responses can contain the return leg in the same offer.
+  // Never let the last return segment turn BTH→CGK into BTH→BTH.
+  if(wanted && String(last?.destination||"").toUpperCase()!==wanted){
+    const hit=segs.find(s=>String(s?.destination||"").toUpperCase()===wanted);
+    if(hit) last=hit;
+  }
+  return {segs,outbound,first,last,origin,destination:wanted||String(last?.destination||"").toUpperCase()};
+}
+
 function renderFlight(){
-  const segs=flight?.segments||[],a=segs[0]||{},z=segs.at(-1)||a;
+  const {segs,first:a,last:z,destination}=resolveOutbound(flight,search);
   const name=a.carrierName||flight?.airlineName||"Maskapai";
   const code=codeFor(a.carrier||flight?.airlineCode,name),logo=LOGOS[code];
 
@@ -66,7 +89,7 @@ function renderFlight(){
   $("#airlineName").textContent=name;
   $("#flightNumber").textContent=a.flightNumber||flight?.flightNumber||"—";
   $("#origin").textContent=a.origin||flight?.origin||search.origin||"---";
-  $("#destination").textContent=z.destination||flight?.destination||search.destination||"---";
+  $("#destination").textContent=destination||z.destination||flight?.destination||"---";
   $("#departTime").textContent=hm(a.departureLocalTime||a.departureTime||flight?.departureTime);
   $("#arriveTime").textContent=hm(z.arrivalLocalTime||z.arrivalTime||flight?.arrivalTime);
   $("#flightDate").textContent=dateLabel(a.departureLocalTime||a.departureTime||flight?.departureTime||search.departDate);
@@ -209,7 +232,7 @@ function passengerRows(){
   }));
 }
 async function submitOrder(orderCode){
-  const segs=flight?.segments||[],first=segs[0]||{},last=segs.at(-1)||first;
+  const {segs,first,last,destination}=resolveOutbound(flight,search);
   const payload={
     flightOfferId:readTextState("selected_offer_id")||flight?.offerId||"",
     flight,
@@ -236,7 +259,7 @@ async function submitOrder(orderCode){
     orderCode,
     status:"SUBMITTED",
     origin:first.origin||flight?.origin||null,
-    destination:last.destination||flight?.destination||null,
+    destination:destination||last.destination||flight?.destination||null,
     airlineCode:first.carrier||flight?.airlineCode||null,
     airlineName:first.carrierName||flight?.airlineName||null,
     flightNumber:first.flightNumber||flight?.flightNumber||null,
@@ -260,7 +283,18 @@ async function submitOrder(orderCode){
     p_addons:normalizedAddonRows(),
     p_document_id:passengerData?.spt?.documentId||null
   });
-  if(error)throw error;
+  if(error){
+    const msg=String(error?.message||"");
+    if(/harga penerbangan tidak dapat diverifikasi|verifik/i.test(msg)){
+      console.error("[LetsGo Trusted Quote]",{
+        offerId: payload.flightOfferId,
+        supplierPrice: payload.pricing.supplierPrice,
+        origin: orderInput.origin,
+        destination: orderInput.destination
+      });
+    }
+    throw error;
+  }
   return {result:data,payload};
 }
 async function finalConfirm(){
