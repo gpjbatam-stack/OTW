@@ -8,219 +8,238 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./e-ticket.css?v=20260827-mobile">
-<style id="letsgo-mobile-pdf-v3">
-:root{--lg-navy:#061d40;--lg-text:#0b2238;--lg-muted:#74879a;--lg-line:#dce8f0}
-body{background:linear-gradient(180deg,#eef5fa 0%,#f8fbfd 45%,#edf4f8 100%)}
-.page-shell{width:min(100%,860px);margin:0 auto;padding-bottom:max(24px,env(safe-area-inset-bottom))}
-.topbar{position:sticky;top:0;z-index:20;background:rgba(249,252,254,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(214,228,237,.85)}
-#ticketArea{padding:0 14px 22px}.screen-actions{padding:14px 2px 10px}
-.ticket{border:1px solid #d8e5ee;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 24px 70px rgba(8,45,72,.11)}
-.ticket-head{background:linear-gradient(135deg,#061d40,#073961 66%,#086283);padding:22px 24px}
-.return-ticket-meta{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--lg-line);margin-top:14px}
-.return-ticket-meta>div{padding:12px 14px}.return-ticket-meta>div+div{border-left:1px solid var(--lg-line)}
-.return-ticket-meta small{display:block;font-size:8px;font-weight:800;letter-spacing:.08em;color:var(--lg-muted)}
-.return-ticket-meta strong{display:block;margin-top:4px;font-size:13px;color:var(--lg-text);overflow-wrap:anywhere}
-.customer-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.customer-actions .official{grid-column:1/-1}
-body.pdf-capture{background:#fff!important}body.pdf-capture .topbar,body.pdf-capture .screen-actions,body.pdf-capture .customer-actions,body.pdf-capture .official-note{display:none!important}
-body.pdf-capture .ticket{width:100%!important;max-width:none!important;margin:0!important;border-radius:18px!important;box-shadow:none!important;border:1px solid #d8e5ee!important}
-@media(max-width:600px){
-.page-shell{width:100%;padding:0 0 20px}.topbar{padding-left:12px;padding-right:12px}#ticketArea{padding:0 10px 18px}
-.ticket{border-radius:20px;box-shadow:0 16px 46px rgba(11,45,70,.10)}.ticket-head{padding:17px 14px;align-items:flex-start;gap:10px}
-.ticket-head .brand strong{font-size:23px}.ticket-head .brand span{font-size:7.5px;line-height:1.35}.verified{padding:7px 8px;border-radius:12px}
-.booking-strip{display:grid;grid-template-columns:1fr 1fr}.booking-strip>div{padding:12px 11px}.booking-strip>div:first-child{grid-column:1/-1;border-bottom:1px solid var(--lg-line)}.booking-strip>div:nth-child(3){border-left:1px solid var(--lg-line)}
-.booking-strip small{font-size:6.5px}.booking-strip strong{font-size:12.5px;overflow-wrap:anywhere}
-.route-hero{padding:18px 12px;grid-template-columns:minmax(0,1fr) 68px minmax(0,1fr);gap:7px}.airport strong{font-size:28px}.airport span{font-size:6.8px;line-height:1.35}.airport b{font-size:10.5px}.flight-center>strong{font-size:8.5px;text-align:center}.flight-center small{font-size:6.5px}
-.facts{grid-template-columns:1fr 1fr}.facts>div{padding:11px}.facts>div:nth-child(3),.facts>div:nth-child(4){border-top:1px solid var(--lg-line)}
-.compact-card{margin:9px 9px 0;border-radius:15px}.compact-card header{padding:10px 12px}.return-route{padding:13px 11px}.return-route strong{font-size:20px}
-.return-ticket-meta{grid-template-columns:1fr}.return-ticket-meta>div+div{border-left:0;border-top:1px solid var(--lg-line)}
-.passenger{grid-template-columns:28px minmax(0,1fr);gap:9px;padding:11px 12px}.passenger>b{grid-column:2;font-size:10.5px;text-align:left;color:#0878d8;overflow-wrap:anywhere}
-.travel-row{display:grid;grid-template-columns:1fr;margin:9px}.travel-row>div{padding:11px 13px}.travel-row>div+div{border-left:0;border-top:1px solid var(--lg-line)}
-.airport-guide{grid-template-columns:1fr;margin:9px}.airport-guide>div{padding:11px 13px}.airport-guide>div+div{border-left:0;border-top:1px solid var(--lg-line)}
-.issued-strip{grid-template-columns:1fr 1fr;padding:11px 13px}.issued-strip>div:last-child{grid-column:1/-1;margin-top:7px}.ticket-foot{padding:13px 14px}
-.customer-actions{grid-template-columns:1fr;margin:12px 0 0}.customer-actions .official{grid-column:auto}.action{min-height:50px;border-radius:15px;font-size:11.5px}.official-note{font-size:8.5px;line-height:1.55;padding:0 10px}
-}
-@media print{@page{size:A5 portrait;margin:6mm}html,body{background:#fff!important}.topbar,.screen-actions,.customer-actions,.official-note{display:none!important}#ticketArea{padding:0!important}.ticket{box-shadow:none!important;border-radius:0!important;border:0!important}.ticket,.compact-card,.route-hero,.facts,.travel-row,.airport-guide,.issued-strip{break-inside:avoid;page-break-inside:avoid}}
-</style>
+  <link rel="stylesheet" href="./e-ticket.css?v=20260828-final-v1">
 </head>
 <body>
-  <main class="page-shell">
-    <header class="topbar">
-      <button id="backBtn" class="icon-btn" type="button" aria-label="Kembali">
-        <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
-      </button>
-      <div>
-        <span>LetsGo TRAVEL DOCUMENT</span>
-        <strong>E-Ticket</strong>
-      </div>
-      <button id="shareTopBtn" class="icon-btn" type="button" aria-label="Bagikan">
-        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.1M8.6 13.4l6.8 4.1"/></svg>
-      </button>
-    </header>
+  <header class="appbar">
+    <button id="backBtn" class="appbar-btn" type="button" aria-label="Kembali">
+      <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <div class="appbar-copy">
+      <small>DOKUMEN PERJALANAN</small>
+      <strong>E-Ticket LetsGo</strong>
+    </div>
+    <button id="shareTopBtn" class="appbar-btn" type="button" aria-label="Bagikan">
+      <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.1M8.6 13.4l6.8 4.1"/></svg>
+    </button>
+  </header>
 
+  <main class="page">
     <section id="loadingState" class="state-card">
-      <div class="spinner"></div>
+      <span class="spinner"></span>
       <strong>Menyiapkan e-ticket</strong>
-      <span>Mengambil dokumen perjalanan Anda...</span>
+      <p>Mengambil detail perjalanan yang telah diterbitkan.</p>
     </section>
 
     <section id="errorState" class="state-card hidden">
-      <div class="state-icon">!</div>
+      <span class="state-alert">!</span>
       <strong>E-ticket belum dapat dibuka</strong>
-      <span id="errorText">Silakan coba lagi.</span>
+      <p id="errorText">Silakan coba kembali.</p>
       <button id="retryBtn" type="button">Coba lagi</button>
     </section>
 
-    <section id="ticketArea" class="hidden">
-      <div class="screen-actions">
-        <span class="issued-chip"><i></i> TIKET TERBIT</span>
-        <span id="screenOrder">LetsGo-—</span>
+    <section id="ticketArea" class="ticket-area hidden">
+      <div class="screen-meta">
+        <span class="issued-pill"><i>✓</i> TIKET TERBIT</span>
+        <span id="screenOrder">LG-—</span>
       </div>
 
-      <article id="printTicket" class="ticket">
-        <header class="ticket-head">
-          <div class="brand">
+      <article id="ticketDocument" class="travel-document">
+        <section class="hero">
+          <div class="brand-lockup">
             <strong>LetsGo</strong>
-            <div>
-              <span>Perjalanan, dalam Genggaman.</span>
-              <small>E-TICKET / TRAVEL DOCUMENT</small>
-            </div>
+            <span>Perjalanan, dalam Genggaman.</span>
           </div>
-          <div class="verified">
-            <i>✓</i>
-            <div><small>DOCUMENT STATUS</small><strong>VERIFIED</strong></div>
+          <div class="verify-badge">
+            <span class="verify-icon">✓</span>
+            <div><small>STATUS DOKUMEN</small><strong>VERIFIED</strong></div>
           </div>
-        </header>
+        </section>
 
-        <section class="booking-strip">
-          <div>
-            <small>LetsGo ORDER</small>
+        <section class="booking-card">
+          <div class="booking-main">
+            <small>NOMOR PESANAN</small>
             <strong id="orderCode">—</strong>
           </div>
-          <div class="important">
-            <small>BOOKING CODE / PNR</small>
-            <strong id="pnr">—</strong>
-          </div>
-          <div class="important">
-            <small>E-TICKET NUMBER</small>
-            <strong id="ticketNumber">—</strong>
+          <div class="booking-side">
+            <small>JENIS PERJALANAN</small>
+            <strong id="tripType">—</strong>
           </div>
         </section>
 
-        <section class="route-hero">
-          <div class="airport">
-            <small>DEPARTURE</small>
-            <strong id="origin">---</strong>
-            <span id="originName">Bandara asal</span>
-            <b id="departAt">—</b>
-            <em id="originTerminal">Terminal —</em>
-          </div>
+        <section class="section-block flights-block">
+          <header class="section-heading">
+            <div><span>01</span><div><small>ITINERARY</small><strong>Penerbangan Anda</strong></div></div>
+            <em id="legCountText">1 penerbangan</em>
+          </header>
 
-          <div class="flight-center">
-            <span id="duration">—</span>
-            <div><i></i><b>✈</b><i></i></div>
-            <strong id="flightMain">—</strong>
-            <small id="flightType">Direct / Non-stop</small>
-          </div>
+          <article class="flight-leg outbound-leg">
+            <header class="leg-head">
+              <div class="leg-label">
+                <span class="leg-index">PERGI</span>
+                <div><strong id="flightMain">—</strong><small id="outboundDateLabel">—</small></div>
+              </div>
+              <span class="leg-status">CONFIRMED</span>
+            </header>
 
-          <div class="airport right">
-            <small>ARRIVAL</small>
-            <strong id="destination">---</strong>
-            <span id="destinationName">Bandara tujuan</span>
-            <b id="arrivalAt">—</b>
-            <em id="destinationTerminal">Terminal —</em>
-          </div>
+            <div class="route-mobile">
+              <div class="airport-point">
+                <small>BERANGKAT</small>
+                <strong id="origin">---</strong>
+                <span id="originName">Bandara asal</span>
+                <b id="departAt">—</b>
+                <em id="originTerminal">Terminal —</em>
+              </div>
+              <div class="route-bridge">
+                <span id="duration">—</span>
+                <div><i></i><b>✈</b><i></i></div>
+                <small id="flightType">Langsung</small>
+              </div>
+              <div class="airport-point right">
+                <small>TIBA</small>
+                <strong id="destination">---</strong>
+                <span id="destinationName">Bandara tujuan</span>
+                <b id="arrivalAt">—</b>
+                <em id="destinationTerminal">Terminal —</em>
+              </div>
+            </div>
+
+            <div class="leg-identifiers">
+              <div><small>MASKAPAI</small><strong id="airline">—</strong></div>
+              <div><small>FLIGHT</small><strong id="flightNumber">—</strong></div>
+              <div><small>PNR PERGI</small><strong id="pnr">—</strong></div>
+              <div><small>E-TICKET PERGI</small><strong id="ticketNumber">—</strong></div>
+            </div>
+          </article>
+
+          <article id="returnCard" class="flight-leg return-leg hidden">
+            <header class="leg-head">
+              <div class="leg-label">
+                <span class="leg-index return">PULANG</span>
+                <div><strong id="returnFlight">—</strong><small id="returnDateLabel">—</small></div>
+              </div>
+              <span class="leg-status">CONFIRMED</span>
+            </header>
+
+            <div class="route-mobile">
+              <div class="airport-point">
+                <small>BERANGKAT</small>
+                <strong id="returnOrigin">---</strong>
+                <span id="returnOriginName">Bandara asal</span>
+                <b id="returnDepart">—</b>
+                <em id="returnOriginTerminal">Terminal —</em>
+              </div>
+              <div class="route-bridge">
+                <span id="returnDuration">—</span>
+                <div><i></i><b>✈</b><i></i></div>
+                <small id="returnFlightType">Langsung</small>
+              </div>
+              <div class="airport-point right">
+                <small>TIBA</small>
+                <strong id="returnDestination">---</strong>
+                <span id="returnDestinationName">Bandara tujuan</span>
+                <b id="returnArrival">—</b>
+                <em id="returnDestinationTerminal">Terminal —</em>
+              </div>
+            </div>
+
+            <div class="leg-identifiers">
+              <div><small>MASKAPAI</small><strong id="returnAirline">—</strong></div>
+              <div><small>FLIGHT</small><strong id="returnFlightNumber">—</strong></div>
+              <div><small>PNR PULANG</small><strong id="returnPnr">—</strong></div>
+              <div><small>E-TICKET PULANG</small><strong id="returnTicketNumber">—</strong></div>
+            </div>
+          </article>
         </section>
 
-        <section class="facts">
-          <div><small>AIRLINE</small><strong id="airline">—</strong></div>
-          <div><small>FLIGHT</small><strong id="flightNumber">—</strong></div>
-          <div><small>CLASS</small><strong id="cabin">Economy</strong></div>
-          <div><small>TRIP</small><strong id="tripType">Sekali jalan</strong></div>
-        </section>
-
-        <section id="returnCard" class="compact-card hidden">
-          <header><span>RETURN FLIGHT</span><strong id="returnFlight">—</strong></header>
-          <div class="return-route">
-            <div><small>FROM</small><strong id="returnOrigin">---</strong><span id="returnDepart">—</span></div>
-            <b>✈</b>
-            <div class="right"><small>TO</small><strong id="returnDestination">---</strong><span id="returnArrival">—</span></div>
-          </div>
-        </section>
-
-        <section class="compact-card">
-          <header><span>PASSENGER</span><strong id="paxCount">1 PAX</strong></header>
+        <section class="section-block">
+          <header class="section-heading">
+            <div><span>02</span><div><small>PASSENGER</small><strong>Penumpang</strong></div></div>
+            <em id="paxCount">1 PAX</em>
+          </header>
           <div id="passengerList" class="passenger-list"></div>
         </section>
 
-        <section class="travel-row">
-          <div>
-            <small>CHECKED BAGGAGE</small>
-            <strong id="checkedBaggage">Sesuai ketentuan maskapai</strong>
-          </div>
-          <div>
-            <small>EXTRA BAGGAGE</small>
-            <strong id="extraBaggage">Tidak ada</strong>
-          </div>
-          <div>
-            <small>TRAVEL PROTECTION</small>
-            <strong id="protection">Tidak dipilih</strong>
-          </div>
-        </section>
-
-        <section class="airport-guide">
-          <div>
-            <span class="guide-icon">▣</span>
-            <p><strong>Siapkan dokumen</strong>Gunakan e-ticket resmi maskapai/supplier dan identitas penumpang.</p>
-          </div>
-          <div>
-            <span class="guide-icon">◷</span>
-            <p><strong>Check-in tepat waktu</strong>Ikuti batas waktu check-in dan boarding dari maskapai.</p>
-          </div>
-          <div>
-            <span class="guide-icon">i</span>
-            <p><strong>Waktu setempat</strong>Waktu mengikuti zona waktu lokal masing-masing bandara.</p>
+        <section class="section-block">
+          <header class="section-heading">
+            <div><span>03</span><div><small>TRAVEL SERVICES</small><strong>Bagasi & layanan</strong></div></div>
+          </header>
+          <div class="service-list">
+            <div class="service-row">
+              <span class="service-icon">▣</span>
+              <div><small>BAGASI TERCATAT</small><strong id="checkedBaggage">Sesuai ketentuan maskapai</strong></div>
+            </div>
+            <div class="service-row">
+              <span class="service-icon">＋</span>
+              <div><small>EXTRA BAGASI</small><strong id="extraBaggage">Tidak ada</strong></div>
+            </div>
+            <div class="service-row">
+              <span class="service-icon">✓</span>
+              <div><small>PERLINDUNGAN PERJALANAN</small><strong id="protection">Tidak dipilih</strong></div>
+            </div>
           </div>
         </section>
 
-        <section class="issued-strip">
-          <div><small>ISSUED BY</small><strong>LetsGo Ticketing</strong></div>
-          <div><small>ISSUED AT</small><strong id="issuedAt">—</strong></div>
+        <section class="travel-notice">
+          <div class="notice-title">
+            <span>i</span>
+            <div><small>SEBELUM BERANGKAT</small><strong>Yang perlu Anda perhatikan</strong></div>
+          </div>
+          <div class="notice-list">
+            <p><b>01</b><span><strong>Siapkan dokumen perjalanan</strong>Gunakan dokumen resmi maskapai/supplier dan identitas penumpang saat check-in.</span></p>
+            <p><b>02</b><span><strong>Datang lebih awal</strong>Ikuti batas waktu check-in, boarding, dan ketentuan bagasi dari maskapai.</span></p>
+            <p><b>03</b><span><strong>Waktu lokal</strong>Seluruh waktu di dokumen ini mengikuti waktu lokal bandara terkait.</span></p>
+          </div>
+        </section>
+
+        <section class="issued-panel">
+          <div><small>DITERBITKAN OLEH</small><strong>LetsGo Ticketing</strong></div>
+          <div><small>DITERBITKAN PADA</small><strong id="issuedAt">—</strong></div>
           <div><small>STATUS</small><strong>ISSUED</strong></div>
         </section>
 
-        <footer class="ticket-foot">
+        <footer class="document-footer">
           <div><strong>LetsGo</strong><span>Perjalanan, dalam Genggaman.</span></div>
-          <span>SECURE ELECTRONIC TRAVEL DOCUMENT</span>
+          <small>SECURE ELECTRONIC TRAVEL DOCUMENT</small>
         </footer>
       </article>
 
-      <section class="customer-actions">
-        <button id="printBtn" class="action primary" type="button">
-          <svg viewBox="0 0 24 24"><path d="M7 8V3h10v5M7 17h10v4H7z"/><path d="M5 17H3V9h18v8h-2"/></svg>
-          Unduh PDF Premium
+      <section class="actions-panel">
+        <button id="printBtn" class="action action-primary" type="button">
+          <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/><path d="M8 15h8M8 18h6"/></svg>
+          <span><small>SIMPAN KE PERANGKAT</small><strong>Unduh PDF Premium</strong></span>
         </button>
-        <button id="shareBtn" class="action secondary" type="button">
+
+        <button id="shareBtn" class="action action-secondary" type="button">
           <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.1M8.6 13.4l6.8 4.1"/></svg>
-          Bagikan
+          <span><small>KIRIM KE ORANG LAIN</small><strong>Bagikan E-Ticket</strong></span>
         </button>
-        <button id="officialBtn" class="action official hidden" type="button">
-          <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/></svg>
-          E-Ticket Resmi Maskapai
-        </button>
+
+        <div id="officialActions" class="official-actions hidden">
+          <div class="official-title">
+            <span>✓</span>
+            <div><small>DOKUMEN MASKAPAI / SUPPLIER</small><strong>Dokumen resmi perjalanan</strong></div>
+          </div>
+          <button id="officialBtn" class="official-btn hidden" type="button">
+            <span>PERGI</span><strong>E-Ticket Resmi Pergi</strong><em>↗</em>
+          </button>
+          <button id="returnOfficialBtn" class="official-btn hidden" type="button">
+            <span>PULANG</span><strong>E-Ticket Resmi Pulang</strong><em>↗</em>
+          </button>
+          <button id="sharedOfficialBtn" class="official-btn shared hidden" type="button">
+            <span>PP</span><strong>E-Ticket Resmi Pulang-Pergi</strong><em>↗</em>
+          </button>
+        </div>
       </section>
 
-      <p class="official-note">
-        LetsGo Travel Document adalah ringkasan perjalanan. Dokumen resmi maskapai/supplier tetap menjadi dokumen utama untuk check-in dan boarding.
-      </p>
+      <p class="document-note">Dokumen LetsGo adalah ringkasan perjalanan. Untuk check-in dan boarding, dokumen resmi maskapai/supplier tetap menjadi referensi utama.</p>
     </section>
   </main>
 
   <div id="toast" class="toast"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" referrerpolicy="no-referrer"></script>
-  <script type="module" src="./e-ticket.js?v=20260828-mobilepdf-v3"></script>
+  <script type="module" src="./e-ticket.js?v=20260828-final-v1"></script>
 </body>
 </html>
