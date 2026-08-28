@@ -53,15 +53,7 @@ async function loadData(){
   if(!code)throw new Error("Nomor pesanan tidak ditemukan pada URL.");
 
   const {data,error}=await supabase.from("flight_orders").select("*").eq("order_code",code).single();
-  if(error)throw error;
-
-  const sessionUserId=session?.user?.id||session?.user_id||null;
-  if(!sessionUserId)throw new Error("Sesi pengguna tidak valid. Silakan masuk kembali.");
-  if(data?.user_id&&data.user_id!==sessionUserId){
-    throw new Error("Anda tidak memiliki akses ke pesanan ini.");
-  }
-
-  order=data;
+  if(error)throw error;order=data;
 
   const [paxRes,addonRes,docRes]=await Promise.all([
     supabase.from("flight_passengers").select("*").eq("order_id",order.id).order("passenger_index"),
@@ -79,7 +71,7 @@ async function loadData(){
 
   const {data:receivableData,error:receivableError}=await supabase
     .from("receivables")
-    .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,arrived_batam_at,due_date,effective_due_date,paid_at,status,booking_blocked")
+    .select("id,flight_order_id,principal_amount,paid_amount,outstanding_amount,arrived_batam_at,due_date,effective_due_date,status,booking_blocked")
     .eq("flight_order_id",order.id)
     .maybeSingle();
 
@@ -110,7 +102,28 @@ function renderStatus(){
   if(note){$("#adminNoteSection").classList.remove("hidden");$("#adminNote").textContent=note}
 }
 function renderFlight(){
-  const payload=order.payload||{},flight=payload.flight||{},segs=flight.segments||[],first=segs[0]||{},last=segs.at(-1)||first;
+  const payload=order.payload||{},flight=payload.flight||{},segs=flight.segments||[],first=segs[0]||{};
+
+  // Untuk round-trip, segments dapat berisi perjalanan pergi + pulang.
+  // Jangan gunakan segmen terakhir sebagai tujuan karena hasilnya bisa BTH -> BTH.
+  const search=flight.searchSnapshot||payload.search||{};
+  const origin=String(order.origin||search.origin||flight.origin||first.origin||"").toUpperCase();
+  const wantedDestination=String(order.destination||search.destination||flight.destination||"").toUpperCase();
+
+  let outbound=[];
+  for(const seg of segs){
+    outbound.push(seg);
+    if(wantedDestination && String(seg?.destination||"").toUpperCase()===wantedDestination)break;
+  }
+  if(!outbound.length&&first)outbound=[first];
+
+  let last=outbound.at(-1)||first;
+  if(wantedDestination&&String(last?.destination||"").toUpperCase()!==wantedDestination){
+    const destinationSegment=segs.find(seg=>String(seg?.destination||"").toUpperCase()===wantedDestination);
+    if(destinationSegment)last=destinationSegment;
+  }
+
+  const destination=wantedDestination||String(last?.destination||"").toUpperCase();
   const name=first.carrierName||flight.airlineName||order.airline_name||"Maskapai",code=resolveAirlineCode(flight);
 
   $("#airlineLogo").innerHTML=LOGOS[code]?`<img src="./${LOGOS[code]}?v=20260824" alt="${esc(name)}"><span style="display:none">${esc(code)}</span>`:`<span>${esc(code)}</span>`;
@@ -118,17 +131,21 @@ function renderFlight(){
   $("#flightNumber").textContent=first.flightNumber||flight.flightNumber||order.flight_number||"—";
   $("#departTime").textContent=hm(first.departureLocalTime||first.departureTime||order.depart_at);
   $("#arriveTime").textContent=hm(last.arrivalLocalTime||last.arrivalTime||order.arrival_at);
-  $("#origin").textContent=first.origin||flight.origin||order.origin||"---";
-  $("#destination").textContent=last.destination||flight.destination||order.destination||"---";
+  $("#origin").textContent=origin||first.origin||"---";
+  $("#destination").textContent=destination||last.destination||"---";
   $("#originName").textContent=AIRPORTS[$("#origin").textContent]||"Bandara asal";
   $("#destinationName").textContent=AIRPORTS[$("#destination").textContent]||"Bandara tujuan";
   $("#flightDate").textContent=dateLabel(first.departureLocalTime||first.departureTime||order.depart_at);
-  $("#duration").textContent=duration(flight.totalDuration||flight.durationMinutes||first.duration);
+  $("#duration").textContent=duration(
+    outbound.reduce((sum,seg)=>sum+Number(seg?.duration||0),0)||
+    flight.durationMinutes||
+    first.duration
+  );
   $("#cabin").textContent=first.cabinClass||flight.cabin||order.cabin_class||"Ekonomi";
   $("#baggage").textContent=`Bagasi ${first.baggageAllowance||flight.baggage||"sesuai fare"}`;
-  const stops=Number(flight.stops??Math.max(0,segs.length-1));
+  const stops=Math.max(0,outbound.length-1);
   $("#stops").textContent=stops?`${stops} transit`:"Langsung";
-  $("#tripTypePill").textContent=(flight.searchSnapshot||{}).trip==="roundtrip"?"Pulang-pergi":"Sekali jalan";
+  $("#tripTypePill").textContent=(search.trip==="roundtrip"||search.returnDate)?"Pulang-pergi":"Sekali jalan";
 }
 function renderTimeline(){
   const status=String(order.status||"SUBMITTED").toUpperCase();
@@ -205,7 +222,7 @@ function renderSpt(){
 }
 function renderPricing(){
   const p=order.payload?.pricing||{};
-  const ticket=Number(order.flight_total??p.flightTotal??order.ticket_price??p.ticketFare??0);
+  const ticket=Number(order.ticket_price??p.ticketFare??0);
   const service=Number(order.service_fee??p.serviceFee??150000);
   const baggageTotal=addons.length
     ? addons.filter(x=>x.addon_type==="BAGGAGE").reduce((s,x)=>s+Number(x.total_price||0),0)
@@ -238,13 +255,7 @@ function renderPaymentDeadline(){
   const deadline=receivable?.effective_due_date||receivable?.due_date||null;
   const arrived=receivable?.arrived_batam_at||null;
   const paymentStatus=String(receivable?.status||"open").toLowerCase();
-  const outstanding=receivable?.outstanding_amount;
-  const paid=paymentStatus==="paid"||(
-    outstanding!==null &&
-    outstanding!==undefined &&
-    Number.isFinite(Number(outstanding)) &&
-    Number(outstanding)<=0
-  );
+  const paid=paymentStatus==="paid"||Number(receivable?.outstanding_amount||0)<=0;
   const overdue=Boolean(deadline)&&!paid&&new Date(`${deadline}T23:59:59`).getTime()<Date.now();
 
   $("#paymentAmount").textContent=rupiah(receivable?.outstanding_amount??order?.grand_total??0);
@@ -317,7 +328,7 @@ $("#invoiceBtn")?.addEventListener("click",()=>location.href=invoicePageUrl());
 $("#openSptBtn")?.addEventListener("click",openSpt);
 $("#primaryActionBtn")?.addEventListener("click",()=>{
   const status=String(order?.status||"").toUpperCase();
-  if(isPaymentPaid())return location.href=invoicePageUrl();
+  if(isPaymentPaid())return location.href="orders.html";
   if(status==="ISSUED")return location.href=ticketPageUrl();
   if(status==="COMPLETED")return location.href=paymentPageUrl();
   if(status==="CANCELLED")return location.href="help.html";
