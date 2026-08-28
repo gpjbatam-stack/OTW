@@ -8,62 +8,40 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./e-ticket.css?v=20260828-pp-premium-v2">
-
-<style id="letsgo-eticket-premium-mobile-v2">
-  :root{--lg-navy:#071d40;--lg-cyan:#09bfe9;--lg-blue:#1475ef;--lg-line:#dbe7f0;--lg-soft:#f5f9fc;--lg-text:#0c2136;--lg-muted:#74879a}
-  body{background:linear-gradient(180deg,#eef5fa 0,#f8fbfd 38%,#edf4f8 100%)}
-  .page-shell{max-width:860px;margin:0 auto;padding-bottom:max(26px,env(safe-area-inset-bottom))}
-  .topbar{position:sticky;top:0;z-index:20;background:rgba(248,251,253,.9);backdrop-filter:blur(18px);border-bottom:1px solid rgba(212,227,237,.8)}
-  .screen-actions{padding:14px 16px 10px}
-  .ticket{border-radius:24px;overflow:hidden;box-shadow:0 24px 70px rgba(9,45,72,.10);border:1px solid #d8e5ee;background:#fff}
-  .ticket-head{background:linear-gradient(135deg,#071d40,#073b68 68%,#075b7f);padding:22px 24px}
-  .booking-strip{background:#fff}
-  .route-hero{background:linear-gradient(180deg,#fff,#fbfdff)}
-  .compact-card,.travel-row,.airport-guide,.facts{border-color:var(--lg-line)}
-  .return-ticket-card{background:linear-gradient(180deg,#f8fcff,#fff)}
-  .return-ticket-meta{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--lg-line);margin-top:14px}
-  .return-ticket-meta>div{padding:12px 14px}.return-ticket-meta>div+div{border-left:1px solid var(--lg-line)}
-  .return-ticket-meta small{display:block;font-size:8px;font-weight:800;letter-spacing:.08em;color:var(--lg-muted)}
-  .return-ticket-meta strong{display:block;margin-top:4px;font-size:13px;color:var(--lg-text)}
-  .customer-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-  .customer-actions .official{grid-column:1/-1}
-  .customer-actions .return-official{background:#fff;border:1px solid #cfe6ef;color:#087897}
-  .official-note{max-width:660px;margin:14px auto 0;padding:0 18px;text-align:center}
-  @media(max-width:600px){
-    .page-shell{width:100%;padding:0 0 22px}
-    .topbar{padding-left:14px;padding-right:14px}
-    #ticketArea{padding:0 12px}
-    .screen-actions{padding-left:2px;padding-right:2px}
-    .ticket{border-radius:20px;box-shadow:0 16px 46px rgba(11,45,70,.10)}
-    .ticket-head{padding:18px 16px;align-items:flex-start}
-    .ticket-head .brand strong{font-size:24px}.ticket-head .brand span{font-size:8px}
-    .verified{padding:7px 8px;border-radius:12px}.verified div small{font-size:6px}.verified div strong{font-size:8px}
-    .booking-strip{display:grid;grid-template-columns:1fr 1fr}.booking-strip>div{padding:13px 12px}.booking-strip>div:first-child{grid-column:1/-1;border-bottom:1px solid var(--lg-line)}
-    .booking-strip>div:nth-child(3){border-left:1px solid var(--lg-line)}
-    .booking-strip small{font-size:7px}.booking-strip strong{font-size:13px;overflow-wrap:anywhere}
-    .route-hero{padding:20px 14px;grid-template-columns:minmax(0,1fr) 76px minmax(0,1fr);gap:8px}
-    .airport strong{font-size:28px}.airport span{font-size:7px;line-height:1.35}.airport b{font-size:11px}
-    .flight-center>strong{font-size:9px;text-align:center}.flight-center small{font-size:7px}
-    .facts{grid-template-columns:1fr 1fr}.facts>div{padding:12px}.facts>div:nth-child(3){border-top:1px solid var(--lg-line)}.facts>div:nth-child(4){border-top:1px solid var(--lg-line)}
-    .compact-card{margin:10px 10px 0;border-radius:15px}
-    .return-route{padding:14px 12px}.return-route strong{font-size:20px}
-    .return-ticket-meta{grid-template-columns:1fr}.return-ticket-meta>div+div{border-left:0;border-top:1px solid var(--lg-line)}
-    .passenger{grid-template-columns:30px minmax(0,1fr);gap:10px}.passenger>b{grid-column:2;font-size:11px;text-align:left;color:#0a75d5;overflow-wrap:anywhere}
-    .travel-row{display:grid;grid-template-columns:1fr;margin:10px}.travel-row>div{padding:12px 14px}.travel-row>div+div{border-left:0;border-top:1px solid var(--lg-line)}
-    .airport-guide{grid-template-columns:1fr;margin:10px}.airport-guide>div{padding:12px 14px}.airport-guide>div+div{border-left:0;border-top:1px solid var(--lg-line)}
-    .issued-strip{grid-template-columns:1fr 1fr;padding:12px 14px}.issued-strip>div:last-child{grid-column:1/-1;margin-top:8px}
-    .ticket-foot{padding:14px 16px}
-    .customer-actions{grid-template-columns:1fr;margin:12px 0 0}.customer-actions .official{grid-column:auto}
-    .action{min-height:52px;border-radius:15px;font-size:12px}
-    .official-note{font-size:9px;line-height:1.55}
-  }
-  @media print{
-    .topbar,.screen-actions,.customer-actions,.official-note{display:none!important}
-    #ticketArea{padding:0!important}.ticket{box-shadow:none;border-radius:0}
-  }
+  <link rel="stylesheet" href="./e-ticket.css?v=20260827-mobile">
+<style id="letsgo-mobile-pdf-v3">
+:root{--lg-navy:#061d40;--lg-text:#0b2238;--lg-muted:#74879a;--lg-line:#dce8f0}
+body{background:linear-gradient(180deg,#eef5fa 0%,#f8fbfd 45%,#edf4f8 100%)}
+.page-shell{width:min(100%,860px);margin:0 auto;padding-bottom:max(24px,env(safe-area-inset-bottom))}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(249,252,254,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(214,228,237,.85)}
+#ticketArea{padding:0 14px 22px}.screen-actions{padding:14px 2px 10px}
+.ticket{border:1px solid #d8e5ee;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 24px 70px rgba(8,45,72,.11)}
+.ticket-head{background:linear-gradient(135deg,#061d40,#073961 66%,#086283);padding:22px 24px}
+.return-ticket-meta{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--lg-line);margin-top:14px}
+.return-ticket-meta>div{padding:12px 14px}.return-ticket-meta>div+div{border-left:1px solid var(--lg-line)}
+.return-ticket-meta small{display:block;font-size:8px;font-weight:800;letter-spacing:.08em;color:var(--lg-muted)}
+.return-ticket-meta strong{display:block;margin-top:4px;font-size:13px;color:var(--lg-text);overflow-wrap:anywhere}
+.customer-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.customer-actions .official{grid-column:1/-1}
+body.pdf-capture{background:#fff!important}body.pdf-capture .topbar,body.pdf-capture .screen-actions,body.pdf-capture .customer-actions,body.pdf-capture .official-note{display:none!important}
+body.pdf-capture .ticket{width:100%!important;max-width:none!important;margin:0!important;border-radius:18px!important;box-shadow:none!important;border:1px solid #d8e5ee!important}
+@media(max-width:600px){
+.page-shell{width:100%;padding:0 0 20px}.topbar{padding-left:12px;padding-right:12px}#ticketArea{padding:0 10px 18px}
+.ticket{border-radius:20px;box-shadow:0 16px 46px rgba(11,45,70,.10)}.ticket-head{padding:17px 14px;align-items:flex-start;gap:10px}
+.ticket-head .brand strong{font-size:23px}.ticket-head .brand span{font-size:7.5px;line-height:1.35}.verified{padding:7px 8px;border-radius:12px}
+.booking-strip{display:grid;grid-template-columns:1fr 1fr}.booking-strip>div{padding:12px 11px}.booking-strip>div:first-child{grid-column:1/-1;border-bottom:1px solid var(--lg-line)}.booking-strip>div:nth-child(3){border-left:1px solid var(--lg-line)}
+.booking-strip small{font-size:6.5px}.booking-strip strong{font-size:12.5px;overflow-wrap:anywhere}
+.route-hero{padding:18px 12px;grid-template-columns:minmax(0,1fr) 68px minmax(0,1fr);gap:7px}.airport strong{font-size:28px}.airport span{font-size:6.8px;line-height:1.35}.airport b{font-size:10.5px}.flight-center>strong{font-size:8.5px;text-align:center}.flight-center small{font-size:6.5px}
+.facts{grid-template-columns:1fr 1fr}.facts>div{padding:11px}.facts>div:nth-child(3),.facts>div:nth-child(4){border-top:1px solid var(--lg-line)}
+.compact-card{margin:9px 9px 0;border-radius:15px}.compact-card header{padding:10px 12px}.return-route{padding:13px 11px}.return-route strong{font-size:20px}
+.return-ticket-meta{grid-template-columns:1fr}.return-ticket-meta>div+div{border-left:0;border-top:1px solid var(--lg-line)}
+.passenger{grid-template-columns:28px minmax(0,1fr);gap:9px;padding:11px 12px}.passenger>b{grid-column:2;font-size:10.5px;text-align:left;color:#0878d8;overflow-wrap:anywhere}
+.travel-row{display:grid;grid-template-columns:1fr;margin:9px}.travel-row>div{padding:11px 13px}.travel-row>div+div{border-left:0;border-top:1px solid var(--lg-line)}
+.airport-guide{grid-template-columns:1fr;margin:9px}.airport-guide>div{padding:11px 13px}.airport-guide>div+div{border-left:0;border-top:1px solid var(--lg-line)}
+.issued-strip{grid-template-columns:1fr 1fr;padding:11px 13px}.issued-strip>div:last-child{grid-column:1/-1;margin-top:7px}.ticket-foot{padding:13px 14px}
+.customer-actions{grid-template-columns:1fr;margin:12px 0 0}.customer-actions .official{grid-column:auto}.action{min-height:50px;border-radius:15px;font-size:11.5px}.official-note{font-size:8.5px;line-height:1.55;padding:0 10px}
+}
+@media print{@page{size:A5 portrait;margin:6mm}html,body{background:#fff!important}.topbar,.screen-actions,.customer-actions,.official-note{display:none!important}#ticketArea{padding:0!important}.ticket{box-shadow:none!important;border-radius:0!important;border:0!important}.ticket,.compact-card,.route-hero,.facts,.travel-row,.airport-guide,.issued-strip{break-inside:avoid;page-break-inside:avoid}}
 </style>
-
 </head>
 <body>
   <main class="page-shell">
@@ -124,7 +102,7 @@
             <strong id="pnr">—</strong>
           </div>
           <div class="important">
-            <small>E-TICKET PERGI</small>
+            <small>E-TICKET NUMBER</small>
             <strong id="ticketNumber">—</strong>
           </div>
         </section>
@@ -161,19 +139,12 @@
           <div><small>TRIP</small><strong id="tripType">Sekali jalan</strong></div>
         </section>
 
-        <section id="returnCard" class="compact-card return-ticket-card hidden">
-          <header>
-            <span>RETURN FLIGHT</span>
-            <strong id="returnFlight">—</strong>
-          </header>
+        <section id="returnCard" class="compact-card hidden">
+          <header><span>RETURN FLIGHT</span><strong id="returnFlight">—</strong></header>
           <div class="return-route">
             <div><small>FROM</small><strong id="returnOrigin">---</strong><span id="returnDepart">—</span></div>
             <b>✈</b>
             <div class="right"><small>TO</small><strong id="returnDestination">---</strong><span id="returnArrival">—</span></div>
-          </div>
-          <div class="return-ticket-meta">
-            <div><small>PNR PULANG</small><strong id="returnPnr">—</strong></div>
-            <div><small>E-TICKET PULANG</small><strong id="returnTicketNumber">—</strong></div>
           </div>
         </section>
 
@@ -227,7 +198,7 @@
       <section class="customer-actions">
         <button id="printBtn" class="action primary" type="button">
           <svg viewBox="0 0 24 24"><path d="M7 8V3h10v5M7 17h10v4H7z"/><path d="M5 17H3V9h18v8h-2"/></svg>
-          Unduh / Simpan PDF
+          Unduh PDF Premium
         </button>
         <button id="shareBtn" class="action secondary" type="button">
           <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.1M8.6 13.4l6.8 4.1"/></svg>
@@ -235,11 +206,7 @@
         </button>
         <button id="officialBtn" class="action official hidden" type="button">
           <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/></svg>
-          E-Ticket Resmi Pergi
-        </button>
-        <button id="returnOfficialBtn" class="action official return-official hidden" type="button">
-          <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/></svg>
-          E-Ticket Resmi Pulang
+          E-Ticket Resmi Maskapai
         </button>
       </section>
 
@@ -252,6 +219,8 @@
   <div id="toast" class="toast"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
-  <script type="module" src="./e-ticket.js?v=20260828-pp-premium-v2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" referrerpolicy="no-referrer"></script>
+  <script type="module" src="./e-ticket.js?v=20260828-mobilepdf-v3"></script>
 </body>
 </html>
