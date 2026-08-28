@@ -306,7 +306,26 @@ async function uploadOfficialTicket(file){
   const ext=(file.name.split(".").pop()||"pdf").toLowerCase(),safe=`${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`,path=`${currentOrder.user_id}/${currentOrder.order_code}/${safe}`;
   $("#officialTicketName").textContent="Mengupload e-ticket…";
   const {error}=await supabase.storage.from(TICKET_BUCKET).upload(path,file,{upsert:false,contentType:file.type||undefined});if(error)throw error;
-  officialTicketRef=path;syncOfficialTicketUI();syncReadiness();toast("E-ticket resmi berhasil di-upload.");
+  officialTicketRef=path;
+
+  // Persist immediately. Previously the uploaded Storage path could exist only
+  // in this browser state until another save/issue action completed.
+  const payload={...(currentOrder.payload||{})};
+  payload.ticketing={
+    ...(payload.ticketing||{}),
+    officialTicketPath:path,
+    officialTicketUrl:"",
+    updatedAt:new Date().toISOString()
+  };
+  const {error:saveError}=await supabase
+    .from("flight_orders")
+    .update({payload,ticket_url:path})
+    .eq("id",currentOrder.id);
+  if(saveError)throw saveError;
+
+  currentOrder.payload=payload;
+  currentOrder.ticket_url=path;
+  syncOfficialTicketUI();syncReadiness();toast("E-ticket resmi berhasil di-upload dan disimpan.");
 }
 
 

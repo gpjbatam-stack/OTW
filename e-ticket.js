@@ -72,15 +72,42 @@ function render(){
   $("#checkedBaggage").textContent=t.first.baggageAllowance||t.flight.baggage||"Sesuai ketentuan maskapai";$("#extraBaggage").textContent=extraKg?`${extraKg} kg`:"Tidak ada";$("#protection").textContent=addons.insurance?(addons.insurance.addonName||addons.insurance.name||"Dipilih"):"Tidak dipilih";
   $("#issuedAt").textContent=dateTime(ops.issuedAt||ops.travelDocumentGeneratedAt||order.updated_at);
 
-  officialRef=ops.officialTicketPath||ops.officialTicketUrl||order.ticket_url||"";
+  officialRef=
+    ops.officialTicketPath||
+    ops.officialTicketUrl||
+    ops.official_ticket_path||
+    ops.official_ticket_url||
+    order.ticket_url||
+    "";
   $("#officialBtn").classList.toggle("hidden",!officialRef);
 }
 async function openOfficial(){
   if(!officialRef)return;
-  if(/^https?:\/\//i.test(officialRef)){window.open(officialRef,"_blank","noopener,noreferrer");return}
+
+  const raw=String(officialRef).trim();
+  if(/^https?:\/\//i.test(raw)){
+    window.open(raw,"_blank","noopener,noreferrer");
+    return;
+  }
+
+  // Accept either a plain object path or a value accidentally stored with
+  // the bucket prefix (flight-tickets/user/order/file.pdf).
+  const candidates=[raw];
   for(const bucket of ["flight-tickets","tickets","documents"]){
-    const {data,error}=await supabase.storage.from(bucket).createSignedUrl(officialRef,600);
-    if(!error&&data?.signedUrl){window.open(data.signedUrl,"_blank","noopener,noreferrer");return}
+    const prefix=`${bucket}/`;
+    if(raw.startsWith(prefix))candidates.push(raw.slice(prefix.length));
+  }
+
+  for(const bucket of ["flight-tickets","tickets","documents"]){
+    for(const path of [...new Set(candidates)]){
+      try{
+        const {data,error}=await supabase.storage.from(bucket).createSignedUrl(path,600);
+        if(!error&&data?.signedUrl){
+          window.open(data.signedUrl,"_blank","noopener,noreferrer");
+          return;
+        }
+      }catch{}
+    }
   }
   toast("E-ticket resmi belum dapat dibuka.");
 }
