@@ -9,7 +9,7 @@ const AIRPORTS={
   BPN:"Sultan Aji Muhammad Sulaiman Sepinggan Airport",UPG:"Sultan Hasanuddin International Airport",
   SOC:"Adi Soemarmo International Airport",YIA:"Yogyakarta International Airport"
 };
-let order=null,user=null,officialRef="";
+let order=null,user=null,officialRef="",returnOfficialRef="";
 
 function esc(v=""){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function dateLabel(v){if(!v)return"—";const d=new Date(v);if(Number.isNaN(d.getTime()))return"—";return new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"short",year:"numeric"}).format(d)}
@@ -54,7 +54,9 @@ function resolve(){
 }
 function render(){
   const t=resolve(),ops=order.payload?.ticketing||{},pax=order.payload?.passengerDetails?.passengers||[],addons=order.payload?.addons||{};
-  const pnr=ops.pnr||order.pnr||"—",ticketNo=ops.ticketNumber||order.ticket_number||"—";
+  const pnr=ops.pnr||order.pnr||"—",ticketNo=ops.outboundTicketNumber||ops.ticketNumber||order.ticket_number||"—";
+  const returnPnr=ops.returnPnr||pnr;
+  const returnTicketNo=ops.returnTicketNumber||ticketNo;
   $("#screenOrder").textContent=order.order_code;$("#orderCode").textContent=order.order_code;$("#pnr").textContent=pnr;$("#ticketNumber").textContent=ticketNo;
   $("#origin").textContent=t.origin;$("#destination").textContent=t.destination;$("#originName").textContent=t.first.originName||AIRPORTS[t.origin]||"Bandara asal";$("#destinationName").textContent=t.last.destinationName||AIRPORTS[t.destination]||"Bandara tujuan";
   $("#departAt").textContent=`${dateLabel(t.depart)} · ${hm(t.depart)}`;$("#arrivalAt").textContent=`${dateLabel(t.arrive)} · ${hm(t.arrive)}`;
@@ -63,49 +65,46 @@ function render(){
   $("#airline").textContent=t.airline;$("#flightNumber").textContent=t.flightNo;$("#cabin").textContent=t.cabin;$("#tripType").textContent=t.trip;
 
   const returnSeg=t.segs.find(s=>String(s.origin||"").toUpperCase()===t.destination&&String(s.destination||"").toUpperCase()===t.origin);
-  if(returnSeg){$("#returnCard").classList.remove("hidden");$("#returnFlight").textContent=`${returnSeg.carrierName||t.airline} · ${returnSeg.flightNumber||"—"}`;$("#returnOrigin").textContent=returnSeg.origin;$("#returnDestination").textContent=returnSeg.destination;$("#returnDepart").textContent=`${dateLabel(returnSeg.departureLocalTime||returnSeg.departureTime)} · ${hm(returnSeg.departureLocalTime||returnSeg.departureTime)}`;$("#returnArrival").textContent=`${dateLabel(returnSeg.arrivalLocalTime||returnSeg.arrivalTime)} · ${hm(returnSeg.arrivalLocalTime||returnSeg.arrivalTime)}`}
+  if(returnSeg){$("#returnCard").classList.remove("hidden");$("#returnFlight").textContent=`${returnSeg.carrierName||t.airline} · ${returnSeg.flightNumber||"—"}`;$("#returnOrigin").textContent=returnSeg.origin;$("#returnDestination").textContent=returnSeg.destination;$("#returnDepart").textContent=`${dateLabel(returnSeg.departureLocalTime||returnSeg.departureTime)} · ${hm(returnSeg.departureLocalTime||returnSeg.departureTime)}`;$("#returnArrival").textContent=`${dateLabel(returnSeg.arrivalLocalTime||returnSeg.arrivalTime)} · ${hm(returnSeg.arrivalLocalTime||returnSeg.arrivalTime)}`;$("#returnPnr").textContent=returnPnr;$("#returnTicketNumber").textContent=returnTicketNo}
 
   const effective=pax.length?pax:[{fullName:"Data penumpang tersimpan",type:"PASSENGER"}];$("#paxCount").textContent=`${effective.length||1} PAX`;
-  $("#passengerList").innerHTML=effective.map((p,i)=>`<div class="passenger"><span>${i+1}</span><div><strong>${esc([p.title,p.fullName].filter(Boolean).join(" ")||`Penumpang ${i+1}`)}</strong><small>${esc(String(p.label||p.type||"ADULT").toUpperCase())} · ${esc(String(t.cabin).toUpperCase())}</small></div><b>${esc(p.ticketNumber||p.eTicketNumber||ticketNo)}</b></div>`).join("");
+  $("#passengerList").innerHTML=effective.map((p,i)=>`<div class="passenger"><span>${i+1}</span><div><strong>${esc([p.title,p.fullName].filter(Boolean).join(" ")||`Penumpang ${i+1}`)}</strong><small>${esc(String(p.label||p.type||"ADULT").toUpperCase())} · ${esc(String(t.cabin).toUpperCase())}</small></div><b>${esc(t.trip==="Pulang-pergi"?`${p.ticketNumber||p.eTicketNumber||ticketNo} / ${p.returnTicketNumber||p.returnETicketNumber||returnTicketNo}`:(p.ticketNumber||p.eTicketNumber||ticketNo))}</b></div>`).join("");
 
   const baggage=Array.isArray(addons.baggage)?addons.baggage:[],extraKg=baggage.reduce((s,x)=>s+Number(x.weightKg||x.weight_kg||0),0);
   $("#checkedBaggage").textContent=t.first.baggageAllowance||t.flight.baggage||"Sesuai ketentuan maskapai";$("#extraBaggage").textContent=extraKg?`${extraKg} kg`:"Tidak ada";$("#protection").textContent=addons.insurance?(addons.insurance.addonName||addons.insurance.name||"Dipilih"):"Tidak dipilih";
   $("#issuedAt").textContent=dateTime(ops.issuedAt||ops.travelDocumentGeneratedAt||order.updated_at);
 
   officialRef=
+    ops.outboundOfficialTicketPath||
+    ops.outboundOfficialTicketUrl||
     ops.officialTicketPath||
     ops.officialTicketUrl||
     ops.official_ticket_path||
     ops.official_ticket_url||
     order.ticket_url||
     "";
+  returnOfficialRef=
+    ops.returnOfficialTicketPath||
+    ops.returnOfficialTicketUrl||
+    (ops.sharedOfficialTicket?officialRef:"")||
+    "";
   $("#officialBtn").classList.toggle("hidden",!officialRef);
+  $("#returnOfficialBtn").classList.toggle("hidden",!(returnSeg&&returnOfficialRef));
 }
-async function openOfficial(){
-  if(!officialRef)return;
-
-  const raw=String(officialRef).trim();
-  if(/^https?:\/\//i.test(raw)){
-    window.open(raw,"_blank","noopener,noreferrer");
-    return;
-  }
-
-  // Accept either a plain object path or a value accidentally stored with
-  // the bucket prefix (flight-tickets/user/order/file.pdf).
+async function openOfficial(ref=officialRef){
+  if(!ref)return;
+  const raw=String(ref).trim();
+  if(/^https?:\/\//i.test(raw)){window.open(raw,"_blank","noopener,noreferrer");return}
   const candidates=[raw];
   for(const bucket of ["flight-tickets","tickets","documents"]){
     const prefix=`${bucket}/`;
     if(raw.startsWith(prefix))candidates.push(raw.slice(prefix.length));
   }
-
   for(const bucket of ["flight-tickets","tickets","documents"]){
     for(const path of [...new Set(candidates)]){
       try{
         const {data,error}=await supabase.storage.from(bucket).createSignedUrl(path,600);
-        if(!error&&data?.signedUrl){
-          window.open(data.signedUrl,"_blank","noopener,noreferrer");
-          return;
-        }
+        if(!error&&data?.signedUrl){window.open(data.signedUrl,"_blank","noopener,noreferrer");return}
       }catch{}
     }
   }
@@ -119,6 +118,6 @@ async function share(){
 
 $("#backBtn").onclick=()=>history.length>1?history.back():location.href=`detail-pesanan.html?id=${encodeURIComponent(code())}`;
 $("#retryBtn").onclick=()=>location.reload();
-$("#printBtn").onclick=()=>window.print();$("#shareBtn").onclick=share;$("#shareTopBtn").onclick=share;$("#officialBtn").onclick=()=>openOfficial().catch(e=>toast(e.message));
+$("#printBtn").onclick=()=>window.print();$("#shareBtn").onclick=share;$("#shareTopBtn").onclick=share;$("#officialBtn").onclick=()=>openOfficial(officialRef).catch(e=>toast(e.message));$("#returnOfficialBtn").onclick=()=>openOfficial(returnOfficialRef).catch(e=>toast(e.message));
 
 (async()=>{try{if(!await auth())return;await load();render();$("#loadingState").classList.add("hidden");$("#ticketArea").classList.remove("hidden")}catch(e){console.error(e);$("#loadingState").classList.add("hidden");$("#errorState").classList.remove("hidden");$("#errorText").textContent=e.message||"E-ticket belum dapat dibuka."}})();

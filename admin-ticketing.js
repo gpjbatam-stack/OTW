@@ -5,7 +5,7 @@ const STATUS_LABEL={SUBMITTED:"Diajukan",PROCESSING:"Diajukan",VERIFIED:"Diajuka
 const STATUS_CLASS={SUBMITTED:"submitted",PROCESSING:"processing",VERIFIED:"verified",ISSUED:"issued",COMPLETED:"completed",CANCELLED:"cancelled"};
 const TICKET_BUCKET="flight-tickets";
 
-let adminUser=null,orders=[],currentOrder=null,currentReceivable=null,selectedStatus="SUBMITTED",officialTicketRef=null,generatedDoc=false,arrivalActionMode="mark";
+let adminUser=null,orders=[],currentOrder=null,currentReceivable=null,selectedStatus="SUBMITTED",officialTicketRef=null,returnOfficialTicketRef=null,generatedDoc=false,arrivalActionMode="mark";
 
 function rupiah(v){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(Number(v)||0)}
 function esc(v=""){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
@@ -13,6 +13,29 @@ function dt(v){if(!v)return"—";const d=new Date(v);return Number.isNaN(d.getTi
 function dateOnly(v){if(!v)return"—";const d=new Date(v);return Number.isNaN(d.getTime())?"—":new Intl.DateTimeFormat("id-ID",{day:"numeric",month:"short",year:"numeric"}).format(d)}
 function hm(v){const m=String(v||"").match(/T(\d{2}):(\d{2})/);return m?`${m[1]}:${m[2]}`:"—"}
 function toast(m){const e=$("#toast");e.textContent=m;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),2200)}
+
+function tripData(o=currentOrder){
+  const payload=o?.payload||{},flight=payload.flight||{},search=flight.searchSnapshot||payload.search||{};
+  const segs=Array.isArray(flight.segments)?flight.segments:[];
+  const origin=String(search.origin||o?.origin||segs[0]?.origin||"").toUpperCase();
+  const destination=String(search.destination||o?.destination||"").toUpperCase();
+  const tripRaw=String(search.trip||search.tripType||payload.tripType||"").toLowerCase();
+  const returnSeg=segs.find(s=>String(s.origin||"").toUpperCase()===destination&&String(s.destination||"").toUpperCase()===origin)||null;
+  const roundtrip=/round|return|pp/.test(tripRaw)||Boolean(search.returnDate)||Boolean(returnSeg);
+  return {payload,flight,search,segs,origin,destination,returnSeg,roundtrip};
+}
+function syncTripTicketUI(){
+  const t=tripData();
+  document.querySelectorAll(".roundtrip-only").forEach(el=>el.classList.toggle("hidden",!t.roundtrip));
+  $("#tripTicketHint").innerHTML=t.roundtrip
+    ?'<strong>Tiket pulang-pergi</strong><span>Dukung nomor tiket & dokumen pergi/pulang terpisah, atau satu dokumen resmi yang mencakup keduanya.</span>'
+    :'<strong>Tiket sekali jalan</strong><span>Satu nomor e-ticket dan satu dokumen resmi.</span>';
+  $("#outboundOfficialRoute").textContent=`${t.origin||"---"} → ${t.destination||"---"}`;
+  if(t.roundtrip)$("#returnOfficialRoute").textContent=`${t.destination||"---"} → ${t.origin||"---"}`;
+  const shared=Boolean($("#sharedOfficialTicketCheck")?.checked);
+  $("#returnOfficialUploadWrap")?.classList.toggle("hidden",t.roundtrip&&shared);
+}
+
 
 function dateLong(v){
   if(!v)return"—";
@@ -233,14 +256,20 @@ function sptRef(o){
 }
 function passengerCount(o){return o.payload?.passengerDetails?.passengers?.length||o.passenger_count||0}
 function computeReadiness(o=currentOrder,ops=buildOps(false)){
+  const t=tripData(o);
+  const shared=Boolean(ops.sharedOfficialTicket);
+  const outboundTicket=Boolean(ops.outboundTicketNumber||ops.ticketNumber);
+  const returnTicket=!t.roundtrip||Boolean(ops.returnTicketNumber||ops.ticketNumber);
+  const outboundDoc=Boolean(ops.outboundOfficialTicketPath||ops.outboundOfficialTicketUrl||ops.officialTicketPath||ops.officialTicketUrl);
+  const returnDoc=!t.roundtrip||shared||Boolean(ops.returnOfficialTicketPath||ops.returnOfficialTicketUrl);
   const checks={
     flight:Boolean(o?.origin&&o?.destination&&o?.flight_number&&o?.depart_at),
     passenger:passengerCount(o)>0,
     spt:Boolean(sptRef(o)),
     supplier:Boolean(ops.supplier&&Number(ops.supplierCost)>0),
     pnr:Boolean(ops.pnr),
-    ticketNumber:Boolean(ops.ticketNumber),
-    officialTicket:Boolean(ops.officialTicketPath||ops.officialTicketUrl)
+    ticketNumber:outboundTicket&&returnTicket,
+    officialTicket:outboundDoc&&returnDoc
   };
   const vals=Object.values(checks),ok=vals.filter(Boolean).length;
   return {checks,percent:Math.round(ok/vals.length*100),ready:ok===vals.length};
@@ -250,7 +279,8 @@ async function openOrder(code){
   currentOrder=orders.find(o=>o.order_code===code); if(!currentOrder)return;
   const ops=currentOrder.payload?.ticketing||{};
   selectedStatus=["PROCESSING","VERIFIED"].includes(String(currentOrder.status||"").toUpperCase())?"SUBMITTED":String(currentOrder.status||"SUBMITTED").toUpperCase();
-  officialTicketRef=ops.officialTicketPath||ops.officialTicketUrl||currentOrder.ticket_url||"";
+  officialTicketRef=ops.outboundOfficialTicketPath||ops.outboundOfficialTicketUrl||ops.officialTicketPath||ops.officialTicketUrl||currentOrder.ticket_url||"";
+  returnOfficialTicketRef=ops.returnOfficialTicketPath||ops.returnOfficialTicketUrl||"";
   generatedDoc=Boolean(ops.travelDocumentGeneratedAt);
   await loadCurrentReceivable();
 
@@ -262,8 +292,8 @@ async function openOrder(code){
   const addons=currentOrder.payload?.addons||{},bags=Array.isArray(addons.baggage)?addons.baggage.length:0;$("#drawerAddon").textContent=bags||addons.insurance?`${bags} bagasi${addons.insurance?" + asuransi":""}`:"Tidak ada";
   $("#drawerSptState").textContent=sptRef(currentOrder)?"Tersimpan":"Belum ada";$("#viewSptBtn").disabled=!sptRef(currentOrder);
 
-  $("#supplierInput").value=ops.supplier||"";$("#supplierCostInput").value=ops.supplierCost||"";$("#pnrInput").value=ops.pnr||"";$("#ticketNumberInput").value=ops.ticketNumber||"";$("#internalNoteInput").value=ops.internalNote||"";$("#customerNoteInput").value=currentOrder.admin_notes||"";
-  syncOfficialTicketUI();syncMargin();syncTravelDoc();syncStatusFlow();syncReadiness();syncPaymentControl();
+  $("#supplierInput").value=ops.supplier||"";$("#supplierCostInput").value=ops.supplierCost||"";$("#pnrInput").value=ops.pnr||"";$("#ticketNumberInput").value=ops.outboundTicketNumber||ops.ticketNumber||"";$("#returnPnrInput").value=ops.returnPnr||"";$("#returnTicketNumberInput").value=ops.returnTicketNumber||"";$("#sharedOfficialTicketCheck").checked=Boolean(ops.sharedOfficialTicket);$("#internalNoteInput").value=ops.internalNote||"";$("#customerNoteInput").value=currentOrder.admin_notes||"";
+  syncTripTicketUI();syncOfficialTicketUI();syncMargin();syncTravelDoc();syncStatusFlow();syncReadiness();syncPaymentControl();
   $("#drawerBackdrop").classList.remove("hidden");document.body.style.overflow="hidden";
 }
 function closeDrawer(){$("#drawerBackdrop").classList.add("hidden");document.body.style.overflow="";currentOrder=null;currentReceivable=null}
@@ -271,7 +301,29 @@ function closeDrawer(){$("#drawerBackdrop").classList.add("hidden");document.bod
 function buildOps(fromForm=true){
   const old=currentOrder?.payload?.ticketing||{};
   if(!fromForm)return old;
-  return {...old,supplier:$("#supplierInput").value.trim(),supplierCost:Number($("#supplierCostInput").value||0),pnr:$("#pnrInput").value.trim().toUpperCase(),ticketNumber:$("#ticketNumberInput").value.trim(),officialTicketPath:officialTicketRef&&!/^https?:/i.test(officialTicketRef)?officialTicketRef:(old.officialTicketPath||""),officialTicketUrl:/^https?:/i.test(officialTicketRef)?officialTicketRef:(old.officialTicketUrl||""),internalNote:$("#internalNoteInput").value.trim(),travelDocumentGeneratedAt:generatedDoc?(old.travelDocumentGeneratedAt||new Date().toISOString()):null,updatedAt:new Date().toISOString()};
+  const outboundTicketNumber=$("#ticketNumberInput").value.trim();
+  const returnTicketNumber=$("#returnTicketNumberInput")?.value.trim()||"";
+  const sharedOfficialTicket=Boolean($("#sharedOfficialTicketCheck")?.checked);
+  return {
+    ...old,
+    supplier:$("#supplierInput").value.trim(),
+    supplierCost:Number($("#supplierCostInput").value||0),
+    pnr:$("#pnrInput").value.trim().toUpperCase(),
+    returnPnr:$("#returnPnrInput")?.value.trim().toUpperCase()||"",
+    ticketNumber:outboundTicketNumber,
+    outboundTicketNumber,
+    returnTicketNumber,
+    sharedOfficialTicket,
+    officialTicketPath:officialTicketRef&&!/^https?:/i.test(officialTicketRef)?officialTicketRef:(old.officialTicketPath||""),
+    officialTicketUrl:/^https?:/i.test(officialTicketRef)?officialTicketRef:(old.officialTicketUrl||""),
+    outboundOfficialTicketPath:officialTicketRef&&!/^https?:/i.test(officialTicketRef)?officialTicketRef:(old.outboundOfficialTicketPath||""),
+    outboundOfficialTicketUrl:/^https?:/i.test(officialTicketRef)?officialTicketRef:(old.outboundOfficialTicketUrl||""),
+    returnOfficialTicketPath:returnOfficialTicketRef&&!/^https?:/i.test(returnOfficialTicketRef)?returnOfficialTicketRef:(old.returnOfficialTicketPath||""),
+    returnOfficialTicketUrl:/^https?:/i.test(returnOfficialTicketRef)?returnOfficialTicketRef:(old.returnOfficialTicketUrl||""),
+    internalNote:$("#internalNoteInput").value.trim(),
+    travelDocumentGeneratedAt:generatedDoc?(old.travelDocumentGeneratedAt||new Date().toISOString()):null,
+    updatedAt:new Date().toISOString()
+  };
 }
 function buildPayload(){return {...(currentOrder.payload||{}),ticketing:buildOps(true)}}
 
@@ -293,7 +345,18 @@ function syncTravelDoc(){
   $("#printTravelDocBtn").disabled=!generatedDoc;
 }
 function syncOfficialTicketUI(){
-  const has=Boolean(officialTicketRef);$("#officialTicketName").textContent=has?"Official e-ticket tersimpan":"Belum ada e-ticket resmi";$("#officialTicketMeta").textContent=has?(officialTicketRef.split("/").pop()||"Dokumen supplier"):"Upload PDF/JPG/PNG dari supplier atau maskapai.";$("#openOfficialTicketBtn").disabled=!has;$("#removeOfficialTicketBtn").disabled=!has;
+  const has=Boolean(officialTicketRef);
+  const hasReturn=Boolean(returnOfficialTicketRef);
+  const shared=Boolean($("#sharedOfficialTicketCheck")?.checked);
+  $("#officialTicketName").textContent=has?"E-ticket pergi tersimpan":"Belum ada e-ticket pergi";
+  $("#officialTicketMeta").textContent=has?(officialTicketRef.split("/").pop()||"Dokumen supplier"):"Upload PDF/JPG/PNG dari supplier atau maskapai.";
+  $("#openOfficialTicketBtn").disabled=!has;$("#removeOfficialTicketBtn").disabled=!has;
+
+  $("#returnOfficialTicketName").textContent=shared?"Menggunakan dokumen perjalanan PP":hasReturn?"E-ticket pulang tersimpan":"Belum ada e-ticket pulang";
+  $("#returnOfficialTicketMeta").textContent=shared?"Dokumen tiket pergi dipakai sebagai dokumen resmi untuk seluruh perjalanan PP.":hasReturn?(returnOfficialTicketRef.split("/").pop()||"Dokumen supplier"):"Upload dokumen khusus penerbangan pulang.";
+  $("#openReturnOfficialTicketBtn").disabled=shared?!has:!hasReturn;
+  $("#removeReturnOfficialTicketBtn").disabled=shared||!hasReturn;
+  syncTripTicketUI();
 }
 async function openStorageRef(ref,buckets=[TICKET_BUCKET,"tickets","documents"]){
   if(!ref)return false;if(/^https?:\/\//i.test(ref)){window.open(ref,"_blank","noopener,noreferrer");return true}
@@ -301,32 +364,41 @@ async function openStorageRef(ref,buckets=[TICKET_BUCKET,"tickets","documents"])
   return false;
 }
 async function openSpt(){if(!await openStorageRef(sptRef(currentOrder),[currentOrder.payload?.passengerDetails?.spt?.bucket,"spt","documents","flight-documents"].filter(Boolean)))toast("SPT ditemukan, tetapi bucket Storage belum cocok.")}
-async function uploadOfficialTicket(file){
+async function uploadTicketForLeg(file,leg="outbound"){
   if(!currentOrder||!file)return;
-  const ext=(file.name.split(".").pop()||"pdf").toLowerCase(),safe=`${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`,path=`${currentOrder.user_id}/${currentOrder.order_code}/${safe}`;
-  $("#officialTicketName").textContent="Mengupload e-ticket…";
-  const {error}=await supabase.storage.from(TICKET_BUCKET).upload(path,file,{upsert:false,contentType:file.type||undefined});if(error)throw error;
-  officialTicketRef=path;
+  const ext=(file.name.split(".").pop()||"pdf").toLowerCase();
+  const safe=`${Date.now()}-${leg}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+  const path=`${currentOrder.user_id}/${currentOrder.order_code}/${safe}`;
+  const isReturn=leg==="return";
+  const nameEl=isReturn?$("#returnOfficialTicketName"):$("#officialTicketName");
+  nameEl.textContent="Mengupload e-ticket…";
 
-  // Persist immediately. Previously the uploaded Storage path could exist only
-  // in this browser state until another save/issue action completed.
+  const {error}=await supabase.storage.from(TICKET_BUCKET).upload(path,file,{upsert:false,contentType:file.type||undefined});
+  if(error)throw error;
+
+  if(isReturn)returnOfficialTicketRef=path;else officialTicketRef=path;
+
   const payload={...(currentOrder.payload||{})};
+  const old=payload.ticketing||{};
   payload.ticketing={
-    ...(payload.ticketing||{}),
-    officialTicketPath:path,
-    officialTicketUrl:"",
+    ...old,
+    ...(isReturn
+      ? {returnOfficialTicketPath:path,returnOfficialTicketUrl:""}
+      : {officialTicketPath:path,officialTicketUrl:"",outboundOfficialTicketPath:path,outboundOfficialTicketUrl:""}),
     updatedAt:new Date().toISOString()
   };
-  const {error:saveError}=await supabase
-    .from("flight_orders")
-    .update({payload,ticket_url:path})
-    .eq("id",currentOrder.id);
+  const patch={payload};
+  if(!isReturn)patch.ticket_url=path;
+  const {error:saveError}=await supabase.from("flight_orders").update(patch).eq("id",currentOrder.id);
   if(saveError)throw saveError;
 
   currentOrder.payload=payload;
-  currentOrder.ticket_url=path;
-  syncOfficialTicketUI();syncReadiness();toast("E-ticket resmi berhasil di-upload dan disimpan.");
+  if(!isReturn)currentOrder.ticket_url=path;
+  syncOfficialTicketUI();syncReadiness();
+  toast(isReturn?"E-ticket pulang berhasil di-upload dan disimpan.":"E-ticket pergi berhasil di-upload dan disimpan.");
 }
+async function uploadOfficialTicket(file){return uploadTicketForLeg(file,"outbound")}
+async function uploadReturnOfficialTicket(file){return uploadTicketForLeg(file,"return")}
 
 
 const AIRPORT_NAMES={
@@ -440,7 +512,8 @@ function fillTravelDoc(){
   const insurance=addons.insurance||null;
 
   const pnr=$("#pnrInput").value.trim().toUpperCase()||ops.pnr||"—";
-  const ticketNumber=$("#ticketNumberInput").value.trim()||ops.ticketNumber||"—";
+  const ticketNumber=$("#ticketNumberInput").value.trim()||ops.outboundTicketNumber||ops.ticketNumber||"—";
+  const returnTicketNumber=$("#returnTicketNumberInput")?.value.trim()||ops.returnTicketNumber||ticketNumber;
   const airline=currentOrder.airline_name||t.first.carrierName||t.flight.airlineName||"—";
   const flightNo=currentOrder.flight_number||t.first.flightNumber||t.flight.flightNumber||"—";
   const cabin=t.first.cabinClass||t.flight.cabin||t.search.cabin||"Economy";
@@ -508,10 +581,11 @@ function fillTravelDoc(){
     const name=[p.title,p.fullName||p.full_name||p.name].filter(Boolean).join(" ").trim()||`Penumpang ${index+1}`;
     const type=p.type||p.label||"ADULT";
     const paxTicket=p.ticketNumber||p.eTicketNumber||ticketNumber;
+    const paxReturnTicket=p.returnTicketNumber||p.returnETicketNumber||returnTicketNumber;
     return `<div class="letsgo-doc-pax-v8">
       <span>${index+1}</span>
       <div><strong>${esc(name.toUpperCase())}</strong><small>${esc(String(type).toUpperCase())} · ${esc(String(cabin).toUpperCase())}</small></div>
-      <b>${esc(paxTicket||"—")}</b>
+      <b>${esc(t.tripType==="Pulang-pergi"?`${paxTicket||"—"} / ${paxReturnTicket||"—"}`:(paxTicket||"—"))}</b>
     </div>`;
   }).join("");
 
@@ -554,10 +628,14 @@ $("#focusNewBtn").onclick=()=>{$("#statusFilter").value="SUBMITTED";$("#sortFilt
 $("#menuBtn").onclick=()=>$("#sidebar").classList.toggle("open");$("#logoutBtn").onclick=async()=>{await supabase.auth.signOut();location.replace("admin-login.html")};
 $("#closeDrawerBtn").onclick=closeDrawer;$("#drawerBackdrop").onclick=e=>{if(e.target===$("#drawerBackdrop"))closeDrawer()};
 $("#viewSptBtn").onclick=()=>openSpt().catch(e=>toast(e.message));$("#openCustomerBtn").onclick=()=>currentOrder&&window.open(`detail-pesanan.html?id=${encodeURIComponent(currentOrder.order_code)}`,"_blank");
-$("#supplierCostInput").oninput=()=>{syncMargin();syncReadiness()};["supplierInput","pnrInput","ticketNumberInput"].forEach(id=>$("#"+id).oninput=()=>{syncReadiness();syncTravelDoc()});
+$("#supplierCostInput").oninput=()=>{syncMargin();syncReadiness()};["supplierInput","pnrInput","ticketNumberInput","returnPnrInput","returnTicketNumberInput"].forEach(id=>$("#"+id)?.addEventListener("input",()=>{syncReadiness();syncTravelDoc()}));
 $("#officialTicketInput").onchange=e=>uploadOfficialTicket(e.target.files?.[0]).catch(err=>toast(err.message));
+$("#returnOfficialTicketInput")?.addEventListener("change",e=>uploadReturnOfficialTicket(e.target.files?.[0]).catch(err=>toast(err.message)));
 $("#openOfficialTicketBtn").onclick=()=>openStorageRef(officialTicketRef).then(ok=>!ok&&toast("Dokumen belum dapat dibuka."));
-$("#removeOfficialTicketBtn").onclick=()=>{officialTicketRef=null;syncOfficialTicketUI();syncReadiness();toast("Referensi e-ticket dihapus dari draft.")};
+$("#openReturnOfficialTicketBtn")?.addEventListener("click",()=>openStorageRef($("#sharedOfficialTicketCheck")?.checked?officialTicketRef:returnOfficialTicketRef).then(ok=>!ok&&toast("Dokumen pulang belum dapat dibuka.")));
+$("#removeOfficialTicketBtn").onclick=()=>{officialTicketRef=null;syncOfficialTicketUI();syncReadiness();toast("Referensi e-ticket pergi dihapus dari draft.")};
+$("#removeReturnOfficialTicketBtn")?.addEventListener("click",()=>{returnOfficialTicketRef=null;syncOfficialTicketUI();syncReadiness();toast("Referensi e-ticket pulang dihapus dari draft.")});
+$("#sharedOfficialTicketCheck")?.addEventListener("change",()=>{syncOfficialTicketUI();syncReadiness()});
 document.querySelectorAll("#statusFlow button").forEach(b=>b.onclick=()=>{
   const target=b.dataset.status;
   if(target==="CANCELLED"){ $("#cancelModal").classList.remove("hidden"); return; }

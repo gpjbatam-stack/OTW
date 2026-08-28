@@ -9,6 +9,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./admin-ticketing.css?v=20260827-flow-v3">
+
+<style id="letsgo-ticketing-pp-upgrade">
+  .trip-ticket-hint{margin-top:12px;padding:12px 14px;border:1px solid #dbe8f3;border-radius:14px;background:#f7fbff;display:flex;gap:8px;align-items:center;justify-content:space-between}
+  .trip-ticket-hint strong{font-size:11px;color:#0b2034}.trip-ticket-hint span{font-size:10px;color:#73869a;text-align:right}
+  .leg-ticket-block{padding:14px;border:1px solid #e1ebf3;border-radius:17px;background:#fbfdff;margin-top:12px}
+  .leg-ticket-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.leg-ticket-title span{font-size:9px;font-weight:900;letter-spacing:.12em;color:#078fc6}.leg-ticket-title strong{font-size:11px;color:#21364c}
+  .shared-ticket-option{display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:14px;background:#eef9fd;border:1px solid #cfeefa;margin-bottom:12px}
+  .shared-ticket-option input{margin-top:2px;accent-color:#08bdeb}.shared-ticket-option span{display:grid;gap:3px}.shared-ticket-option strong{font-size:10.5px;color:#0b2034}.shared-ticket-option small{font-size:9px;line-height:1.45;color:#6f8194}
+  .roundtrip-only.hidden{display:none!important}
+  @media(max-width:720px){
+    .trip-ticket-hint{align-items:flex-start;flex-direction:column}.trip-ticket-hint span{text-align:left}
+    .leg-ticket-block{padding:12px;border-radius:15px}
+    .leg-ticket-title{align-items:flex-start;gap:8px;flex-direction:column}
+    .form-grid label span small{display:block;margin-top:2px}
+  }
+</style>
+
 </head>
 <body>
 <div class="admin-app">
@@ -190,7 +207,13 @@
           <label><span>Supplier / Agen</span><input id="supplierInput" type="text" placeholder="Nama supplier"></label>
           <label><span>Harga Aktual Supplier</span><input id="supplierCostInput" type="number" min="0" placeholder="0"></label>
           <label><span>PNR / Booking Code</span><input id="pnrInput" type="text" maxlength="20" placeholder="ABC123"></label>
-          <label><span>Nomor E-ticket</span><input id="ticketNumberInput" type="text" placeholder="990-1234567890"></label>
+          <label><span>Nomor E-ticket Pergi</span><input id="ticketNumberInput" type="text" placeholder="990-1234567890"></label>
+          <label id="returnPnrField" class="roundtrip-only hidden"><span>PNR Pulang <small>(opsional bila sama)</small></span><input id="returnPnrInput" type="text" maxlength="20" placeholder="Sama dengan PNR pergi"></label>
+          <label id="returnTicketField" class="roundtrip-only hidden"><span>Nomor E-ticket Pulang</span><input id="returnTicketNumberInput" type="text" placeholder="990-1234567891"></label>
+        </div>
+        <div id="tripTicketHint" class="trip-ticket-hint">
+          <strong>Tiket sekali jalan</strong>
+          <span>Satu nomor e-ticket dan satu dokumen resmi.</span>
         </div>
         <div class="margin-panel">
           <div><small>Harga customer</small><strong id="customerAmount">Rp0</strong></div>
@@ -201,14 +224,36 @@
 
       <section class="workspace-card">
         <header><span>03</span><div><small>OFFICIAL E-TICKET</small><strong>Dokumen resmi supplier</strong></div></header>
-        <div class="upload-box" id="officialTicketBox">
-          <span class="upload-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/><path d="M12 16V9M9 12l3-3 3 3"/></svg></span>
-          <div><strong id="officialTicketName">Belum ada e-ticket resmi</strong><small id="officialTicketMeta">Upload PDF/JPG/PNG dari supplier atau maskapai.</small></div>
-          <label class="upload-button">Pilih File<input id="officialTicketInput" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"></label>
+        <div class="leg-ticket-block">
+          <div class="leg-ticket-title"><span>PERGI</span><strong id="outboundOfficialRoute">Penerbangan pergi</strong></div>
+          <div class="upload-box" id="officialTicketBox">
+            <span class="upload-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/><path d="M12 16V9M9 12l3-3 3 3"/></svg></span>
+            <div><strong id="officialTicketName">Belum ada e-ticket pergi</strong><small id="officialTicketMeta">Upload PDF/JPG/PNG dari supplier atau maskapai.</small></div>
+            <label class="upload-button">Pilih File<input id="officialTicketInput" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"></label>
+          </div>
+          <div class="document-actions">
+            <button id="openOfficialTicketBtn" type="button" disabled>Lihat Tiket Pergi</button>
+            <button id="removeOfficialTicketBtn" class="danger-text" type="button" disabled>Hapus</button>
+          </div>
         </div>
-        <div class="document-actions">
-          <button id="openOfficialTicketBtn" type="button" disabled>Lihat E-ticket Resmi</button>
-          <button id="removeOfficialTicketBtn" class="danger-text" type="button" disabled>Hapus</button>
+
+        <div id="roundtripOfficialSection" class="leg-ticket-block roundtrip-only hidden">
+          <div class="leg-ticket-title"><span>PULANG</span><strong id="returnOfficialRoute">Penerbangan pulang</strong></div>
+          <label class="shared-ticket-option">
+            <input id="sharedOfficialTicketCheck" type="checkbox">
+            <span><strong>1 dokumen resmi mencakup perjalanan pergi + pulang</strong><small>Aktifkan jika supplier/maskapai menerbitkan satu PDF untuk seluruh perjalanan PP.</small></span>
+          </label>
+          <div id="returnOfficialUploadWrap">
+            <div class="upload-box" id="returnOfficialTicketBox">
+              <span class="upload-icon"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v5h5"/><path d="M12 16V9M9 12l3-3 3 3"/></svg></span>
+              <div><strong id="returnOfficialTicketName">Belum ada e-ticket pulang</strong><small id="returnOfficialTicketMeta">Upload dokumen khusus penerbangan pulang bila diterbitkan terpisah.</small></div>
+              <label class="upload-button">Pilih File<input id="returnOfficialTicketInput" type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"></label>
+            </div>
+            <div class="document-actions">
+              <button id="openReturnOfficialTicketBtn" type="button" disabled>Lihat Tiket Pulang</button>
+              <button id="removeReturnOfficialTicketBtn" class="danger-text" type="button" disabled>Hapus</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -420,6 +465,6 @@
 
 <div id="toast" class="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
-<script type="module" src="./admin-ticketing.js?v=20260827-flow-v3"></script>
+<script type="module" src="./admin-ticketing.js?v=20260828-pp-v1"></script>
 </body>
 </html>
